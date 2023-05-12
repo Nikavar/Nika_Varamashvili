@@ -35,9 +35,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ClassLibrary1\Library.Data.csproj" />
+    <ProjectReference Include="..\Library.Data\Library.Data.csproj" />
     <ProjectReference Include="..\Library.Model\Library.Model.csproj" />
-    <ProjectReference Include="..\Store.Service\Library.Service.csproj" />
+    <ProjectReference Include="..\Library.Service\Library.Service.csproj" />
   </ItemGroup>
 
 </Project>
