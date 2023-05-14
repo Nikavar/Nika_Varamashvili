@@ -12,8 +12,8 @@ namespace Library.Model.Models
         public string? PositionName { get; set; }
         public double Salary { get; set; }
         public DateTime StartWorkingDate { get; set; }
-        public int OperationHistoryID { get; set; }
-        public OperationHistory History { get; set; }
-        public virtual List<StaffReader> StaffReaders { get; set; }
+        public int LogID { get; set; }
+        public LogInfo Logs { get; set; }
+        public ICollection<StaffReader> StaffReaders { get; set; }
     }
 }

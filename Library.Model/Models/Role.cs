@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Library.Model.Models
 {
-    public class ReaderStatus
+    public class Role
     {
-        public int ReaderStatusID { get; set; }
-        public string ReaderStat { get; set; }
+        public int RoleID { get; set; }
+        public string RoleName { get; set; }
         public int LogID { get; set; }
+        public ICollection<UserRole> UserRoles { get; set; }
         public LogInfo Logs { get; set; }
-        public ICollection<StaffReader> StaffReaders { get; set; }
     }
 }

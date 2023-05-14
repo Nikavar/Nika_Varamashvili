@@ -8,21 +8,21 @@ using System.Threading.Tasks;
 
 namespace Library.Data.Repositories
 {
-    public class OperationHistoryRepository : RepositoryBase<OperationHistory>, IOperationHistoryInterface
+    public class OperationHistoryRepository : RepositoryBase<LogInfo>, IOperationHistoryInterface
     {
         public OperationHistoryRepository(DbFactory dbFactory) : base(dbFactory)
         {
             
         }
 
-        public OperationHistory GetById(int id)
+        public LogInfo GetById(int id)
         {
             var history = this.DbContext.Histories.Where(h => h.HistoryID == id).FirstOrDefault();
             return history ?? throw new NotImplementedException();
         }
     }
 
-    public interface IOperationHistoryInterface : IRepository<OperationHistory>
+    public interface IOperationHistoryInterface : IRepository<LogInfo>
     {
 
     }

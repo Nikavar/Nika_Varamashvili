@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Library.Model.Models
 {
-    public class OperationHistory
+    public class LogInfo
     {
         public int HistoryID { get; set; }
         public string? TableName { get; set; }
@@ -16,7 +16,7 @@ namespace Library.Model.Models
         public int UserID { get; set; }
         public User User { get; set; }
 
-        public OperationHistory()
+        public LogInfo()
         {
             DateCreated = DateTime.Now;
         }

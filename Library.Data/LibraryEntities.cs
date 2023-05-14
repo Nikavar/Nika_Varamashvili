@@ -1,5 +1,6 @@
 ﻿using Library.Data.Configuration;
 using Library.Model.Models;
+//using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -15,10 +16,12 @@ namespace Library.Data
         public LibraryEntities() : base("LibraryManagementDB") { }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<UserRole> UserRoles { get; set; }
+        public DbSet<Role> Roles { get; set; }
         public DbSet<StaffReader> StaffReaders { get; set; }
-        public DbSet<ReaderStatus> ReaderStatuses { get; set; }
         public DbSet<Position> Positions { get; set; }
-        public DbSet<OperationHistory> Histories { get; set; }
+        public DbSet<ReaderStatus> ReaderStatuses { get; set; }
+        public DbSet<LogInfo> Logs { get; set; }
 
         public virtual void Commit()
         {

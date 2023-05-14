@@ -19,5 +19,7 @@ namespace Library.Data.Configuration
             Property(s => s.PhoneNumber).IsRequired();
             Property(s => s.OperationHistoryID).IsRequired();
         }
+
+        
     }
 }

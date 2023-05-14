@@ -11,6 +11,7 @@ namespace Library.Model.Models
         public int StaffReaderID { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
+        public DateTime? DOB { get; set; }
         public string? PersonalNumber { get; set; }
         public string? PassportNumber { get; set; }
         public string? PhoneNumber { get; set; }
@@ -19,12 +20,12 @@ namespace Library.Model.Models
         public bool Gender { get; set; }
         public string? PersonalPhoto { get; set; }
         public int PositionId { get; set; }
-        public Position Positions { get; set; }
         public int ReaderStatusID { get; set; }
+        public int LogID { get; set; }
+        public Position Position { get; set; }
         public ReaderStatus ReaderStatus { get; set; }
-        public int OperationHistoryID { get; set; }
-        public OperationHistory History { get; set; }
-        public virtual List<User> Users { get; set; }
+        public LogInfo Logs { get; set; }
+        public ICollection<User> Users { get; set; }
 
     }
 }
