@@ -17,7 +17,7 @@ namespace Library.Data.Configuration
             Property(s => s.LastName).IsRequired().HasMaxLength(50);
             Property(s => s.Email).IsRequired();
             Property(s => s.PhoneNumber).IsRequired();
-            Property(s => s.OperationHistoryID).IsRequired();
+            Property(s => s.LogID).IsRequired();
         }
 
         

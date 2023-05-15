@@ -12,9 +12,9 @@ namespace Library.Model.Models
         public string UserName { get; set; }
         public string Password { get; set; }
         public int LogID { get; set; }
-        public LogInfo Logs { get; set; }
         public int StaffReaderID { get; set; }
         public StaffReader StaffReader { get; set; }
+        public LogInfo Logs { get; set; }
         public ICollection<UserRole> UserRoles { get; set; }    
     }
 }

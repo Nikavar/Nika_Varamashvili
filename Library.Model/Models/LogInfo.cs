@@ -8,22 +8,23 @@ namespace Library.Model.Models
 {
     public class LogInfo
     {
-        public int HistoryID { get; set; }
+        public int LogID { get; set; }
         public string? TableName { get; set; }
         public DateTime? DateCreated { get; set; }
         public DateTime? DateUpdated { get; set; }
         public DateTime? DateDeleted { get; set; }
         public int UserID { get; set; }
-        public User User { get; set; }
 
         public LogInfo()
         {
             DateCreated = DateTime.Now;
         }
 
-        public virtual List<User> Users { get; set; }
-        public virtual List<StaffReader> StaffReaders { get; set; }
-        public virtual List<Position> Positions { get; set; }
-        public virtual List<ReaderStatus> ReaderStatuses { get; set; }
+        public ICollection<User> Users { get; set; }
+        public ICollection<StaffReader> StaffReaders { get; set; }
+        public ICollection<Position> Positions { get; set; }
+        public ICollection<ReaderStatus> ReaderStatuses { get; set; }   
+        public ICollection<UserRole> UserRoles { get; set; }
+
     }
 }

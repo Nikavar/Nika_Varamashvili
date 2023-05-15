@@ -17,7 +17,7 @@ namespace Library.Data.Repositories
 
         public LogInfo GetById(int id)
         {
-            var history = this.DbContext.Histories.Where(h => h.HistoryID == id).FirstOrDefault();
+            var history = this.DbContext.Logs.Where(h => h.LogID == id).FirstOrDefault();
             return history ?? throw new NotImplementedException();
         }
     }
