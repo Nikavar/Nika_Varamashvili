@@ -26,6 +26,7 @@ namespace Library.Model.Models
         public ReaderStatus ReaderStatus { get; set; }
         public LogInfo Logs { get; set; }
         public ICollection<User> Users { get; set; }
+        public ICollection<Card> Cards { get; set; }
 
     }
 }

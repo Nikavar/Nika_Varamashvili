@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="DocumentFormat.OpenXml" Version="2.20.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Library.Data\Library.Data.csproj" />
     <ProjectReference Include="..\Library.Model\Library.Model.csproj" />
   </ItemGroup>

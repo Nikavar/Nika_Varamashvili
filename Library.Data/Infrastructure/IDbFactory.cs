@@ -8,6 +8,6 @@ namespace Library.Data.Infrastructure
 {
     public interface IDbFactory : IDisposable
     {
-        LibraryEntities Init();
+        LibraryContext Init();
     }
 }

@@ -2,8 +2,8 @@
 using Autofac.Integration.Mvc;
 using Library.Data.Infrastructure;
 using Library.Data.Repositories;
+using Library.Service;
 using Library.Web.Mapping;
-using Store.Service;
 using System.Reflection;
 using System.Web.Mvc;
 

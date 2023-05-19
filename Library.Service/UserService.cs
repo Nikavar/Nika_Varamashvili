@@ -6,70 +6,81 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Library.Data;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using DocumentFormat.OpenXml.Spreadsheet;
+using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
-namespace Store.Service
+namespace Library.Service
 {
     public interface IUserService
     {
-        IEnumerable<User> GetAllUser();
-        IEnumerable<User> GetStaffReaderUser(int staffReaderId, string userName = null);
-        User GetUserById(int id);
-        void CreateUser(User user);
-        void UpdateUser(User user);
-        void SaveUser();
+        Task<IEnumerable<User>> GetAllUsersAsync();
+        Task<IEnumerable<User>> GetManyUsersAsync(Expression<Func<User, bool>> filter = null,
+                                          Func<IQueryable<User>, IOrderedQueryable<User>> orderBy = null,
+                                          int? top = null,
+                                          int? skip = null,
+                                          params string[] includeProperties);
+        Task<User> GetUserByIdAsync(int id);
+        Task AddUserAsync(User entity);
+        Task UpdateUserAsync(User entity);
+        Task DeleteUserAsync(int id);
+        Task DeleteManyUsersAsync(Expression<Func<User, bool>> filter);
+
+
+        // Login User
+        Task LoginUserAsync(User user);
 
     }
     public class UserService : IUserService
     {
-        public readonly IUserRepository userRepository;
-        public readonly IStaffReaderRepository staffReaderRepository;
-        public readonly IUnitOfWork unitOfWork;
+        private readonly IUserRepository _userRepository;
 
-        public UserService(IUserRepository userRepo, IStaffReaderRepository staffReaderRepo, 
-                           IUnitOfWork unitOfWork)
+        public UserService(IUserRepository userRepository)
         {
-            this.userRepository = userRepo;
-            this.staffReaderRepository = staffReaderRepo;
-            this.unitOfWork = unitOfWork;
+            _userRepository = userRepository;
         }
 
-        // added new method for auth of logged users
-        public async Task<User> LoginUser(string userName, string password)
+        public async Task<IEnumerable<User>> GetAllUsersAsync()
         {
-            return await userRepository.AuthenticateUser(userName, password);
+            return await _userRepository.GetAllAsync();
         }
 
-        public void CreateUser(User user)
+        public async Task<IEnumerable<User>> GetManyUsersAsync(Expression<Func<User, bool>> filter = null, Func<IQueryable<User>, IOrderedQueryable<User>> orderBy = null, int? top = null, int? skip = null, params string[] includeProperties)
         {
-            userRepository.Add(user);
+            return await _userRepository.GetManyAsync(filter, orderBy, top, skip, includeProperties);
+        }
+        public async Task<User> GetUserByIdAsync(int id)
+        {
+            return await _userRepository.GetByIdAsync(id);
         }
 
-        public IEnumerable<User> GetAllUser()
+        public async Task AddUserAsync(User entity)
         {
-            var users = userRepository.GetAll();           
-            return users;
+            await _userRepository.AddAsync(entity);
         }
 
-        public IEnumerable<User> GetStaffReaderUser(int staffReaderId, string userName = null)
+        public async Task UpdateUserAsync(User entity)
         {
-            var staffReader = staffReaderRepository.GetById(staffReaderId);
-            return staffReader.Users.Where(u => u.UserName.ToLower().Contains(userName.ToLower().Trim()));
+            await _userRepository.UpdateAsync(entity);
         }
 
-        public User GetUserById(int id)
+        public async Task DeleteUserAsync(int id)
         {
-            var user = userRepository.GetById(id);
-            return user;
+            await _userRepository.DeleteAsync(id);
         }
 
-        public void SaveUser()
+        public async Task DeleteManyUsersAsync(Expression<Func<User, bool>> filter)
         {
-            unitOfWork.Commit();
+            await _userRepository.DeleteManyAsync(filter);
         }
 
-        public void UpdateUser(User user)
+        public async Task LoginUserAsync(User user)
         {
-            userRepository.Update(user);
+            await _userRepository.LoginUserAsync(user);
         }
     }
 }

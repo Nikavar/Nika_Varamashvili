@@ -1,4 +1,6 @@
 ﻿using Library.Model.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.ModelConfiguration;
@@ -8,14 +10,12 @@ using System.Threading.Tasks;
 
 namespace Library.Data.Configuration
 {
-    public class ReaderStatusConfiguration : EntityTypeConfiguration<ReaderStatus>
+    public class ReaderStatusConfiguration : IEntityTypeConfiguration<ReaderStatus>
     {
-        public ReaderStatusConfiguration()
+        public void Configure(EntityTypeBuilder<ReaderStatus> builder)
         {
-            ToTable("ReaderStatuses");
-            // სტატიკური ცხრილებისთვის საჭიროა თუ არა კონფიგურაციის განსაზღვრა?
-
-            //Property(rs => rs.);
+            builder.ToTable("ReaderStatuses");
         }
+           
     }
 }

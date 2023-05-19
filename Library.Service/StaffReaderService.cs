@@ -1,12 +1,21 @@
-﻿using System;
+﻿using Library.Model.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Store.Service
+namespace Library.Service
 {
-    public class StaffReaderService
+    public interface IStaffReaderService
+    {
+       //
+
+        // StaffReader Service Methods 
+
+    }
+
+    public class StaffReaderService : IStaffReaderService
     {
     }
 }

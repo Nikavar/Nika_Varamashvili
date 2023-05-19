@@ -9,12 +9,15 @@ using System.Threading.Tasks;
 
 namespace Library.Data.Repositories
 {
-    public class ReaderStatusRepository : BaseRepository<ReaderStatus>, IReaderStatusRepository
+    public class CardRepository : BaseRepository<Card>, ICardRepository
     {
-        public ReaderStatusRepository(DbContext dbContext) : base(dbContext) { }
+        public CardRepository(DbContext dbContext) : base(dbContext)
+        {
+            
+        }
     }
 
-    public interface IReaderStatusRepository : IBaseRepository<ReaderStatus>
+    public interface ICardRepository : IBaseRepository<Card>
     {
 
     }

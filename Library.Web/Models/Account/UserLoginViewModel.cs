@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
 
-namespace LibraryManagementSystem.Models.Account
+namespace Library.Web.Models.Account
 {
     public class UserLoginViewModel
     {

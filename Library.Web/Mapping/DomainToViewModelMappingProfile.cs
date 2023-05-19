@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Library.Model.Models;
 using Library.Web.Models;
-using LibraryManagementSystem.Models.Account;
+using Library.Web.Models.Account;
 
 namespace Library.Web.Mapping
 {

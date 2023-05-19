@@ -25,6 +25,8 @@ namespace Library.Model.Models
         public ICollection<Position> Positions { get; set; }
         public ICollection<ReaderStatus> ReaderStatuses { get; set; }   
         public ICollection<UserRole> UserRoles { get; set; }
+        public ICollection<Card> Cards { get; set; }
+
 
     }
 }

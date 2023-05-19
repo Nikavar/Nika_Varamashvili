@@ -1,21 +1,22 @@
 ﻿using Library.Data.Repositories;
-using LibraryManagementSystem.Models.Account;
+using Library.Model;
+using Library.Model.Models;
+using Library.Service;
+using Library.Web.Models.Account;
 using Microsoft.AspNet.Identity;
 //using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Store.Service;
 
-namespace LibraryManagementSystem.Controllers
+
+namespace Library.Web.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly IUserRepository _loginUser;
         private readonly UserService _userService;
 
-        public AccountController(IUserRepository logUser, UserService userService)
+        public AccountController(UserService userService)
         {
-            _loginUser = logUser;
             _userService = userService;
         }
 
@@ -24,30 +25,53 @@ namespace LibraryManagementSystem.Controllers
             return View(new UserLoginViewModel());
         }
 
-
         [HttpPost]
-        public async Task<IActionResult> Login(UserLoginViewModel model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(User user)
         {
-            var isSuccess = await _userService.LoginUser(model.EmailAddress, model.Password);
-
-
-            //var isSuccess = await _loginUser.AuthenticateUser(model.EmailAddress, model.Password);
-
-            if (isSuccess != null)
+            if (ModelState.IsValid)
             {
-                ViewBag.username = string.Format("Successfully logged-in", model.EmailAddress);
-                return RedirectToAction("Index", "Home");
+                await _userService.LoginUserAsync(user);
+                return RedirectToAction(nameof(Index));
             }
+            return View(user);
+        }
 
-            else
-            {
-                ViewBag.username = string.Format("Login failed", model.EmailAddress);
-                return View(model);
-            }
+        public async Task<IActionResult> Index()
+        {
+            var users = await _userService.GetAllUsersAsync();
+            return View(users);
+        }
+
+        public async Task<IActionResult> Details(int id)
+        {
+            var user = await _userService.GetUserByIdAsync(id);
+            return View(user);
         }
 
 
-        //.private readonly UserManager<IdentityUser> _userManager;
+        //public async Task<IActionResult> Login(UserLoginViewModel model)
+        //{
+        //    //var isSuccess = await _userService.LoginUser(model.EmailAddress, model.Password);
+
+
+        //    //var isSuccess = await _loginUser.AuthenticateUser(model.EmailAddress, model.Password);
+
+        //    //if (isSuccess != null)
+        //    //{
+        //    //    ViewBag.username = string.Format("Successfully logged-in", model.EmailAddress);
+        //    //    return RedirectToAction("Index", "Home");
+        //    //}
+
+        //    //else
+        //    //{
+        //    //    ViewBag.username = string.Format("Login failed", model.EmailAddress);
+        //    //    return View(model);
+        //    //}
+        //}
+
+
+        //private readonly UserManager<IdentityUser> _userManager;
         //private readonly SignInManager<IdentityUser> _signInManager;
 
         //private readonly IUserService userService;
@@ -74,7 +98,7 @@ namespace LibraryManagementSystem.Controllers
         //{
         //    if (!ModelState.IsValid) return View(model);
         //    //var user = await _userManager.FindByEmailAsync(model.EmailAddress);
-            
+
         //    var user = userService.GetUserById(model.UserId);
 
         //    if (user != null)
@@ -101,6 +125,24 @@ namespace LibraryManagementSystem.Controllers
         //    return View(model);
         //}
 
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(User user)
+        {
+            if (ModelState.IsValid)
+            {
+                await _userService.AddUserAsync(user);
+                return RedirectToAction(nameof(Index));
+            }
+            return View(user);
+        }
+
+        // ეს რამდენად საჭიროა?
         public IActionResult Register()
         {
             return View(new RegisterViewModel());
@@ -134,6 +176,43 @@ namespace LibraryManagementSystem.Controllers
             //    }
             //}
             return View(model);
+        }
+
+        public async Task<IActionResult> Edit(int id)
+        {
+            var user = await _userService.GetUserByIdAsync(id);
+            return View(user);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, User user)
+        {
+            if (id != user.UserID)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                await _userService.UpdateUserAsync(user);
+                return RedirectToAction(nameof(Index));
+            }
+            return View(user);
+        }
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            var user = await _userService.GetUserByIdAsync(id);
+            return View(user);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            await _userService.DeleteUserAsync(id);
+            return RedirectToAction(nameof(Index));
         }
     }
 }

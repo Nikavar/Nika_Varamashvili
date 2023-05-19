@@ -1,6 +1,7 @@
 ﻿using Library.Data.Infrastructure;
 using Library.Model.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,37 +11,35 @@ using System.Threading.Tasks;
 
 namespace Library.Data.Repositories
 {
-    public class UserRepository : RepositoryBase<User>, IUserRepository
+    public class UserRepository : BaseRepository<User>, IUserRepository
     {
-        public UserRepository(DbFactory dbFactory) : base(dbFactory) 
-        { 
-        
-        
-        }
-
-        public override User GetById(int id)
+        public UserRepository(DbContext dbContext) : base(dbContext)
         {
-            var user = this.DbContext.Users.Where(u => u.UserID == id).FirstOrDefault();
-            return user ?? throw new NotImplementedException();
-        }
 
-        // Authentification Users
-        public async Task<User> AuthenticateUser(string username, string password)
+        }
+        public async Task LoginUserAsync(User user)
         {
-            var succeded = await this.DbContext.Users.FirstOrDefaultAsync(authUser =>
-            authUser.UserName == username && authUser.Password == password);
-            return succeded ?? throw new NotImplementedException();
+            var result = await _dbContext.AddAsync(user);
+            _dbContext.SaveChanges();
         }
 
-        public Task<IEnumerable<User>> getUser()
+        public Task LogoutUser(User user)
         {
             throw new NotImplementedException();
         }
+
+        public async Task RegisterUser(User user)
+        {
+           await _dbContext.AddAsync(user);
+           _dbContext.SaveChanges();
+        }
     }
 
-    public interface IUserRepository : IRepository<User> 
+    public interface IUserRepository : IBaseRepository<User> 
     {
-        Task<IEnumerable<User>> getUser();
-        Task<User> AuthenticateUser(string userName, string password);    
+        Task LoginUserAsync(User user);    
+        Task LogoutUser(User user);
+        Task RegisterUser(User user);
+
     }
 }

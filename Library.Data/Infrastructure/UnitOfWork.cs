@@ -9,13 +9,13 @@ namespace Library.Data.Infrastructure
     public class UnitOfWork : IUnitOfWork
     {
         private readonly IDbFactory dbFactory;
-        private LibraryEntities dbContext;
+        private LibraryContext dbContext;
 
         public UnitOfWork(IDbFactory dbFactory)
         {
             this.dbFactory = dbFactory;
         }
-        public LibraryEntities DbContext
+        public LibraryContext DbContext
         {
             get { return dbContext ?? (dbContext = dbFactory.Init()); }
         }

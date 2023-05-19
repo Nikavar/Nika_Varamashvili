@@ -11,29 +11,30 @@ using System.Threading.Tasks;
 
 namespace Library.Data.Configuration
 {
-    public class UserConfiguration : EntityTypeConfiguration<User>
+    public class UserConfiguration : IEntityTypeConfiguration<User>
     {
-        public UserConfiguration()
+        public void Configure(EntityTypeBuilder<User> builder)
         {
-            ToTable("Users");
-            Property(u => u.UserName)
+            builder.ToTable("users");
+            builder.Property(u => u.UserName)
                 .HasMaxLength(30)
                 .IsUnicode(false)
                 .IsRequired();
-            Property(u => u.Password)
+            builder.Property(u => u.Password)
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .IsRequired();
-            Property(u => u.StaffReaderID)
+            builder.Property(u => u.StaffReaderID)
                 .IsRequired();
-            Property(u => u.LogID)
+            builder.Property(u => u.LogID)
                 .IsRequired();
 
-            HasRequired<StaffReader>(sr => sr.StaffReader)
+            builder.HasOne(sr => sr.StaffReader)
                 .WithMany(u => u.Users);
 
-            HasRequired<LogInfo>(l => l.Logs)
+            builder.HasOne(l => l.Logs)
                 .WithMany(u => u.Users);
         }
+
     }
 }

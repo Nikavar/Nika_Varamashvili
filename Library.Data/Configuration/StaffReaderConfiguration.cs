@@ -1,4 +1,6 @@
 ﻿using Library.Model.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.ModelConfiguration;
@@ -8,18 +10,16 @@ using System.Threading.Tasks;
 
 namespace Library.Data.Configuration
 {
-    public class StaffReaderConfiguration : EntityTypeConfiguration<StaffReader>
+    public class StaffReaderConfiguration : IEntityTypeConfiguration<StaffReader>
     {
-        public StaffReaderConfiguration()
+        public void Configure(EntityTypeBuilder<StaffReader> builder)
         {
-            ToTable("StaffReaders");
-            Property(s => s.FirstName).IsRequired().HasMaxLength(30);
-            Property(s => s.LastName).IsRequired().HasMaxLength(50);
-            Property(s => s.Email).IsRequired();
-            Property(s => s.PhoneNumber).IsRequired();
-            Property(s => s.LogID).IsRequired();
+            builder.ToTable("StaffReaders");
+            builder.Property(s => s.FirstName).IsRequired().HasMaxLength(30);
+            builder.Property(s => s.LastName).IsRequired().HasMaxLength(50);
+            builder.Property(s => s.Email).IsRequired();
+            builder.Property(s => s.PhoneNumber).IsRequired();
+            builder.Property(s => s.LogID).IsRequired();
         }
-
-        
     }
 }

@@ -1,5 +1,4 @@
-﻿using LibraryManagementSystem.Context;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +20,7 @@ namespace LibraryManagementSystem
     //    {
     //        services.AddControllersWithViews();
 
-    //        //services.AddDbContext<LibraryDbContext>(options =>
+    //        //services.AddDbContext<LibraryContext>(options =>
     //        //options.UseSqlServer
     //        //(
     //        //    Configuration.GetConnectionString("LibraryDbConnection")

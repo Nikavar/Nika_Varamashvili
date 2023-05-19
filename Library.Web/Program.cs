@@ -1,13 +1,17 @@
+using Library.Data;
+using Library.Data.Infrastructure;
 using Library.Data.Repositories;
 using Library.Model.Models;
+using Library.Service;
 using Library.Web.App_Start;
-using LibraryManagementSystem.Context;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
+
 var builder = WebApplication.CreateBuilder(args);
-string connString = builder.Configuration.GetConnectionString("LibraryDbConnection");
+string connString = builder.Configuration
+                           .GetConnectionString("LibraryDbConnection");
 
 // Add services to the container.
 
@@ -19,10 +23,20 @@ builder.Services.AddControllersWithViews();
 //                .AddDefaultTokenProviders();
 
 
-builder.Services.AddTransient<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IDbFactory, DbFactory>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
+
+builder.Services.AddScoped<IStaffReaderRepository, StaffReaderRepository>();
+builder.Services.AddScoped<IStaffReaderService, StaffReaderService>();
+
+builder.Services.AddScoped<ICardRepository, CardRepository>();
+builder.Services.AddScoped<ILogInfoRepository, LogInfoRepository>();
+builder.Services.AddScoped<IPositionRepository, PositionRepository>();
+builder.Services.AddScoped<IReaderStatusRepository, ReaderStatusRepository>();
 
 //DbContext
-builder.Services.AddDbContext<LibDBContext>(options =>
+builder.Services.AddDbContext<LibraryContext>(options =>
 {
     options.UseSqlServer(connString);
 });

@@ -8,10 +8,10 @@ namespace Library.Data.Infrastructure
 {
     public class DbFactory : Disposable, IDbFactory
     {
-        LibraryEntities dbContext;
-        public LibraryEntities Init()
+        LibraryContext dbContext;
+        public LibraryContext Init()
         {
-            return dbContext ?? (dbContext = new LibraryEntities());
+            return dbContext ?? (dbContext = new LibraryContext());
         }
 
         protected override void DisposeCore()

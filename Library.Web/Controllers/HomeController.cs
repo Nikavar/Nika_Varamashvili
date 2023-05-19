@@ -1,8 +1,8 @@
-﻿using LibraryManagementSystem.Models;
+﻿using Library.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
-namespace LibraryManagementSystem.Controllers
+namespace Library.Web.Controllers
 {
     public class HomeController : Controller
     {
