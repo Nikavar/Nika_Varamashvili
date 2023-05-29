@@ -11,7 +11,7 @@ namespace Library.Data.Repositories
 {
     public class StaffReaderRepository : BaseRepository<StaffReader>, IStaffReaderRepository
     {
-        public StaffReaderRepository(DbContext dbContext) : base(dbContext) { }
+        public StaffReaderRepository(IDbFactory dbFactory) : base(dbFactory) { }
 
         //public async Task<StaffReader> GetByIdAsync(int id)
         //{

@@ -11,7 +11,7 @@ namespace Library.Data.Repositories
 {
     public class CardRepository : BaseRepository<Card>, ICardRepository
     {
-        public CardRepository(DbContext dbContext) : base(dbContext)
+        public CardRepository(IDbFactory dbFactory) : base(dbFactory)
         {
             
         }

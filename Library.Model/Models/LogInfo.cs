@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,12 +9,13 @@ namespace Library.Model.Models
 {
     public class LogInfo
     {
+        [Key]
         public int LogID { get; set; }
         public string? TableName { get; set; }
         public DateTime? DateCreated { get; set; }
         public DateTime? DateUpdated { get; set; }
         public DateTime? DateDeleted { get; set; }
-        public int UserID { get; set; }
+        public int? UserID { get; set; }
 
         public LogInfo()
         {

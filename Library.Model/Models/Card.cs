@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ namespace Library.Model.Models
 {
     public class Card
     {
+        [Key]
         public int CardID { get; set; }
         public int BookLimit { get; set; }
         public DateTime ValidFrom { get; set; }
@@ -16,7 +18,7 @@ namespace Library.Model.Models
         public int LogID { get; set; }
 
         // Relations
-        public StaffReader StaffReader { get; set; }
-        public LogInfo Logs { get; set; }
+        public StaffReader? StaffReader { get; set; }
+        public LogInfo? Logs { get; set; }
     }
 }

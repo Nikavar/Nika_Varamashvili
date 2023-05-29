@@ -8,7 +8,7 @@ namespace Library.Data.Infrastructure
 {
     public class DbFactory : Disposable, IDbFactory
     {
-        LibraryContext dbContext;
+        LibraryContext? dbContext;
         public LibraryContext Init()
         {
             return dbContext ?? (dbContext = new LibraryContext());
@@ -16,9 +16,9 @@ namespace Library.Data.Infrastructure
 
         protected override void DisposeCore()
         {
-            if (dbContext != null) 
-            { 
-                dbContext.Dispose(); 
+            if (dbContext != null)
+            {
+                dbContext.Dispose();
             }
         }
     }

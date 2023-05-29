@@ -13,15 +13,11 @@ namespace Library.Data.Infrastructure
         #region General Methods for All Classes
 
         Task<IEnumerable<T>> GetAllAsync();
-        Task<IEnumerable<T>> GetManyAsync(Expression<Func<T, bool>> filter = null,
-                                          Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
-                                          int? top = null,
-                                          int? skip = null,
-                                          params string[] includeProperties);
+        Task<IEnumerable<T>> GetManyAsync(Expression<Func<T, bool>> filter);
         Task<T> GetByIdAsync(int id);
         Task AddAsync(T entity);
         Task UpdateAsync(T entity);
-        Task DeleteAsync(int id);
+        Task DeleteAsync(T entity);
         Task DeleteManyAsync(Expression<Func<T, bool>> filter);
 
         #endregion

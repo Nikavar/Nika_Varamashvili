@@ -1,5 +1,4 @@
-﻿//using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using System;
 using System.Collections.Generic;
@@ -19,107 +18,104 @@ namespace Library.Data.Infrastructure
 
     public class BaseRepository<T> : IBaseRepository<T> where T : class
     {
-        #region Readonlys
+        #region Properties
+        private LibraryContext? dataContext;
+        private readonly DbSet<T> dbSet;
 
-        protected readonly DbContext _dbContext;
-        protected readonly DbSet<T> _dbSet;
+        protected IDbFactory DbFactory
+        {
+            get;
+            private set;
+        }
 
+        protected LibraryContext DbContext
+        {
+            get { return dataContext ?? (dataContext = DbFactory.Init()); }
+        }
 
-        #endregion
+        #endregion  
 
         #region Constructor
 
-        public BaseRepository(DbContext dbContext)
+        public BaseRepository(IDbFactory dbFactory)
         {
-            _dbContext = dbContext;
-            _dbSet = dbContext.Set<T>();
+            DbFactory = dbFactory;
+            dbSet = DbContext.Set<T>();
         }
 
         #endregion
 
         #region Implementation
 
-        public async Task<IEnumerable<T>> GetAllAsync()
+        public virtual async Task<IEnumerable<T>> GetAllAsync()
         {
-            return await _dbSet.ToListAsync();
+            return await dbSet.ToListAsync();
         }
 
 
-        public async Task<IEnumerable<T>> GetManyAsync(
-                    Expression<Func<T, bool>> filter = null,
-                    Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
-                    int? top = null,
-                    int? skip = null,
-                    params string[] includeProperties)
+        public virtual async Task<IEnumerable<T>> GetManyAsync(Expression<Func<T, bool>> filter)                   
         {
-            IQueryable<T> query = _dbSet;
+            IQueryable<T> query = dbSet;
 
             if (filter != null)
             {
                 query = query.Where(filter);
             }
 
-            if (includeProperties.Length > 0)
-            {
-                query = includeProperties.Aggregate(query, (theQuery, theInclude) => theQuery.Include(theInclude));
-            }
-
-            if (orderBy != null)
-            {
-                query = orderBy(query);
-            }
-
-            if (skip.HasValue)
-            {
-                query = query.Skip(skip.Value);
-            }
-
-            if (top.HasValue)
-            {
-                query = query.Take(top.Value);
-            }
-
             return await query.ToListAsync();
         }
 
-        public async Task<T> GetByIdAsync(int id)
+        public virtual async Task<T> GetByIdAsync(int id)
         {
-            var result = await _dbSet.FindAsync(id);
+            return await dbSet.FindAsync(id);
 
-            if (result != null)
-                return result;
+            //var result = await _dbSet.FindAsync(id);
 
-            throw new NullReferenceException();
+            //if (result != null)
+            //    return result;
+
+            //throw new NullReferenceException();
         }
 
-        public async Task AddAsync(T entity)
+        public virtual async Task AddAsync(T entity)
         {
-            await _dbSet.AddAsync(entity);
-            await _dbContext.SaveChangesAsync();
+            await dbSet.AddAsync(entity);
+            //await _dbContext.SaveChangesAsync();
         }
-        public async Task UpdateAsync(T entity)
+        public virtual async Task UpdateAsync(T entity)
         {
-            _dbContext.Entry(entity).State = EntityState.Modified;
-            await _dbContext.SaveChangesAsync();
-        }
+            dbSet.Attach(entity);
+            dataContext.Entry(entity).State = EntityState.Modified;
 
-        public async Task DeleteAsync(int id)
-        {
-            var deleted = await _dbSet.FindAsync(id);            
-            if (deleted != null)
-                _dbSet.Remove(deleted);
-
-            await _dbContext.SaveChangesAsync();
+            //_dbContext.Entry(entity).State = EntityState.Modified;
+            //await _dbContext.SaveChangesAsync();
         }
 
-        public async Task DeleteManyAsync(Expression<Func<T, bool>> filter)
+        public virtual async Task DeleteAsync(T entity)
         {
-            var filtered = _dbSet.Where(filter);
-            if (filtered != null)
-                _dbSet.RemoveRange(filtered);
+            dbSet.Remove(entity);
 
-            await _dbContext.SaveChangesAsync();
+            //var deleted = await _dbSet.FindAsync(id);            
+            //if (deleted != null)
+            //    _dbSet.Remove(deleted);
+
+            //await _dbContext.SaveChangesAsync();
         }
+
+        public virtual async Task DeleteManyAsync(Expression<Func<T, bool>> filter)
+        {
+            IEnumerable<T> objects = dbSet.Where<T>(filter).AsEnumerable();
+            foreach (T obj in objects)
+                dbSet.Remove(obj);
+
+
+            //var filtered = _dbSet.Where(filter);
+            //if (filtered != null)
+            //    _dbSet.RemoveRange(filtered);
+
+            //await _dbContext.SaveChangesAsync();
+        }
+
         #endregion
     }
 }

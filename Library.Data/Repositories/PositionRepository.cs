@@ -11,7 +11,7 @@ namespace Library.Data.Repositories
 {
     public class PositionRepository : BaseRepository<Position>, IPositionRepository
     {
-        public PositionRepository(DbContext dbContext) : base(dbContext)
+        public PositionRepository(IDbFactory dbFactory) : base(dbFactory)
         {
         }
 

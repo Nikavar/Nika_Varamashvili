@@ -13,14 +13,14 @@ namespace Library.Data.Repositories
 {
     public class UserRepository : BaseRepository<User>, IUserRepository
     {
-        public UserRepository(DbContext dbContext) : base(dbContext)
+        public UserRepository(IDbFactory dbFactory) : base(dbFactory)
         {
 
         }
         public async Task LoginUserAsync(User user)
         {
-            var result = await _dbContext.AddAsync(user);
-            _dbContext.SaveChanges();
+            var result = await DbContext.Users
+                .FirstOrDefaultAsync(u => u.UserName == user.UserName && u.Password == user.Password);
         }
 
         public Task LogoutUser(User user)
@@ -30,8 +30,12 @@ namespace Library.Data.Repositories
 
         public async Task RegisterUser(User user)
         {
-           await _dbContext.AddAsync(user);
-           _dbContext.SaveChanges();
+            var result = await this.DbContext.Users.AddAsync(user);
+        }
+
+        public override Task UpdateAsync(User entity)
+        {
+            return base.UpdateAsync(entity);
         }
     }
 
@@ -40,6 +44,5 @@ namespace Library.Data.Repositories
         Task LoginUserAsync(User user);    
         Task LogoutUser(User user);
         Task RegisterUser(User user);
-
     }
 }

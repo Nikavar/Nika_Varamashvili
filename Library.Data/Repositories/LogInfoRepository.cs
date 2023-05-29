@@ -11,7 +11,7 @@ namespace Library.Data.Repositories
 {
     public class LogInfoRepository : BaseRepository<LogInfo>, ILogInfoRepository
     {
-        public LogInfoRepository(DbContext dbContext) : base(dbContext)
+        public LogInfoRepository(IDbFactory dbFactory) : base(dbFactory)
         {
             
         }

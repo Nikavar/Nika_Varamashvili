@@ -16,7 +16,7 @@ namespace Library.Web.App_Start
             SetAutofacContainer();
 
             //Configure AutoMapper
-            AutoMapperConfiguration.Configure();
+            //AutoMapperConfiguration.Configure();
         }
 
         private static void SetAutofacContainer()

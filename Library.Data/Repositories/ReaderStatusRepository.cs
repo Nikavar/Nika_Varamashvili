@@ -11,7 +11,7 @@ namespace Library.Data.Repositories
 {
     public class ReaderStatusRepository : BaseRepository<ReaderStatus>, IReaderStatusRepository
     {
-        public ReaderStatusRepository(DbContext dbContext) : base(dbContext) { }
+        public ReaderStatusRepository(IDbFactory dbFactory) : base(dbFactory) { }
     }
 
     public interface IReaderStatusRepository : IBaseRepository<ReaderStatus>

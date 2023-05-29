@@ -19,15 +19,11 @@ namespace Library.Service
     public interface IUserService
     {
         Task<IEnumerable<User>> GetAllUsersAsync();
-        Task<IEnumerable<User>> GetManyUsersAsync(Expression<Func<User, bool>> filter = null,
-                                          Func<IQueryable<User>, IOrderedQueryable<User>> orderBy = null,
-                                          int? top = null,
-                                          int? skip = null,
-                                          params string[] includeProperties);
+        Task<IEnumerable<User>> GetManyUsersAsync(Expression<Func<User, bool>> filter);
         Task<User> GetUserByIdAsync(int id);
         Task AddUserAsync(User entity);
         Task UpdateUserAsync(User entity);
-        Task DeleteUserAsync(int id);
+        Task DeleteUserAsync(User user);
         Task DeleteManyUsersAsync(Expression<Func<User, bool>> filter);
 
 
@@ -38,10 +34,14 @@ namespace Library.Service
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IStaffReaderRepository _staffReaderRepository;
+        private readonly IUnitOfWork unitOfWork;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository, IStaffReaderRepository staffReader, IUnitOfWork unitOfWork)
         {
-            _userRepository = userRepository;
+            this._userRepository = userRepository;
+            this._staffReaderRepository = staffReader;
+            this.unitOfWork = unitOfWork;
         }
 
         public async Task<IEnumerable<User>> GetAllUsersAsync()
@@ -49,9 +49,9 @@ namespace Library.Service
             return await _userRepository.GetAllAsync();
         }
 
-        public async Task<IEnumerable<User>> GetManyUsersAsync(Expression<Func<User, bool>> filter = null, Func<IQueryable<User>, IOrderedQueryable<User>> orderBy = null, int? top = null, int? skip = null, params string[] includeProperties)
+        public async Task<IEnumerable<User>> GetManyUsersAsync(Expression<Func<User, bool>> filter)
         {
-            return await _userRepository.GetManyAsync(filter, orderBy, top, skip, includeProperties);
+            return await _userRepository.GetManyAsync(filter);
         }
         public async Task<User> GetUserByIdAsync(int id)
         {
@@ -68,9 +68,9 @@ namespace Library.Service
             await _userRepository.UpdateAsync(entity);
         }
 
-        public async Task DeleteUserAsync(int id)
+        public async Task DeleteUserAsync(User user)
         {
-            await _userRepository.DeleteAsync(id);
+            await _userRepository.DeleteAsync(user);
         }
 
         public async Task DeleteManyUsersAsync(Expression<Func<User, bool>> filter)
@@ -82,5 +82,6 @@ namespace Library.Service
         {
             await _userRepository.LoginUserAsync(user);
         }
+
     }
 }

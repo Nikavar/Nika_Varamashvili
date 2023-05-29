@@ -1,40 +1,47 @@
-﻿using Library.Data.Repositories;
+﻿using Autofac.Core;
+using AutoMapper;
+using Library.Data;
+using Library.Data.Repositories;
 using Library.Model;
 using Library.Model.Models;
 using Library.Service;
 using Library.Web.Models.Account;
-using Microsoft.AspNet.Identity;
-//using Microsoft.AspNet.Identity;
-using Microsoft.AspNetCore.Identity;
+using Library.Web.Resources;
+using Mapster;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.EntityFrameworkCore;
+using System.Runtime.CompilerServices;
 
 namespace Library.Web.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly UserService _userService;
+        private readonly IUserService _userService;
+        private readonly IStaffReaderService _staffReaderService;
 
-        public AccountController(UserService userService)
+        public AccountController(IUserService userService, IStaffReaderService staffReaderService)
         {
             _userService = userService;
+            _staffReaderService = staffReaderService;
         }
-
         public IActionResult Login()
         {
             return View(new UserLoginViewModel());
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(User user)
+        public async Task<IActionResult> Login(UserLoginViewModel model)
         {
             if (ModelState.IsValid)
             {
-                await _userService.LoginUserAsync(user);
-                return RedirectToAction(nameof(Index));
+                User logUser = new User();
+                logUser.UserName = model.EmailAddress;
+                logUser.Password = model.Password;
+
+                await _userService.LoginUserAsync(logUser);
+                return RedirectToAction("Index","Home");
             }
-            return View(user);
+            return View(model);
         }
 
         public async Task<IActionResult> Index()
@@ -49,7 +56,7 @@ namespace Library.Web.Controllers
             return View(user);
         }
 
-
+        #region Old Code for Identity
         //public async Task<IActionResult> Login(UserLoginViewModel model)
         //{
         //    //var isSuccess = await _userService.LoginUser(model.EmailAddress, model.Password);
@@ -124,6 +131,7 @@ namespace Library.Web.Controllers
 
         //    return View(model);
         //}
+        #endregion
 
         public IActionResult Create()
         {
@@ -151,30 +159,17 @@ namespace Library.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            //if (ModelState.IsValid)
-            //{
-            //    var user = await _userManager.FindByEmailAsync(model.Email);
+            var newUser = model.Adapt<User>();
+            var newStaffReader = model.Adapt<StaffReader>();
 
-            //    if (user != null)
-            //    {
-            //        TempData["Error"] = "the same account is already exists!";
-            //        return View(model);
-            //    }
+            if (ModelState.IsValid)
+            {
+                await _userService.AddUserAsync(newUser);
+                await _staffReaderService.AddStaffReaderAsync(newStaffReader);
 
-            //    var newUser = new IdentityUser { UserName = model.Email, Email = model.Email };
-            //    var result = await _userManager.CreateAsync(newUser,model.Password);
+                return RedirectToAction(nameof(Index));
+            }
 
-            //    if (result.Succeeded) 
-            //    { 
-            //        await _signInManager.SignInAsync(newUser, isPersistent: false);
-            //        return RedirectToAction("index", "home");
-            //    }
-
-            //    foreach (var error in result.Errors)
-            //    {
-            //        ModelState.AddModelError("", error.Description);
-            //    }
-            //}
             return View(model);
         }
 
@@ -209,9 +204,9 @@ namespace Library.Web.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(User user)
         {
-            await _userService.DeleteUserAsync(id);
+            await _userService.DeleteUserAsync(user);
             return RedirectToAction(nameof(Index));
         }
     }

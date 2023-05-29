@@ -9,7 +9,7 @@ namespace Library.Data.Infrastructure
     public class UnitOfWork : IUnitOfWork
     {
         private readonly IDbFactory dbFactory;
-        private LibraryContext dbContext;
+        private LibraryContext? dbContext;
 
         public UnitOfWork(IDbFactory dbFactory)
         {
@@ -21,7 +21,7 @@ namespace Library.Data.Infrastructure
         }
         public void Commit()
         {
-            dbContext.Commit();
+            dbContext?.Commit();
         }
     }
 }
