@@ -21,7 +21,7 @@ namespace Library.Web.Controllers
             var result = _positionService.GetAllPositionsAsync();
             //var positions= result.Adapt<List<Position>>();
 
-            return View(result.Result);
+            return View(result);
         }
 
         [HttpPost]

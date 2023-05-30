@@ -19,8 +19,8 @@ namespace Library.Data.Infrastructure
     public class BaseRepository<T> : IBaseRepository<T> where T : class
     {
         #region Properties
-        private LibraryContext? dataContext;
-        private readonly DbSet<T> dbSet;
+        protected LibraryContext? dataContext;
+        protected readonly DbSet<T> dbSet;
 
         protected IDbFactory DbFactory
         {

@@ -15,19 +15,29 @@ namespace Library.Data.Configuration
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
-            builder.ToTable("users");
+            builder.ToTable("Users");
+
             builder.Property(u => u.UserName)
                 .HasMaxLength(30)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+
             builder.Property(u => u.Password)
                 .HasMaxLength(50)
-                .IsUnicode(false)
-                .IsRequired();
+                .IsUnicode(false);
+
             builder.Property(u => u.StaffReaderID)
-                .IsRequired();
+                .HasColumnName("StaffReader_Id");
+
             builder.Property(u => u.LogID)
-                .IsRequired();
+                .HasColumnName("LogID");
+
+            //builder.Property(u => u.StaffReaderID)
+            //    .IsRequired();
+            //builder.Property(u => u.LogID)
+            //    .IsRequired();
+
+
+            // relations
 
             builder.HasOne(sr => sr.StaffReader)
                 .WithMany(u => u.Users);

@@ -14,6 +14,7 @@ namespace Library.Web.Mapping
             TypeAdapterConfig<User, UserLoginViewModel>
                 .NewConfig()
                 .TwoWays();
+
             TypeAdapterConfig<User, RegisterViewModel>
                 .NewConfig()
                 .TwoWays();

@@ -10,26 +10,34 @@ using System.Threading.Tasks;
 
 namespace Library.Data.Configuration
 {
-    public class UserRoleConfiguration : IEntityTypeConfiguration<UserRole>
+    public class RoleUserConfiguration : IEntityTypeConfiguration<RoleUser>
     {
-        public void Configure(EntityTypeBuilder<UserRole> builder)
+        public void Configure(EntityTypeBuilder<RoleUser> builder)
         {
-            builder.ToTable("UserRole");
+            builder.ToTable("RoleUsers");
 
             builder.Property(ur => ur.UserID)
-                   .IsRequired();
+                .HasColumnName("User_Id");
+
             builder.Property(ur => ur.RoleID)
-                   .IsRequired();
+                .HasColumnName("Role_Id");
+
             builder.Property(ur => ur.LogID)
-                   .IsRequired();
+                .HasColumnName("LogID");
+
 
             // relations
 
             builder.HasOne(u => u.User)
-                .WithMany(ur => ur.UserRoles);
+                .WithMany(ur => ur.RoleUsers);
 
             builder.HasOne(l => l.Logs)
-                .WithMany(ur => ur.UserRoles);
+                .WithMany(ur => ur.RoleUsers);
+
+            builder.HasOne(r => r.Role)
+                .WithMany(ur => ur.RoleUsers);
+        
+
         }
     }
 }

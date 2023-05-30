@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Library.Model.Models
 {
-    public class UserRole
+    public class RoleUser
     {
         [Key]
-        public int UserRoleID { get; set; }
+        public int RoleUserID { get; set; }
         public int UserID { get; set; }
         public int RoleID { get; set; }
         public int LogID { get; set; }

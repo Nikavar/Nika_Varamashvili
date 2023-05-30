@@ -17,9 +17,9 @@ namespace Library.Data.Configuration
             builder.ToTable("StaffReaders");
             builder.Property(s => s.FirstName).IsRequired().HasMaxLength(30);
             builder.Property(s => s.LastName).IsRequired().HasMaxLength(50);
-            builder.Property(s => s.Email).IsRequired();
-            builder.Property(s => s.PhoneNumber).IsRequired();
-            builder.Property(s => s.LogID).IsRequired();
+            //builder.Property(s => s.Email).IsRequired();
+            //builder.Property(s => s.PhoneNumber).IsRequired();
+            //builder.Property(s => s.LogID).IsRequired();
         }
     }
 }

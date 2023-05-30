@@ -17,6 +17,6 @@ namespace Library.Model.Models
         public int? StaffReaderID { get; set; }
         public StaffReader? StaffReader { get; set; }
         public LogInfo? Logs { get; set; }
-        public ICollection<UserRole>? UserRoles { get; set; }    
+        public ICollection<RoleUser>? RoleUsers { get; set; }    
     }
 }

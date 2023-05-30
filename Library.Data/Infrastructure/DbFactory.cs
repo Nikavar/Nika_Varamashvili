@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,9 +10,16 @@ namespace Library.Data.Infrastructure
     public class DbFactory : Disposable, IDbFactory
     {
         LibraryContext? dbContext;
+
+        private readonly DbContextOptions<LibraryContext> options;
+
+        public DbFactory(DbContextOptions<LibraryContext> options)
+        {
+            this.options = options;
+        }
         public LibraryContext Init()
         {
-            return dbContext ?? (dbContext = new LibraryContext());
+            return dbContext ?? (dbContext = new LibraryContext(options));
         }
 
         protected override void DisposeCore()

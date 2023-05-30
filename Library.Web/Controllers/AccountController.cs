@@ -30,18 +30,25 @@ namespace Library.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(UserLoginViewModel model)
+        public async Task<ActionResult> Login(UserLoginViewModel model)
         {
             if (ModelState.IsValid)
             {
-                User logUser = new User();
-                logUser.UserName = model.EmailAddress;
-                logUser.Password = model.Password;
+                var logUser = await _userService.LoginUserAsync(model.EmailAddress, model.Password);
 
-                await _userService.LoginUserAsync(logUser);
-                return RedirectToAction("Index","Home");
+
+                if(logUser != null)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+
+                else
+                {
+                    ViewBag.ErrorMessage = "Login Error!";
+                    return View("Login");
+                }               
             }
-            return View(model);
+            return View("Login");
         }
 
         public async Task<IActionResult> Index()

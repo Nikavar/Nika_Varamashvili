@@ -28,7 +28,7 @@ namespace Library.Service
 
 
         // Login User
-        Task LoginUserAsync(User user);
+        Task<User> LoginUserAsync(string userName, string password);
 
     }
     public class UserService : IUserService
@@ -78,10 +78,9 @@ namespace Library.Service
             await _userRepository.DeleteManyAsync(filter);
         }
 
-        public async Task LoginUserAsync(User user)
+        public async Task<User> LoginUserAsync(string userName, string password)
         {
-            await _userRepository.LoginUserAsync(user);
+            return await _userRepository.LoginUserAsync(userName,password);
         }
-
     }
 }

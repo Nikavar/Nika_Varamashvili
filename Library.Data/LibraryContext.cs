@@ -1,7 +1,6 @@
 ﻿using Library.Data.Configuration;
 using Library.Model.Models;
 using Microsoft.EntityFrameworkCore;
-//using System.Data.Entity;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
@@ -27,7 +26,7 @@ namespace Library.Data
         }
 
         public DbSet<User>? Users { get; set; }
-        public DbSet<UserRole>? UserRoles { get; set; }
+        public DbSet<RoleUser>? UserRoles { get; set; }
         public DbSet<Role>? Roles { get; set; }
         public DbSet<StaffReader>? StaffReaders { get; set; }
         public DbSet<Position>? Positions { get; set; }
@@ -47,7 +46,7 @@ namespace Library.Data
             modelBuilder.ApplyConfiguration(new ReaderStatusConfiguration());
             modelBuilder.ApplyConfiguration(new StaffReaderConfiguration());
             modelBuilder.ApplyConfiguration(new UserConfiguration());
-            modelBuilder.ApplyConfiguration(new UserRoleConfiguration());
+            modelBuilder.ApplyConfiguration(new RoleUserConfiguration());
             modelBuilder.ApplyConfiguration(new PositionConfiguration());
 
 
@@ -58,14 +57,6 @@ namespace Library.Data
                     new User{ UserID = 2, UserName = "user2", Password= "345", LogID = 0, StaffReaderID = 0 }
                 }
             );
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer("Server = DESKTOP - JJVTG17\\SQLEXPRESS01; Database = LibraryManagementDB; Trusted_Connection = True; MultipleActiveResultSets = true");
-
-
-            //optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=LMSDB;Trusted_Connection=True;MultipleActiveResultSets=true");
         }
     }
 }

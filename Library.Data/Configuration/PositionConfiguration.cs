@@ -13,7 +13,7 @@ namespace Library.Data.Configuration
     {
         public void Configure(EntityTypeBuilder<Position> builder)
         {
-            builder.ToTable("Position");
+            builder.ToTable("Positions");
 
             builder.Property(p => p.PositionName)
                    .IsRequired();
