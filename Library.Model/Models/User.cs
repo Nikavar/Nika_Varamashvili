@@ -10,13 +10,13 @@ namespace Library.Model.Models
     public class User
     {
         [Key]
-        public int UserID { get; set; }
+        public int id { get; set; }
         public string? UserName { get; set; }
         public string? Password { get; set; }
         public int? LogID { get; set; }
         public int? StaffReaderID { get; set; }
         public StaffReader? StaffReader { get; set; }
-        public LogInfo? Logs { get; set; }
+        public LogInfo? Log { get; set; }
         public ICollection<RoleUser>? RoleUsers { get; set; }    
     }
 }

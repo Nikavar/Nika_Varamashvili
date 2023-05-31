@@ -13,11 +13,10 @@ namespace Library.Data.Repositories
     {
         public StaffReaderRepository(IDbFactory dbFactory) : base(dbFactory) { }
 
-        //public async Task<StaffReader> GetByIdAsync(int id)
-        //{
-        //    return await _dbContext.FindAsync(typeof(StaffReader), id);
-        //}
-
+        public override Task SaveAsync()
+        {
+            return DbContext.SaveChangesAsync();
+        }
 
     }
 

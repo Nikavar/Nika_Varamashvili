@@ -1,4 +1,4 @@
-﻿using Autofac.Core;
+﻿using AspNetCore;
 using AutoMapper;
 using Library.Data;
 using Library.Data.Repositories;
@@ -18,11 +18,17 @@ namespace Library.Web.Controllers
     {
         private readonly IUserService _userService;
         private readonly IStaffReaderService _staffReaderService;
-
-        public AccountController(IUserService userService, IStaffReaderService staffReaderService)
+        private readonly ILogService _logService;
+        public AccountController
+        (
+            ILogService logService, 
+            IUserService userService, 
+            IStaffReaderService staffReaderService
+        )        
         {
             _userService = userService;
             _staffReaderService = staffReaderService;
+            _logService = logService;
         }
         public IActionResult Login()
         {
@@ -166,15 +172,45 @@ namespace Library.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            var newUser = model.Adapt<User>();
-            var newStaffReader = model.Adapt<StaffReader>();
-
             if (ModelState.IsValid)
             {
-                await _userService.AddUserAsync(newUser);
-                await _staffReaderService.AddStaffReaderAsync(newStaffReader);
+                var checkedMail = _userService.CheckUserByMailAsync(model.Email);
 
-                return RedirectToAction(nameof(Index));
+                if (checkedMail != null)
+                {
+                    ViewBag.ErrorMessage = "This mail is already exists!";
+                    return View("Error", "Home");
+                }
+
+                LogInfo lastLoggedStaff = await _logService.GetLastLogID(new LogInfo() { TableName = "StaffReaders", DateCreated = DateTime.Now, UserID = null });
+                await _logService.SaveLogsAsync();
+
+                await _staffReaderService.AddStaffReaderAsync
+                    (
+                        new StaffReader()
+                        {
+                            FirstName = model.FirstName,
+                            LastName = model.LastName,
+                            DOB = model.DOB,
+                            PersonalNumber = model.PersonalNumber,
+                            PassportNumber = model.PassportNumber,
+                            PhoneNumber = model.PhoneNumber,
+                            Email = model.Email,
+                            Address = model.Address,
+                            Gender = model.Gender,
+                            PersonalPhoto = model.PersonalPhoto,
+                            LogID = lastLoggedStaff.LogID
+                        }
+                    );
+                await _staffReaderService.SaveStaffReaderAsync();
+
+                LogInfo lastLoggedUser = await _logService.GetLastLogID(new LogInfo() { TableName = "Users", DateCreated = DateTime.Now, UserID = null });
+                await _logService.SaveLogsAsync();
+
+                await _userService.AddUserAsync(new User() {  UserName = model.Email, Password = model.Password, LogID = lastLoggedUser.LogID});
+                await _userService.SaveUserAsync();
+
+                return RedirectToAction("Index","Account");
             }
 
             return View(model);
@@ -190,7 +226,7 @@ namespace Library.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, User user)
         {
-            if (id != user.UserID)
+            if (id != user.id)
             {
                 return NotFound();
             }

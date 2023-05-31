@@ -31,20 +31,13 @@ namespace Library.Data.Configuration
             builder.Property(u => u.LogID)
                 .HasColumnName("LogID");
 
-            //builder.Property(u => u.StaffReaderID)
-            //    .IsRequired();
-            //builder.Property(u => u.LogID)
-            //    .IsRequired();
-
-
             // relations
 
             builder.HasOne(sr => sr.StaffReader)
                 .WithMany(u => u.Users);
 
-            builder.HasOne(l => l.Logs)
+            builder.HasOne(l => l.Log)
                 .WithMany(u => u.Users);
         }
-
     }
 }

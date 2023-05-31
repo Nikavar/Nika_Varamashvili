@@ -23,12 +23,15 @@ namespace Library.Service
         Task<User> GetUserByIdAsync(int id);
         Task AddUserAsync(User entity);
         Task UpdateUserAsync(User entity);
-        Task DeleteUserAsync(User user);
+        Task DeleteUserAsync(User entity);
         Task DeleteManyUsersAsync(Expression<Func<User, bool>> filter);
-
+        Task SaveUserAsync();
+        
 
         // Login User
         Task<User> LoginUserAsync(string userName, string password);
+        Task<User> CheckUserByPasswordAsync(string password);
+        Task<User> CheckUserByMailAsync(string mail);
 
     }
     public class UserService : IUserService
@@ -81,6 +84,21 @@ namespace Library.Service
         public async Task<User> LoginUserAsync(string userName, string password)
         {
             return await _userRepository.LoginUserAsync(userName,password);
+        }
+
+        public async Task<User> CheckUserByPasswordAsync(string password)
+        {
+            return await _userRepository.CheckUserByPasswordAsync(password);
+        }
+
+        public async Task<User> CheckUserByMailAsync(string mail)
+        {
+            return await _userRepository.CheckUserByMailAsync(mail);
+        }
+
+        public async Task SaveUserAsync()
+        {
+            await _userRepository.SaveAsync();
         }
     }
 }

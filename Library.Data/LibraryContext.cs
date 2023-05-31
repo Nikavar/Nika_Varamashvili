@@ -53,8 +53,8 @@ namespace Library.Data
             modelBuilder.Entity<User>().HasData(
                  new List<User>
                 {
-                    new User{ UserID = 1, UserName = "user1", Password = "123", LogID = 0, StaffReaderID = 0 },
-                    new User{ UserID = 2, UserName = "user2", Password= "345", LogID = 0, StaffReaderID = 0 }
+                    new User{ id = 1, UserName = "user1", Password = "123", LogID = 0, StaffReaderID = 0 },
+                    new User{ id = 2, UserName = "user2", Password= "345", LogID = 0, StaffReaderID = 0 }
                 }
             );
         }

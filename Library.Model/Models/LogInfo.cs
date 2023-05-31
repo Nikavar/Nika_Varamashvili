@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Reflection.Metadata.BlobBuilder;
 
 namespace Library.Model.Models
 {
@@ -17,19 +18,13 @@ namespace Library.Model.Models
         public DateTime? DateDeleted { get; set; }
         public int? UserID { get; set; }
 
-        public LogInfo()
-        {
-            DateCreated = DateTime.Now;
-        }
-
         public ICollection<User> Users { get; set; }
         public ICollection<StaffReader> StaffReaders { get; set; }
         public ICollection<Position> Positions { get; set; }
         public ICollection<ReaderStatus> ReaderStatuses { get; set; }   
         public ICollection<Role> Roles { get; set; }
         public ICollection<RoleUser> RoleUsers { get; set; }
-        public ICollection<Card> Cards { get; set; }
-
+        public ICollection<Card> Cards { get; set; }        
 
     }
 }

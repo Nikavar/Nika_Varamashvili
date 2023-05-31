@@ -19,6 +19,7 @@ namespace Library.Service
         Task UpdateStaffReaderAsync(StaffReader entity);
         Task DeleteStaffReaderAsync(StaffReader user);
         Task DeleteManyStaffReadersAsync(Expression<Func<StaffReader, bool>> filter);
+        Task SaveStaffReaderAsync();
 
     }
 
@@ -63,6 +64,11 @@ namespace Library.Service
         public async Task<StaffReader> GetStaffReaderByIdAsync(int id)
         {
             return await _staffReaderRepository.GetByIdAsync(id);
+        }
+
+        public async Task SaveStaffReaderAsync()
+        {
+            await _staffReaderRepository.SaveAsync();
         }
 
         public async Task UpdateStaffReaderAsync(StaffReader entity)

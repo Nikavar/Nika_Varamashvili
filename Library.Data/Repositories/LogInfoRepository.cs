@@ -16,15 +16,27 @@ namespace Library.Data.Repositories
             
         }
 
-        //public LogInfo GetById(int id)
-        //{
-        //    //var log = this.DbContext.Logs.Where(h => h.LogID == id).FirstOrDefault();
-        //    //return log ?? throw new NotImplementedException();
-        //}
+        public override Task UpdateAsync(LogInfo entity)
+        {
+            var res = dbSet.FirstOrDefault(l => l.UserID == entity.UserID && l.TableName == entity.TableName);
+            res.DateUpdated = entity.DateUpdated;
+            return Task.CompletedTask;
+        }
+
+        public override Task SaveAsync()
+        {
+            return DbContext.SaveChangesAsync();
+        }
+
+        public async Task<LogInfo> GetLastLogID(LogInfo newLog)
+        {
+            await dbSet.AddAsync(newLog);
+            return await dbSet.LastOrDefaultAsync();
+        }       
     }
 
     public interface ILogInfoRepository : IBaseRepository<LogInfo>
     {
-
+        Task<LogInfo> GetLastLogID(LogInfo newLog);
     }
 }

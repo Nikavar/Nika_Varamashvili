@@ -116,6 +116,11 @@ namespace Library.Data.Infrastructure
             //await _dbContext.SaveChangesAsync();
         }
 
+        public virtual async Task SaveAsync()
+        {
+           await dataContext.SaveChangesAsync();
+        }
+
         #endregion
     }
 }
