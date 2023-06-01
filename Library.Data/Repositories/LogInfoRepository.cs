@@ -31,7 +31,7 @@ namespace Library.Data.Repositories
         public async Task<LogInfo> GetLastLogID(LogInfo newLog)
         {
             await dbSet.AddAsync(newLog);
-            return await dbSet.LastOrDefaultAsync();
+            return await dbSet.OrderBy(l=>l.LogID).LastOrDefaultAsync();
         }       
     }
 

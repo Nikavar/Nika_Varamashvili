@@ -31,7 +31,7 @@ namespace Library.Model.Models
         public int? LogID { get; set; }
         public Position? Position { get; set; }
         public ReaderStatus? ReaderStatus { get; set; }
-        public LogInfo? LogInfo { get; set; }
+        public LogInfo? Log { get; set; }
         public ICollection<User>? Users { get; set; }
         public ICollection<Card>? Cards { get; set; }
 

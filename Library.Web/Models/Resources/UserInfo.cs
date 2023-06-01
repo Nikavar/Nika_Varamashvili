@@ -1,6 +1,6 @@
 ﻿namespace Library.Web.Models.Resources
 {
-    public class UserInfo : Resource
-    {
-    }
+	public class UserInfo : Resource
+	{
+	}
 }

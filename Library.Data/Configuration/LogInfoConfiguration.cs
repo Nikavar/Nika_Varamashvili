@@ -22,19 +22,19 @@ namespace Library.Data.Configuration
 
             builder.Property(l => l.DateCreated)
                 .HasColumnType("date")
-                .HasColumnName("CreateDate");
+                .HasColumnName("DateCreated");
 
             builder.Property(l => l.DateUpdated)
                 .HasColumnType("date")
-            .HasColumnName("ChangeDate");
+            .HasColumnName("DateUpdated");
 
             builder.Property(l => l.DateDeleted)
                 .HasColumnType("date")
-            .HasColumnName("DeleteDate");
+            .HasColumnName("DateDeleted");
 
 
             builder.Property(l => l.UserID)
-                .HasColumnName("User_Id");
+                .HasColumnName("UserId");
         }
     }
 }

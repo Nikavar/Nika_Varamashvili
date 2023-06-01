@@ -13,7 +13,12 @@ namespace Library.Data.Repositories
     {
         public StaffReaderRepository(IDbFactory dbFactory) : base(dbFactory) { }
 
-        public override Task SaveAsync()
+		public async Task<StaffReader> GetLastStaffReader()
+		{
+            return await dbSet.OrderBy(sr => sr.ID).LastOrDefaultAsync();
+		}
+
+		public override Task SaveAsync()
         {
             return DbContext.SaveChangesAsync();
         }
@@ -23,6 +28,6 @@ namespace Library.Data.Repositories
 
     public interface IStaffReaderRepository : IBaseRepository<StaffReader>
     {
-        
-    }
+		Task<StaffReader> GetLastStaffReader();
+	}
 }

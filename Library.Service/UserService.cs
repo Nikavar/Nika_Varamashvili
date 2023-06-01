@@ -31,7 +31,7 @@ namespace Library.Service
         // Login User
         Task<User> LoginUserAsync(string userName, string password);
         Task<User> CheckUserByPasswordAsync(string password);
-        Task<User> CheckUserByMailAsync(string mail);
+        User CheckUserByMail(string mail);
 
     }
     public class UserService : IUserService
@@ -91,9 +91,9 @@ namespace Library.Service
             return await _userRepository.CheckUserByPasswordAsync(password);
         }
 
-        public async Task<User> CheckUserByMailAsync(string mail)
+        public User CheckUserByMail(string mail)
         {
-            return await _userRepository.CheckUserByMailAsync(mail);
+            return _userRepository.CheckUserByMail(mail);
         }
 
         public async Task SaveUserAsync()

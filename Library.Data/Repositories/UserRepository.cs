@@ -19,9 +19,9 @@ namespace Library.Data.Repositories
 
         }
 
-        public async Task<User> CheckUserByMailAsync(string mail)
+        public User CheckUserByMail(string mail)
         {
-            return await dbSet.FirstOrDefaultAsync(u => u.UserName == mail);
+            return dbSet.FirstOrDefault(u => u.UserName == mail);
         }
 
         public async Task<User> CheckUserByPasswordAsync(string password)
@@ -53,7 +53,12 @@ namespace Library.Data.Repositories
         {
             return DbContext.SaveChangesAsync();
         }
-    }
+
+		public async Task<User> GetLastUser(User newUser)
+		{
+            return await dbSet.LastOrDefaultAsync();
+		}
+	}
 
     public interface IUserRepository : IBaseRepository<User> 
     {
@@ -63,6 +68,7 @@ namespace Library.Data.Repositories
 
         //---------------------------------------------------
         Task<User> CheckUserByPasswordAsync(string password);
-        Task<User> CheckUserByMailAsync(string mail);
-    }
+        User CheckUserByMail(string mail);
+		Task<User> GetLastUser(User newUser);
+	}
 }
