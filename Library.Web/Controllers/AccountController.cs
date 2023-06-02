@@ -1,6 +1,7 @@
 ﻿using Library.Model.Models;
 using Library.Service;
 using Library.Web.Models.Account;
+using Mapster;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.Web.Controllers
@@ -173,56 +174,59 @@ namespace Library.Web.Controllers
 					return View("Index", "Home");
 				}
 
-				await AddNewStaffReader(model);
+				var newStaffReaderID = await AddNewStaffReader(model);
 
-				await AddNewUser(model);
+				await AddNewUser(model, newStaffReaderID);
 
-				return RedirectToAction("Index", "Account");
+				return RedirectToAction("Index", "Home");
 			}
 
-			return View(model);
+			return View("Error","Account");
 		}
 
-		public async Task AddNewStaffReader(RegisterViewModel model)
+		public async Task<int> AddNewStaffReader(RegisterViewModel model)
 		{
 			// logged row record for creating New StaffReader 
-			LogInfo lastLoggedStaff = await _logService.GetLastLogID(new LogInfo() { TableName = "StaffReaders", DateCreated = DateTime.Now, UserID = null });
+			var lastLoggedStaff = await _logService.GetLastLogID(new LogInfo() { TableName = "StaffReaders", DateCreated = DateTime.Now, UserID = null });
 			await _logService.SaveLogsAsync();
 
 			// Add & Save New StaffReader to DB
-			await _staffReaderService.AddStaffReaderAsync
-				(
-					new StaffReader()
-					{
-						FirstName = model.FirstName,
-						LastName = model.LastName,
-						DOB = model.DOB,
-						PersonalNumber = model.PersonalNumber,
-						PassportNumber = model.PassportNumber,
-						PhoneNumber = model.PhoneNumber,
-						Email = model.Email,
-						Address = model.Address,
-						Gender = model.Gender,
-						PersonalPhoto = model.PersonalPhoto,
-						LogID = lastLoggedStaff.LogID
-					}
-				);
+			var newStaffReader = new StaffReader()
+			{
+				FirstName = model.FirstName,
+				LastName = model.LastName,
+				DOB = model.DOB,
+				PersonalNumber = model.PersonalNumber,
+				PassportNumber = model.PassportNumber,
+				PhoneNumber = model.PhoneNumber,
+				Email = model.Email,
+				Address = model.Address,
+				Gender = model.Gender,
+				PersonalPhoto = model.PersonalPhoto,
+				LogID = lastLoggedStaff.LogID				 
+			};
 
+			await _staffReaderService.AddStaffReaderAsync(newStaffReader);
 			await _staffReaderService.SaveStaffReaderAsync();
 
+			return newStaffReader.ID;
 			//------------------------------------------------//
 		}
-		public async Task AddNewUser(RegisterViewModel model)
+		public async Task AddNewUser(RegisterViewModel model, int lastStaffReaderID)
 		{
 			LogInfo lastLoggedUser = await _logService.GetLastLogID(new LogInfo() { TableName = "Users", DateCreated = DateTime.Now, UserID = null });
 			await _logService.SaveLogsAsync();
 
-			await _userService.AddUserAsync(new User() { UserName = model.Email, Password = model.Password, LogID = lastLoggedUser.LogID });
+			var newUser = new User()
+			{
+				UserName = model.Email,
+				Password = model.Password,
+				LogID = lastLoggedUser.LogID,
+				StaffReaderID = lastStaffReaderID
+			};
+
+			await _userService.AddUserAsync(newUser);
 			await _userService.SaveUserAsync();
-
-			var user = await _userService.GetManyUsersAsync(u => u.UserName == model.Email);
-
-			//lastLoggedUser.UserID => u.UserID;
 			await _logService.UpdateLogAsync(lastLoggedUser);
 		}
 

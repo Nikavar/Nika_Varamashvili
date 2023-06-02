@@ -4,13 +4,14 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"]</title>
-	<img src="~/logo/logo3.png" />
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    @*<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />*@
     <link rel="stylesheet" href="~/LibraryManagementSystem.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
+	<header style="background-color:cadetblue; height:100px" src="~/logo/logo3.png">
+
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
                 @*<a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">LibManagementSystem</a>*@
@@ -38,15 +39,15 @@
                 </div>
             </div>
         </nav>
-    </header>
-    <div class="container">
+    </header>    
+    <div class="container" style="height:800px">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
+    <footer class="border-top footer text-muted" style="height:100px">
+        <div>
             &copy; 2023 - LibraryManagementSystem - N.Varamashvili <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>

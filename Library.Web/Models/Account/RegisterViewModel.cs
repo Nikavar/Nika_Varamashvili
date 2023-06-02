@@ -8,15 +8,15 @@ namespace Library.Web.Models.Account
 		// To_Do: It will better to create resource file separately!
 
 		[Display(Name = "Name:")]
-		//[Required(ErrorMessage = "Please enter first name!")]
+		[Required(ErrorMessage = "Please enter first name!")]
 		public string? FirstName { get; set; }
 
 		[Display(Name = "Last Name:")]
-		//[Required(ErrorMessage = "Please enter last name!")]
+		[Required(ErrorMessage = "Please enter last name!")]
 		public string? LastName { get; set; }
 
 		[Display(Name = "DoB:")]
-		//[Required(ErrorMessage = "Please enter the Email Address!")]
+		[Required(ErrorMessage = "Please enter day of birth!")]
 		public DateTime? DOB { get; set; }
 
 		[Display(Name = "Personal ID:")]
