@@ -32,9 +32,9 @@ namespace Library.Data.Repositories
         public async Task<User> LoginUserAsync(string userName, string password)
         {
             return await dbSet.FirstOrDefaultAsync(u => u.UserName == userName && u.Password == password);
-        }
+		}
 
-        public Task LogoutUser(User user)
+		public Task LogoutUser(User user)
         {
             throw new NotImplementedException();
         }

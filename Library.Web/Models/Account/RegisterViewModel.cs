@@ -32,7 +32,7 @@ namespace Library.Web.Models.Account
 		public string? Address { get; set; }
 
 		[Display(Name = "Gender:")]
-		public Gender Gender { get; set; }
+		public bool Gender { get; set; } = true;
 
 		[Display(Name = "Photo:")]
 		public string? PersonalPhoto { get; set; }
@@ -41,8 +41,8 @@ namespace Library.Web.Models.Account
 		[Display(Name = "Email")]
 		//[Required(ErrorMessage = "Please enter the Email Address!")]
 		//[EmailAddress(ErrorMessage = "Email Address u entered is wrong!")]
-		[RegularExpression("^((?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])|(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[^a-zA-Z0-9])|(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[^a-zA-Z0-9])|(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^a-zA-Z0-9])).{8,}$",
-			ErrorMessage = "Passwords must have at least 8 characters and contain at least 3 of 4 the following: uppercase letters, lowercase letters, numbers (0-9), and symbols.")]
+		//[RegularExpression("^((?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])|(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[^a-zA-Z0-9])|(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[^a-zA-Z0-9])|(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^a-zA-Z0-9])).{8,}$",
+			//ErrorMessage = "Passwords must have at least 8 characters and contain at least 3 of 4 the following: uppercase letters, lowercase letters, numbers (0-9), and symbols.")]
 
 		public string? Email { get; set; }
 

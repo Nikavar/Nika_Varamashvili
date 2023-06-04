@@ -34,7 +34,6 @@ namespace Library.Web.Controllers
 			{
 				var logUser = await _userService.LoginUserAsync(model.EmailAddress, model.Password);
 
-
 				if (logUser != null)
 				{
 					return RedirectToAction("Index", "Home");
@@ -138,24 +137,24 @@ namespace Library.Web.Controllers
 		//}
 		#endregion
 
-		public IActionResult Create()
-		{
-			return View();
-		}
+		//public IActionResult Create()
+		//{
+		//	return View();
+		//}
 
-		[HttpPost]
-		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Create(User user)
-		{
-			if (ModelState.IsValid)
-			{
-				await _userService.AddUserAsync(user);
-				return RedirectToAction(nameof(Index));
-			}
-			return View(user);
-		}
+		//[HttpPost]
+		//[ValidateAntiForgeryToken]
+		//public async Task<IActionResult> Create(User user)
+		//{
+		//	if (ModelState.IsValid)
+		//	{
+		//		await _userService.AddUserAsync(user);
+		//		return RedirectToAction(nameof(Index));
+		//	}
+		//	return View(user);
+		//}
 
-		// ეს რამდენად საჭიროა?
+
 		public IActionResult Register()
 		{
 			return View(new RegisterViewModel());
@@ -178,7 +177,8 @@ namespace Library.Web.Controllers
 
 				await AddNewUser(model, newStaffReaderID);
 
-				return RedirectToAction("Index", "Home");
+				//return RedirectToAction("Index", "Home");
+				return View();
 			}
 
 			return View("Error","Account");
@@ -203,7 +203,7 @@ namespace Library.Web.Controllers
 				Address = model.Address,
 				Gender = model.Gender,
 				PersonalPhoto = model.PersonalPhoto,
-				LogID = lastLoggedStaff.LogID				 
+				LogID = lastLoggedStaff.LogID + 1				 
 			};
 
 			await _staffReaderService.AddStaffReaderAsync(newStaffReader);
@@ -221,7 +221,7 @@ namespace Library.Web.Controllers
 			{
 				UserName = model.Email,
 				Password = model.Password,
-				LogID = lastLoggedUser.LogID,
+				LogID = lastLoggedUser.LogID + 1,
 				StaffReaderID = lastStaffReaderID
 			};
 

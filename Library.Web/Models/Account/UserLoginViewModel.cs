@@ -4,9 +4,6 @@ namespace Library.Web.Models.Account
 {
 	public class UserLoginViewModel
 	{
-		[Key]
-		public int UserId { get; set; }
-
 		[Display(Name = "Email")]
 		[Required(ErrorMessage = "U have to enter Your Email!")]
 		[EmailAddress(ErrorMessage = "Invalid Email Address!")]
