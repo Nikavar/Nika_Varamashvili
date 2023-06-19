@@ -14,8 +14,8 @@ namespace Library.Service
     {
         Task<IEnumerable<Role>> GetAllRolesAsync();
         Task<IEnumerable<Role>> GetManyRolesAsync(Expression<Func<Role, bool>> filter);
-        Task<Role> GetRoleByIdAsync(int id);
-        Task AddRoleAsync(Role entity);
+        Task<Role> GetRoleByIdAsync(params object[] key);
+        Task<Role> AddRoleAsync(Role entity);
         Task UpdateRoleAsync(Role entity);
         Task DeleteRoleAsync(Role entity);
         Task DeleteManyRolesAsync(Expression<Func<Role, bool>> filter);
@@ -31,9 +31,9 @@ namespace Library.Service
             _roleRepository = roleRepository;
             _unitOfWork = unitOfWork;
         }
-        public async Task AddRoleAsync(Role entity)
+        public async Task<Role> AddRoleAsync(Role entity)
         {
-            await _roleRepository.AddAsync(entity);
+            return await _roleRepository.AddAsync(entity);
         }
 
         public async Task DeleteManyRolesAsync(Expression<Func<Role, bool>> filter)
@@ -56,9 +56,9 @@ namespace Library.Service
             return _roleRepository.GetManyAsync(filter);
         }
 
-        public async Task<Role> GetRoleByIdAsync(int id)
+        public async Task<Role> GetRoleByIdAsync(params object[] key)
         {
-            return await _roleRepository.GetByIdAsync(id);
+            return await _roleRepository.GetByIdAsync(key);
         }
 
         public async Task UpdateRoleAsync(Role entity)

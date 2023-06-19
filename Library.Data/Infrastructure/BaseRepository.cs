@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Library.Model.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations;
 using System.Linq;
@@ -49,7 +51,11 @@ namespace Library.Data.Infrastructure
 
         public virtual async Task<IEnumerable<T>> GetAllAsync()
         {
-            return await dbSet.ToListAsync();
+            var result = await dbSet.ToListAsync();
+			if (result == null)
+                throw new NullReferenceException();
+
+            return result;
         }
 
 
@@ -65,41 +71,35 @@ namespace Library.Data.Infrastructure
             return await query.ToListAsync();
         }
 
-        public virtual async Task<T> GetByIdAsync(int id)
+        public virtual async Task<T> GetByIdAsync(params object[] key)
         {
-            return await dbSet.FindAsync(id);
+            var result = await dbSet.FindAsync(key);
+            if (result == null)
+                throw new NullReferenceException();
 
-            //var result = await _dbSet.FindAsync(id);
-
-            //if (result != null)
-            //    return result;
-
-            //throw new NullReferenceException();
+            return await dbSet.FindAsync(key);
         }
 
-        public virtual async Task AddAsync(T entity)
+        public virtual async Task<T> AddAsync(T entity)
         {
             await dbSet.AddAsync(entity);
-            //await _dbContext.SaveChangesAsync();
+            await dataContext.SaveChangesAsync();
+
+            return entity;
         }
+
+
         public virtual async Task UpdateAsync(T entity)
         {
             dbSet.Attach(entity);
             dataContext.Entry(entity).State = EntityState.Modified;
-
-            //_dbContext.Entry(entity).State = EntityState.Modified;
-            //await _dbContext.SaveChangesAsync();
+            await dataContext.SaveChangesAsync();
         }
 
         public virtual async Task DeleteAsync(T entity)
         {
             dbSet.Remove(entity);
-
-            //var deleted = await _dbSet.FindAsync(id);            
-            //if (deleted != null)
-            //    _dbSet.Remove(deleted);
-
-            //await _dbContext.SaveChangesAsync();
+            await dataContext.SaveChangesAsync();
         }
 
         public virtual async Task DeleteManyAsync(Expression<Func<T, bool>> filter)
@@ -107,13 +107,6 @@ namespace Library.Data.Infrastructure
             IEnumerable<T> objects = dbSet.Where<T>(filter).AsEnumerable();
             foreach (T obj in objects)
                 dbSet.Remove(obj);
-
-
-            //var filtered = _dbSet.Where(filter);
-            //if (filtered != null)
-            //    _dbSet.RemoveRange(filtered);
-
-            //await _dbContext.SaveChangesAsync();
         }
 
         public virtual async Task SaveAsync()

@@ -31,7 +31,7 @@ namespace Library.Data.Configuration
             builder.HasOne(u => u.User)
                 .WithMany(ur => ur.RoleUsers);
 
-            builder.HasOne(l => l.Logs)
+            builder.HasOne(l => l.Log)
                 .WithMany(ur => ur.RoleUsers);
 
             builder.HasOne(r => r.Role)

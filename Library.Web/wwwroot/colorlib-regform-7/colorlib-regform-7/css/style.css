@@ -218,6 +218,21 @@ body {
 
 }
 
+.radio_option {   
+        content: "";
+        display: inline-block;
+        width: 0.5em;
+        height: 0.5em;
+        margin-right: 0.5em;
+        border-radius: 100%;
+        vertical-align: -3px;
+        border: 2px solid $grey;
+        padding: 0.15em;
+        background-color: transparent;
+        background-clip: content-box;
+        transition: all 0.2s ease;    
+}
+
 .display-flex {
   justify-content: space-between;
   -moz-justify-content: space-between;
@@ -592,4 +607,19 @@ label.valid {
     margin-right: 0px;
     margin-bottom: 10px; } }
 
+.form-control.error input{
+    border-color: red;
+}
+
+.form-group small{
+    color: red;
+    position: absolute;
+    bottom: 50;
+    left: 0; 
+    visibility: visible;
+}
+
+.form-control.error small{
+    visibility: visible;
+}
 /*# sourceMappingURL=style.css.map */

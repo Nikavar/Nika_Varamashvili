@@ -21,9 +21,12 @@ namespace Library.Service
             this.unitOfWork = unitOfWork;
         }
 
-        public async Task AddPositionAsync(Position entity)
+        public async Task<Position> AddPositionAsync(Position entity)
         {
             await _positionRepository.AddAsync(entity);
+            await _positionRepository.SaveAsync();
+
+            return entity;
         }
 
         public async Task DeleteManyPositionsAsync(Expression<Func<Position, bool>> filter)
@@ -46,9 +49,9 @@ namespace Library.Service
             return await _positionRepository.GetManyAsync(filter);
         }
 
-        public async Task<Position> GetPositionByIdAsync(int id)
+        public async Task<Position> GetPositionByIdAsync(params object[] key)
         {
-            return await _positionRepository.GetByIdAsync(id);
+            return await _positionRepository.GetByIdAsync(key);
         }
 
         public async Task UpdatePositionAsync(Position entity)
@@ -63,8 +66,8 @@ namespace Library.Service
 
         Task<IEnumerable<Position>> GetAllPositionsAsync();
         Task<IEnumerable<Position>> GetManyPositionsAsync(Expression<Func<Position, bool>> filter);
-        Task<Position> GetPositionByIdAsync(int id);
-        Task AddPositionAsync(Position entity);
+        Task<Position> GetPositionByIdAsync(params object[] key);
+        Task<Position> AddPositionAsync(Position entity);
         Task UpdatePositionAsync(Position entity);
         Task DeletePositionAsync(Position user);
         Task DeleteManyPositionsAsync(Expression<Func<Position, bool>> filter);

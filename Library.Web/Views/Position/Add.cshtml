@@ -1,8 +1,62 @@
-﻿@model Library.Model.Models.Position
+﻿@model Library.Web.Models.PositionViewModel
 
 @{
     ViewData["Title"] = "Add";
-    Layout = "~/Views/Account/Login.cshtml";
+}
+
+<br/>
+
+<h4 style="color:blue">Add New List</h4>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        @section Scripts {
+            @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+        }
+        <div class="col-md-4">
+            <form asp-action="Add">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="PositionName" class="control-label"></label>
+                    <input asp-for="PositionName" class="form-control" />
+                    <span asp-validation-for="PositionName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Salary" class="control-label"></label>
+                    <input asp-for="Salary" class="form-control" />
+                    <span asp-validation-for="Salary" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="StartWorkingDate" class="control-label"></label>
+                    <input asp-for="StartWorkingDate" class="form-control" />
+                    <span asp-validation-for="StartWorkingDate" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@*@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}*@
+
+
+
+@*@model Library.Web.Models.PositionViewModel
+
+@{
+    ViewData["Title"] = "Add";
+    Layout = "~/Views/Position/Index.cshtml";
 }
 
 <h1>Add</h1>
@@ -47,3 +101,4 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+*@

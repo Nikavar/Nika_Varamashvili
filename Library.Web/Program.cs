@@ -44,6 +44,15 @@ builder.Services.AddScoped<ILogService, LogService>();
 builder.Services.AddScoped<IPositionRepository, PositionRepository>();
 builder.Services.AddScoped<IPositionService, PositionService>();
 
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IRoleService, RoleService>();
+
+builder.Services.AddScoped<IRoleUserRepository, RoleUserRepository>();
+builder.Services.AddScoped<IRoleUserService, RoleUserService>();
+
+builder.Services.AddScoped<IPositionRepository, PositionRepository>();
+builder.Services.AddScoped<IPositionService, PositionService>();
+
 builder.Services.AddScoped<ICardRepository, CardRepository>();
 
 builder.Services.AddScoped<IReaderStatusRepository, ReaderStatusRepository>();

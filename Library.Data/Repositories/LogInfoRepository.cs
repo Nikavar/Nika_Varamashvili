@@ -28,6 +28,11 @@ namespace Library.Data.Repositories
             return DbContext.SaveChangesAsync();
         }
 
+        public override Task<LogInfo> AddAsync(LogInfo entity)
+        {
+            return base.AddAsync(entity);
+        }
+
         public async Task<LogInfo> GetLastLogID(LogInfo newLog)
         {
             await dbSet.AddAsync(newLog);
@@ -37,6 +42,6 @@ namespace Library.Data.Repositories
 
     public interface ILogInfoRepository : IBaseRepository<LogInfo>
     {
-        Task<LogInfo> GetLastLogID(LogInfo newLog);
+        //Task<LogInfo> GetLastLogID(LogInfo newLog);
     }
 }

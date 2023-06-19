@@ -29,7 +29,7 @@ namespace Library.Service
         
 
         // Login User
-        Task<User> LoginUserAsync(string userName, string password);
+        User LoginUser(string userName, string password);
         Task<User> CheckUserByPasswordAsync(string password);
         User CheckUserByMail(string mail);
 
@@ -81,9 +81,9 @@ namespace Library.Service
             await _userRepository.DeleteManyAsync(filter);
         }
 
-        public async Task<User> LoginUserAsync(string userName, string password)
+        public User LoginUser(string userName, string password)
         {
-            return await _userRepository.LoginUserAsync(userName,password);
+            return _userRepository.LoginUser(userName,password);
         }
 
         public async Task<User> CheckUserByPasswordAsync(string password)

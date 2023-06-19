@@ -29,9 +29,9 @@ namespace Library.Data.Repositories
             return await dbSet.FirstOrDefaultAsync(u => u.Password == password);
         }
 
-        public async Task<User> LoginUserAsync(string userName, string password)
+        public User LoginUser(string userName, string password)
         {
-            return await dbSet.FirstOrDefaultAsync(u => u.UserName == userName && u.Password == password);
+            return dbSet.Where(u => u.UserName == userName && u.Password == password).FirstOrDefault();
 		}
 
 		public Task LogoutUser(User user)
@@ -62,7 +62,7 @@ namespace Library.Data.Repositories
 
     public interface IUserRepository : IBaseRepository<User> 
     {
-        Task<User> LoginUserAsync(string userName, string password);    
+        User LoginUser(string userName, string password);    
         Task LogoutUser(User user);
         Task RegisterUser(User user);
 

@@ -21,3 +21,36 @@ html {
 body {
   margin-bottom: 60px;  
 }
+
+#register-div {
+    background-color: aqua;
+    width: 220px;
+    height: 300px;
+    border: 1px solid black;
+    display: flex;
+    align-items: center;
+}
+
+#register-div div {
+    flex: 1;
+    border: 1px solid black;
+    display: flex;
+    align-items: center;
+}
+
+.red {
+    color: red;
+}
+
+.red::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: red;
+    opacity: 1; /* Firefox */
+}
+
+.red:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: red;
+}
+
+.red::-ms-input-placeholder { /* Microsoft Edge */
+    color: red;
+}

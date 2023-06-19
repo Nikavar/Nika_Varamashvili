@@ -1,8 +1,14 @@
-﻿using Library.Model.Models;
+﻿using DocumentFormat.OpenXml.Drawing.Wordprocessing;
+using DocumentFormat.OpenXml.Wordprocessing;
+using Library.Data.Repositories;
+using Library.Model.Models;
 using Library.Service;
 using Library.Web.Models.Account;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
+using System.Data.Entity;
+using System.Diagnostics.Metrics;
+using System.Linq;
 
 namespace Library.Web.Controllers
 {
@@ -10,17 +16,26 @@ namespace Library.Web.Controllers
 	{
 		private readonly IUserService _userService;
 		private readonly IStaffReaderService _staffReaderService;
+		private readonly IRoleService _roleService;
+		private readonly IRoleUserService _roleUserService;
 		private readonly ILogService _logService;
+		private readonly IPositionService _positionService;
 		public AccountController
 		(
 			ILogService logService,
 			IUserService userService,
-			IStaffReaderService staffReaderService
+			IStaffReaderService staffReaderService,
+			IRoleService roleService,
+			IRoleUserService roleUserService,
+			IPositionService positionService
 		)
 		{
+			_logService = logService;
 			_userService = userService;
 			_staffReaderService = staffReaderService;
-			_logService = logService;
+			_roleService = roleService;
+			_roleUserService = roleUserService;
+			_positionService = positionService;
 		}
 		public IActionResult Login()
 		{
@@ -28,11 +43,11 @@ namespace Library.Web.Controllers
 		}
 
 		[HttpPost]
-		public async Task<ActionResult> Login(UserLoginViewModel model)
+		public IActionResult Login(UserLoginViewModel model)
 		{
 			if (ModelState.IsValid)
 			{
-				var logUser = await _userService.LoginUserAsync(model.EmailAddress, model.Password);
+				var logUser = _userService.LoginUser(model.EmailAddress, model.Password);
 
 				if (logUser != null)
 				{
@@ -41,7 +56,7 @@ namespace Library.Web.Controllers
 
 				else
 				{
-					ViewBag.ErrorMessage = "Login Error!";
+                    TempData["Error"] = "username or password is incorrect!";
 					return View("Login");
 				}
 			}
@@ -155,15 +170,24 @@ namespace Library.Web.Controllers
 		//}
 
 
-		public IActionResult Register()
+		public async Task<IActionResult> Register()
 		{
+			var positions = await _positionService.GetAllPositionsAsync();
+			List<RegisterViewModel> positionLst = new List<RegisterViewModel>();
+
+			var list = (from p in positions select p.PositionName).ToList();
+
+			list.Insert(0, "--- Select Positions ---");
+			ViewBag.message = list;
+
 			return View(new RegisterViewModel());
 		}
 
 		[HttpPost]
 		public async Task<IActionResult> Register(RegisterViewModel model)
 		{
-			if (ModelState.IsValid)
+
+            if (ModelState.IsValid)
 			{
 				var checkedMail = _userService.CheckUserByMail(model.Email);
 
@@ -174,21 +198,54 @@ namespace Library.Web.Controllers
 				}
 
 				var newStaffReaderID = await AddNewStaffReader(model);
+				var lastUser = await AddNewUser(model, newStaffReaderID);
 
-				await AddNewUser(model, newStaffReaderID);
+				// Logged RoleUser
 
-				//return RedirectToAction("Index", "Home");
-				return View();
+				var lastLoggedRoleUser = await _logService.AddLogAsync
+				(
+					new LogInfo 
+					{ 
+						TableName = "RoleUsers", 
+						DateCreated = DateTime.Now 
+					}
+				);
+
+				// Add RoleUser To DB
+				await _roleUserService.AddRoleUserAsync
+				(
+					new RoleUser 
+					{ 
+						LogID = lastLoggedRoleUser.LogID, 
+						RoleID = 2, 
+						UserID = lastUser.id 
+					}
+				);
+
+				// Logged PositionStaff
+				var loggedPositionStaff = await _logService.AddLogAsync(
+						new LogInfo 
+						{ 
+							TableName= "PositionStaff",
+							DateCreated = DateTime.Now
+						}					
+					);
+
+				// To_DO
+				//var positionId = await _positionService.GetPositionByIdAsync("Manager");
+
+				return RedirectToAction("Index", "Home");
+				//return View();
 			}
 
-			return View("Error","Account");
+			return View("Error","Account"); // => exeption + return View()
 		}
 
-		public async Task<int> AddNewStaffReader(RegisterViewModel model)
+		private async Task<int> AddNewStaffReader(RegisterViewModel model)
 		{
 			// logged row record for creating New StaffReader 
-			var lastLoggedStaff = await _logService.GetLastLogID(new LogInfo() { TableName = "StaffReaders", DateCreated = DateTime.Now, UserID = null });
-			await _logService.SaveLogsAsync();
+			
+			var lastLoggedStaff = await _logService.AddLogAsync(new LogInfo() { TableName = "StaffReaders", DateCreated = DateTime.Now, UserID = null });
 
 			// Add & Save New StaffReader to DB
 			var newStaffReader = new StaffReader()
@@ -203,31 +260,29 @@ namespace Library.Web.Controllers
 				Address = model.Address,
 				Gender = model.Gender,
 				PersonalPhoto = model.PersonalPhoto,
-				LogID = lastLoggedStaff.LogID + 1				 
+				LogID = lastLoggedStaff.LogID
 			};
 
 			await _staffReaderService.AddStaffReaderAsync(newStaffReader);
-			await _staffReaderService.SaveStaffReaderAsync();
 
 			return newStaffReader.ID;
-			//------------------------------------------------//
 		}
-		public async Task AddNewUser(RegisterViewModel model, int lastStaffReaderID)
-		{
-			LogInfo lastLoggedUser = await _logService.GetLastLogID(new LogInfo() { TableName = "Users", DateCreated = DateTime.Now, UserID = null });
-			await _logService.SaveLogsAsync();
+		private async Task<User> AddNewUser(RegisterViewModel model, int lastStaffReaderID)
+		{			
+			LogInfo lastLoggedUser = await _logService.AddLogAsync(new LogInfo() { TableName = "Users", DateCreated = DateTime.Now, UserID = null });
 
 			var newUser = new User()
 			{
 				UserName = model.Email,
 				Password = model.Password,
-				LogID = lastLoggedUser.LogID + 1,
+				LogID = lastLoggedUser.LogID,
 				StaffReaderID = lastStaffReaderID
 			};
 
 			await _userService.AddUserAsync(newUser);
-			await _userService.SaveUserAsync();
 			await _logService.UpdateLogAsync(lastLoggedUser);
+
+			return newUser;
 		}
 
 		public async Task<IActionResult> Edit(int id)

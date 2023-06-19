@@ -40,6 +40,7 @@ namespace Library.Service
         public async Task AddStaffReaderAsync(StaffReader entity)
         {
             await _staffReaderRepository.AddAsync(entity);
+            await _staffReaderRepository.SaveAsync();
         }
 
         public async Task DeleteManyStaffReadersAsync(Expression<Func<StaffReader, bool>> filter)

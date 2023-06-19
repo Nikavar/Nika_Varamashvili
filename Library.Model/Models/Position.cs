@@ -10,12 +10,12 @@ namespace Library.Model.Models
     public class Position
     {
         [Key]
-        public int PositionID { get; set; }
+        public int ID { get; set; }
         public string? PositionName { get; set; }
-        public double Salary { get; set; }
-        public DateTime StartWorkingDate { get; set; }
+        public decimal? Salary { get; set; }
+        public DateTime? StartWorkingDate { get; set; }
         public int LogID { get; set; }
-        public LogInfo? Logs { get; set; }
+        public LogInfo? Log { get; set; }
         public ICollection<StaffReader>? StaffReaders { get; set; }
     }
 }

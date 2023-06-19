@@ -22,7 +22,7 @@ namespace Library.Data.Configuration
                 .HasColumnName("LogID");
 
             // relations Role => LogInfo
-            builder.HasOne(l => l.Logs)
+            builder.HasOne(l => l.Log)
                 .WithMany(r => r.Roles);       
         }
     }

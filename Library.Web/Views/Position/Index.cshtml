@@ -1,18 +1,25 @@
 ﻿@model IEnumerable<Library.Model.Models.Position>
 
 @{
-    ViewData["Title"] = "Index";
-    Layout = "~/Views/Account/Login.cshtml";
+    var id = @ViewBag.testId;
 }
 
-<h1>Index</h1>
 
+@{
+    ViewData["Title"] = "Index";
+}
+
+<br />
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Add" asp-route-id="@id">+ New Position</a>
 </p>
+
 <table class="table">
     <thead>
         <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ID)
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.PositionName)
             </th>
@@ -25,30 +32,43 @@
             <th>
                 @Html.DisplayNameFor(model => model.LogID)
             </th>
+
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.PositionName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Salary)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StartWorkingDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LogID)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.PositionID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.PositionID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.PositionID">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PositionName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Salary)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartWorkingDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LogID)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+<br />
+<tfoot>
+    <tr>
+        <td>
+            <a asp-controller="Position" asp-action="Index">Back to List</a>
+        </td>
+    </tr>
+</tfoot>
