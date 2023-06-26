@@ -19,7 +19,6 @@ namespace Library.Data.Infrastructure
         Task UpdateAsync(T entity);
         Task DeleteAsync(T entity);
         Task  DeleteManyAsync(Expression<Func<T, bool>> filter);
-
         Task SaveAsync();
 
         #endregion

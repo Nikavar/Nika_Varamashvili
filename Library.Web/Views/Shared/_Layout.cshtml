@@ -8,6 +8,16 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     @*<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />*@
     <link rel="stylesheet" href="~/LibraryManagementSystem.styles.css" asp-append-version="true" />
+
+    <script>
+        $(function () {
+            $.ajax({
+                url: "Tab/GetTabMenu",
+            }).done(function (data) {
+                $("#menu").html(data);
+            });
+        })
+    </script>
 </head>
 <body>
 	<header style="background-color:cadetblue; height:100px" src="~/logo/logo3.png">
@@ -27,6 +37,17 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
+
+					@*   For Recursion Tabs generated from DB*@
+                 <div class="container">
+                        <main role="main" class="pb-3">
+                            <div id="menu">
+                            </div>
+                            @*@RenderBody()*@
+                        </main>
+                    </div>
+
+
 
 					<ul class="navbar-nav ml-auto">
 						<li class="nav-item dropdown">

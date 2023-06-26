@@ -10,7 +10,7 @@ namespace Library.Model.Models
     public class Card
     {
         [Key]
-        public int CardID { get; set; }
+        public int Id { get; set; }
         public int BookLimit { get; set; }
         public DateTime ValidFrom { get; set; }
         public DateTime ValidTo { get; set; }

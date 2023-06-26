@@ -1,0 +1,24 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Security.Principal;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Library.Model.Models
+{
+    public class BookCategory
+    {
+        [Key]
+        public int Id { get; set; }
+        public int BookId { get; set; }
+        public int CategoryId { get; set; }
+        public int LogID { get; set; }
+
+        // relations
+        public Book? Book { get; set; }
+        public Category? Category { get; set; }
+        public LogInfo? Log { get; set; }
+    }
+}

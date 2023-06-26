@@ -1,40 +1,30 @@
-﻿@*@model todo_domain_entities.POCO.ToDoList*@
-@model Library.Model.Models.Position;
+﻿@model Library.Model.Models.Position;
 
 
 @{
     ViewData["Title"] = "Edit";
 }
 
-<hr />
-<h4>Edit Position</h4>
+<br/>
+
+<h4 style="color:grey; font-size:larger">Edit Position</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            @*<input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>*@
-            <div class="form-group">
+        <form asp-action="Edit">               
+            <div class="form-group" style="width:225px; margin: 10px 0 10px 0">
                 <label asp-for="PositionName" class="control-label"></label>
-                <input asp-for="PositionName" class="form-control" />
+                <input asp-for="PositionName" class="form-control" style="margin: 5px 0 5px 0" />
                 <span asp-validation-for="PositionName" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group" style="width: 225px; margin: 10px 0 10px 0">
                 <label asp-for="Salary" class="control-label"></label>
-                <input asp-for="Salary" class="form-control" />
+                <input asp-for="Salary" class="form-control" style="margin: 5px 0 5px 0" />
                 <span asp-validation-for="Salary" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group" style="width: 225px; margin: 10px 0 10px 0">
                 <label asp-for="StartWorkingDate" class="control-label"></label>
-                <input asp-for="StartWorkingDate" class="form-control" />
+                <input asp-for="StartWorkingDate" class="form-control" style="margin: 5px 0 5px 0" />
                 <span asp-validation-for="StartWorkingDate" class="text-danger"></span>
             </div>
             <div class="form-group" hidden>
@@ -42,15 +32,12 @@
                 <input asp-for="LogID" class="form-control" />
                 <span asp-validation-for="LogID" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+            <div class="form-group" style="margin: 10px 0 10px 0; width: 250px">
+                <input type="submit" value="Update" class="btn btn-success" style="width:100px; background-color:cadetblue" onclick="@("window.location.href='" + @Url.Action("Edit") + "'");" />
+                <input type="submit" value="Cancel" class="btn btn-secondary" style="width:100px; margin-left:21px" asp-action="Index"  />
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

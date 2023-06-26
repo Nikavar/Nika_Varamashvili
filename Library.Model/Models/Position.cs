@@ -15,6 +15,8 @@ namespace Library.Model.Models
         public decimal? Salary { get; set; }
         public DateTime? StartWorkingDate { get; set; }
         public int LogID { get; set; }
+
+        // relations
         public LogInfo? Log { get; set; }
         public ICollection<StaffReader>? StaffReaders { get; set; }
     }

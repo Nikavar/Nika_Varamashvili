@@ -51,11 +51,7 @@ namespace Library.Data.Infrastructure
 
         public virtual async Task<IEnumerable<T>> GetAllAsync()
         {
-            var result = await dbSet.ToListAsync();
-			if (result == null)
-                throw new NullReferenceException();
-
-            return result;
+            return await dbSet.ToListAsync();
         }
 
 
@@ -73,15 +69,15 @@ namespace Library.Data.Infrastructure
 
         public virtual async Task<T> GetByIdAsync(params object[] key)
         {
-            var result = await dbSet.FindAsync(key);
-            if (result == null)
-                throw new NullReferenceException();
-
             return await dbSet.FindAsync(key);
         }
 
         public virtual async Task<T> AddAsync(T entity)
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
             await dbSet.AddAsync(entity);
             await dataContext.SaveChangesAsync();
 
@@ -107,6 +103,8 @@ namespace Library.Data.Infrastructure
             IEnumerable<T> objects = dbSet.Where<T>(filter).AsEnumerable();
             foreach (T obj in objects)
                 dbSet.Remove(obj);
+
+            await dataContext.SaveChangesAsync();
         }
 
         public virtual async Task SaveAsync()

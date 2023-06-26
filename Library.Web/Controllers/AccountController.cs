@@ -1,14 +1,19 @@
 ﻿using DocumentFormat.OpenXml.Drawing.Wordprocessing;
+using DocumentFormat.OpenXml.Office2019.Excel.ThreadedComments;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Library.Data.Repositories;
 using Library.Model.Models;
 using Library.Service;
+using Library.Web.Constants;
 using Library.Web.Models.Account;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Data.Entity;
+using System.Diagnostics.Eventing.Reader;
 using System.Diagnostics.Metrics;
 using System.Linq;
+using System.Text.Json;
 
 namespace Library.Web.Controllers
 {
@@ -260,10 +265,28 @@ namespace Library.Web.Controllers
 				Address = model.Address,
 				Gender = model.Gender,
 				PersonalPhoto = model.PersonalPhoto,
-				LogID = lastLoggedStaff.LogID
-			};
+                LogID = lastLoggedStaff.LogID
+            };
 
-			await _staffReaderService.AddStaffReaderAsync(newStaffReader);
+			try
+			{
+				string staffReader_jsondata = JsonConvert.SerializeObject(newStaffReader, Formatting.Indented);
+                lastLoggedStaff.LogContent = staffReader_jsondata;
+                lastLoggedStaff.LogStatus = LogStatus.Info.ToString();
+
+				await _staffReaderService.AddStaffReaderAsync(newStaffReader);
+
+            }
+			catch (Exception ex)
+			{
+				lastLoggedStaff.LogStatus = LogStatus.Error.ToString();
+				lastLoggedStaff.LogContent = ex.Message;
+			}
+
+			finally
+			{
+                await _logService.UpdateLogAsync(lastLoggedStaff);
+			}
 
 			return newStaffReader.ID;
 		}
@@ -279,10 +302,26 @@ namespace Library.Web.Controllers
 				StaffReaderID = lastStaffReaderID
 			};
 
-			await _userService.AddUserAsync(newUser);
-			await _logService.UpdateLogAsync(lastLoggedUser);
+            try
+            {
+                string staffReader_jsondata = JsonConvert.SerializeObject(newUser, Formatting.Indented);
+                lastLoggedUser.LogContent = staffReader_jsondata;
+                lastLoggedUser.LogStatus = LogStatus.Info.ToString();
 
-			return newUser;
+                await _userService.AddUserAsync(newUser);
+            }
+            catch (Exception ex)
+            {
+                lastLoggedUser.LogStatus = LogStatus.Error.ToString();
+                lastLoggedUser.LogContent = ex.Message;
+            }
+
+            finally
+            {
+                await _logService.UpdateLogAsync(lastLoggedUser);
+            }
+
+            return newUser;
 		}
 
 		public async Task<IActionResult> Edit(int id)

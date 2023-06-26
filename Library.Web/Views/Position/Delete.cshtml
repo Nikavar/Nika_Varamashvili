@@ -1,15 +1,12 @@
-﻿@*@model todo_apllication.Models.MyTask*@
-@model Library.Web.Models.PositionViewModel
+﻿@model Library.Web.Models.PositionViewModel
 
 @{
     ViewData["Title"] = "Delete";
 }
 
-<h4>Delete Position</h4>
-
-<h3>Are you sure you want to delete this?</h3>
+<br/>
+<h4 style="color:grey; font-size:larger">Are you sure you want to delete this position?</h4>
 <div>
-    <h4>Position</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -37,10 +34,17 @@
             @Html.DisplayFor(model => model.LogID)
         </dd>
     </dl>
-    
+
     <form asp-action="View">
         <input type="hidden" asp-for="ID" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
+        <input type="submit" value="Delete" class="btn btn-danger" asp-route-id="@Model.LogID" asp-action="Delete" style="width:100px;" />
+        <input type="submit" value="Cancel" class="btn btn-secondary" asp-action="Index" style="width:100px; margin-left:21px" />
+    </form>   
+
 </div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

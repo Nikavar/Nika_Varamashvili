@@ -18,7 +18,7 @@ namespace Library.Data.Repositories
 
         public override Task UpdateAsync(LogInfo entity)
         {
-            var res = dbSet.FirstOrDefault(l => l.UserID == entity.UserID && l.TableName == entity.TableName);
+            var res = dbSet.FirstOrDefault(l => l.LogID == entity.LogID && l.TableName == entity.TableName);
             res.DateUpdated = entity.DateUpdated;
             return Task.CompletedTask;
         }

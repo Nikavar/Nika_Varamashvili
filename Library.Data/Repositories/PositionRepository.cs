@@ -14,12 +14,6 @@ namespace Library.Data.Repositories
         public PositionRepository(IDbFactory dbFactory) : base(dbFactory)
         {
         }
-
-        //public Position GetById(int id)
-        //{
-        //    var position = this.DbContext.Positions.Where(p => p.PositionID == id).FirstOrDefault();
-        //    return position ?? throw new NotImplementedException();
-        //}
     }
 
 

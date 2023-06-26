@@ -4,43 +4,44 @@
     var id = @ViewBag.testId;
 }
 
-
 @{
     ViewData["Title"] = "Index";
 }
 
 <br />
+
 <p>
-    <a asp-action="Add" asp-route-id="@id">+ New Position</a>
+    <input type="submit" value="Add New Position" class="btn btn-outline-secondary btn-sm"
+           onclick="@("window.location.href='" + @Url.Action("Add") + "'");" />
 </p>
 
 <table class="table">
     <thead>
         <tr>
-            <th>
+            <th hidden>
                 @Html.DisplayNameFor(model => model.ID)
             </th>
-            <th>
+            <th style="width:25%">
                 @Html.DisplayNameFor(model => model.PositionName)
             </th>
-            <th>
+            <th style="width:25%">
                 @Html.DisplayNameFor(model => model.Salary)
             </th>
-            <th>
+            <th style="width:25%">
                 @Html.DisplayNameFor(model => model.StartWorkingDate)
             </th>
-            <th>
+            <th hidden>
                 @Html.DisplayNameFor(model => model.LogID)
             </th>
 
-            <th></th>
+            <th style="width:25%"></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
             <tr>
-                <td>
+                <td hidden>
                     @Html.DisplayFor(modelItem => item.ID)
                 </td>
                 <td>
@@ -52,13 +53,13 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.StartWorkingDate)
                 </td>
-                <td>
+                <td hidden>
                     @Html.DisplayFor(modelItem => item.LogID)
                 </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                <td style="height:50px">
+                    <a class="btn btn-outline-secondary" style="width:80px" asp-action="Edit" asp-route-id="@item.ID">Edit</a> 
+                    <a class="btn btn-outline-secondary" style="width:80px" asp-action="Details" asp-route-id="@item.ID">Details</a>
+					<a class="btn btn-danger" style="width: 80px; border-color:dimgray; border-width:1px" asp-action="Delete" asp-route-id="@item.ID">Delete</a>
                 </td>
             </tr>
         }
@@ -66,9 +67,7 @@
 </table>
 <br />
 <tfoot>
-    <tr>
-        <td>
-            <a asp-controller="Position" asp-action="Index">Back to List</a>
-        </td>
-    </tr>
 </tfoot>
+
+@*<script src="~/js/position.js"></script>
+<link href="~/css/position.css" rel="stylesheet" />*@

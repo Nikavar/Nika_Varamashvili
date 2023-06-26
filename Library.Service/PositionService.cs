@@ -63,7 +63,6 @@ namespace Library.Service
 
     public interface IPositionService
     {
-
         Task<IEnumerable<Position>> GetAllPositionsAsync();
         Task<IEnumerable<Position>> GetManyPositionsAsync(Expression<Func<Position, bool>> filter);
         Task<Position> GetPositionByIdAsync(params object[] key);

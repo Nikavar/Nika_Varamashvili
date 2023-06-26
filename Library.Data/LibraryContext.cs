@@ -31,6 +31,10 @@ namespace Library.Data
         public DbSet<StaffReader>? StaffReaders { get; set; }
         public DbSet<Position>? Positions { get; set; }
         public DbSet<ReaderStatus>? ReaderStatuses { get; set; }
+        public DbSet<Publisher>? Publishers { get; set; }
+        public DbSet<Tab>? Tabs { get; set; }
+        public DbSet<BookStorage>? BookStorages { get; set; }
+        public DbSet<Language>? Languages { get; set; }
         public DbSet<LogInfo>? LogInfo { get; set; }
 
         public virtual void Commit()
@@ -48,6 +52,14 @@ namespace Library.Data
             modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new RoleUserConfiguration());
             modelBuilder.ApplyConfiguration(new PositionConfiguration());
+            modelBuilder.ApplyConfiguration(new PositionConfiguration());
+            modelBuilder.ApplyConfiguration(new LogInfoConfiguration());
+            modelBuilder.ApplyConfiguration(new TabConfiguration());
+            modelBuilder.ApplyConfiguration(new LanguageConfiguration());
+            //modelBuilder.ApplyConfiguration(new BookPublisherConfiguration());
+            modelBuilder.ApplyConfiguration(new RoleConfiguration());
+            modelBuilder.ApplyConfiguration(new AuthorConfiguration());
+
 
 
             modelBuilder.Entity<User>().HasData(

@@ -1,0 +1,57 @@
+﻿@model Library.Model.Models.Publisher;
+
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<br />
+
+<h4 style="color:grey; font-size:larger">Edit Position</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div class="form-group" style="width:225px; margin: 10px 0 10px 0">
+
+                <label asp-for="PublisherName" class="control-label"></label>
+                <input asp-for="PublisherName" class="form-control" />
+                <span asp-validation-for="PublisherName" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="width:225px; margin: 10px 0 10px 0">
+
+                <label asp-for="Address" class="control-label"></label>
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="width:225px; margin: 10px 0 10px 0">
+
+                <label asp-for="PhoneNumber" class="control-label"></label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="width:225px; margin: 10px 0 10px 0">
+
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group" hidden>
+                <label asp-for="LogID" class="control-label"></label>
+                <input asp-for="LogID" class="form-control" />
+                <span asp-validation-for="LogID" class="text-danger"></span>
+            </div>
+
+            <div class="form-group" style="margin: 10px 0 10px 0; width: 250px">
+                <input type="submit" value="Update" class="btn btn-success" style="width:100px; background-color:cadetblue" onclick="@("window.location.href='" + @Url.Action("Edit") + "'");" />
+                <input type="submit" value="Cancel" class="btn btn-secondary" style="width:100px; margin-left:21px" asp-action="Index" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

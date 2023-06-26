@@ -1,0 +1,20 @@
+﻿@using Microsoft.AspNetCore.Html
+@*@using xxx.Models*@
+@model IEnumerable<TabViewModel>
+
+@ShowMenu(Model.ToList(), new TabViewModel())(null)
+@{
+    Func<dynamic, IHtmlContent> ShowMenu(List<TabViewModel> cats, TabViewModel parent) =>
+    @<ul>
+        @foreach (var cat in cats)
+                {
+        <li>
+            @cat.TabName
+            @if (cat.Child.Count() > 0)
+            {
+                @ShowMenu(cat.Child, cat)(null)
+            }
+        </li>
+         }
+    </ul>;
+}

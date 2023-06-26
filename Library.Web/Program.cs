@@ -53,10 +53,21 @@ builder.Services.AddScoped<IRoleUserService, RoleUserService>();
 builder.Services.AddScoped<IPositionRepository, PositionRepository>();
 builder.Services.AddScoped<IPositionService, PositionService>();
 
+builder.Services.AddScoped<IPublisherRepository, PublisherRepository>();
+builder.Services.AddScoped<IPublisherService, PublisherService>();
+
 builder.Services.AddScoped<ICardRepository, CardRepository>();
 
 builder.Services.AddScoped<IReaderStatusRepository, ReaderStatusRepository>();
 
+builder.Services.AddScoped<ITabRepository, TabRepository>();
+builder.Services.AddScoped<ITabService, TabService>();
+
+builder.Services.AddScoped<ILanguageRepository, LanguageRepository>();
+builder.Services.AddScoped<ILanguageService, LanguageService>();
+
+builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
+builder.Services.AddScoped<IAuthorService, AuthorService>();
 
 
 var app = builder.Build();

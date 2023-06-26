@@ -1,0 +1,73 @@
+﻿@model IEnumerable<Library.Model.Models.Category>
+
+@{
+    var id = @ViewBag.testId;
+}
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<br />
+
+<p>
+    <input type="submit" value="Add New Author" class="btn btn-outline-secondary btn-sm"
+           onclick="@("window.location.href='" + @Url.Action("Add") + "'");" />
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th hidden>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th style="width:25%">
+                @Html.DisplayNameFor(model => model.FirstName)
+            </th>
+            <th style="width:25%">
+                @Html.DisplayNameFor(model => model.LastName)
+            </th>
+            <th style="width:25%">
+                @Html.DisplayNameFor(model => model.DoB)
+            </th>
+            <th hidden>
+                @Html.DisplayNameFor(model => model.LogID)
+            </th>
+
+            <th style="width:25%"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td hidden>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DoB)
+                </td>
+                <td hidden>
+                    @Html.DisplayFor(modelItem => item.LogID)
+                </td>
+                <td style="height:50px">
+                    <a class="btn btn-outline-secondary" style="width:80px" asp-action="Edit" asp-route-id="@item.Id">Edit</a> 
+                    <a class="btn btn-outline-secondary" style="width:80px" asp-action="Details" asp-route-id="@item.Id">Details</a>
+					<a class="btn btn-danger" style="width: 80px; border-color:dimgray; border-width:1px" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<br />
+<tfoot>
+</tfoot>
+
+@*<script src="~/js/position.js"></script>
+<link href="~/css/position.css" rel="stylesheet" />*@
