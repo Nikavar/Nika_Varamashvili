@@ -12,10 +12,8 @@ namespace Library.Model.Models
         [Key]
         public int Id { get; set; }
         public string? StatusName { get; set; }
-        public int LogID { get; set; }
 
         // relations
-        public LogInfo? Log { get; set; }
         public ICollection<Subscriber>? Subscribers { get; set; }
     }
 }

@@ -15,7 +15,7 @@ namespace Library.Service
         Task<IEnumerable<Publisher>> GetAllPublishersAsync();
         Task<IEnumerable<Publisher>> GetManyPublishersAsync(Expression<Func<Publisher, bool>> filter);
         Task<Publisher> GetPublisherByIdAsync(int? id);
-        Task AddPublisherAsync(Publisher entity);
+        Task<Publisher> AddPublisherAsync(Publisher entity);
         Task UpdatePublisherAsync(Publisher entity);
         Task DeletePublisherAsync(Publisher entity);
         Task DeleteManyPublishersAsync(Expression<Func<Publisher, bool>> filter);
@@ -32,14 +32,17 @@ namespace Library.Service
             _publisherRepository = publisherRepo;
             _unitOfWork = unitOfWork;
         }
-        public async Task<IEnumerable<Publisher>> GetAllPublishersAsync() => await _publisherRepository.GetAllAsync();
+        public async Task<IEnumerable<Publisher>> GetAllPublishersAsync() => 
+            await _publisherRepository.GetAllAsync();
 
         public async Task<IEnumerable<Publisher>> GetManyPublishersAsync(Expression<Func<Publisher, bool>> filter)
             => await _publisherRepository.GetManyAsync(filter);
 
-        public async Task<Publisher> GetPublisherByIdAsync(int? id) => await _publisherRepository.GetByIdAsync(id);
+        public async Task<Publisher> GetPublisherByIdAsync(int? id) => 
+            await _publisherRepository.GetByIdAsync(id);
 
-        public async Task AddPublisherAsync(Publisher entity) => await _publisherRepository.AddAsync(entity);
+        public async Task<Publisher> AddPublisherAsync(Publisher entity) => 
+            await _publisherRepository.AddAsync(entity);
 
         public async Task DeleteManyPublishersAsync(Expression<Func<Publisher, bool>> filter) => 
                                       await _publisherRepository.DeleteManyAsync(filter);

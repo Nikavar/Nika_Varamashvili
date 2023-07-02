@@ -23,15 +23,16 @@ namespace Library.Model.Models
         public string? PassportNumber { get; set; }
         public string? PhoneNumber { get; set; }
         public string? Email { get; set; }
+        public bool IsConfirmed { get; set; }
         public string? Address { get; set; }
         public bool? Gender { get; set; }
         public string? PersonalPhoto { get; set; }
         public int? PositionId { get; set; }
         public int? ReaderStatusID { get; set; }
-        public int? LogID { get; set; }
+
+        // relations
         public Position? Position { get; set; }
         public ReaderStatus? ReaderStatus { get; set; }
-        public LogInfo? Log { get; set; }
         public ICollection<User>? Users { get; set; }
         public ICollection<Card>? Cards { get; set; }
 

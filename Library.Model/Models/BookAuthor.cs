@@ -13,12 +13,10 @@ namespace Library.Model.Models
         public int Id { get; set; }
         public int BookId { get; set; }
         public int AuthorId { get; set; }
-        public int LogId { get; set; }
 
         // realations
-        public Book? Book { get; set; }
-        public Category? Author { get; set; }
-        public LogInfo? Log { get; set; }
+        //public Book? Book { get; set; }
+        //public Category? Author { get; set; }
 
     }
 }

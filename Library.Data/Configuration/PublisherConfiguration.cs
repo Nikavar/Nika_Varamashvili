@@ -23,8 +23,6 @@ namespace Library.Data.Configuration
                 .IsUnicode (true);
             builder.Property(p => p.Email)
                 .IsUnicode (false);
-            builder.Property(p => p.LogID)
-                .HasColumnName("LogID");
 
             // relation
 

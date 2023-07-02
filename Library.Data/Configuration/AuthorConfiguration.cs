@@ -26,9 +26,6 @@ namespace Library.Data.Configuration
 
             builder.Property(a => a.DoB)
                 .HasColumnType("date");
-
-            builder.Property(u => u.LogID)
-                .HasColumnName("LogID");
         }
     }
 }

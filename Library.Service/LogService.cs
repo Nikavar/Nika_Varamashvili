@@ -19,7 +19,7 @@ namespace Library.Service
         Task UpdateLogAsync(LogInfo entity);
         Task DeleteLogAsync(LogInfo entity);
         Task DeleteManyLogsAsync(Expression<Func<LogInfo, bool>> filter);
-        //Task<LogInfo> GetLastLogID(LogInfo entity);
+        Task<LogInfo> GetLogByEntityId(int id);
         Task SaveLogsAsync();
     }
 
@@ -52,6 +52,11 @@ namespace Library.Service
         public async Task<IEnumerable<LogInfo>> GetAllLogsAsync()
         {
             return await _logInfoRepository.GetAllAsync();
+        }
+
+        public async Task<LogInfo> GetLogByEntityId(int id)
+        {
+            return await _logInfoRepository.GetLogByEntityId(id);
         }
 
         public async Task<LogInfo> GetLogByIdAsync(int id)

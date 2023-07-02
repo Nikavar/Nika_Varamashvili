@@ -14,11 +14,10 @@ namespace Library.Model.Models
         public int BookId { get; set; }
         public int StorageId { get; set; }
         public int BookQuantityOnShelf { get; set; }
-        public int LogID { get; set; }
 
         // relations
         //public Book? Book { get; set; }
         //public Storage? Storage { get; set; }
-        //public LogInfo? Log { get; set; }
+
     }
 }

@@ -13,9 +13,6 @@ namespace Library.Model.Models
         public int Id { get; set; }
         public int ClosetNumber { get; set; }
         public int ShelfNumber { get; set; }
-        public int LogID { get; set; }
 
-        // relations
-        public LogInfo? Log { get; set; }
     }
 }

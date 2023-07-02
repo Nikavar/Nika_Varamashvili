@@ -3,6 +3,7 @@ using DocumentFormat.OpenXml.Office.CustomUI;
 using Library.Data.Repositories;
 using Library.Model.Models;
 using Library.Service;
+using Library.Web.Constants;
 using Library.Web.Models;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
@@ -11,18 +12,18 @@ namespace Library.Web.Controllers
 {
 	public class PositionController : Controller
 	{
-		private readonly IPositionService _positionService;
-		private readonly ILogService _logService;
+		private readonly IPositionService positionService;
+		private readonly ILogService logService;
 
 		public PositionController(IPositionService positionService, ILogService logService)
 		{
-			_positionService = positionService;
-			_logService = logService;
+			this.positionService = positionService;
+			this.logService = logService;
 		}
 
 		public async Task<IActionResult> Index()
 		{
-			var result = await _positionService.GetAllPositionsAsync();
+			var result = await positionService.GetAllPositionsAsync();
 			return View(result);
 		}
 
@@ -33,84 +34,76 @@ namespace Library.Web.Controllers
 		// POST/position/Add
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<ActionResult> Add(PositionViewModel item)
+		public async Task<ActionResult> Add(PositionViewModel model)
 		{
 			if (ModelState.IsValid)
 			{
-				var loggedPosition = await _logService.AddLogAsync(new LogInfo { TableName = "Position", DateCreated = DateTime.Now });
-				item.LogID = loggedPosition.LogID;
+				var entity = model.Adapt<Position>();
+				await Helper.AddEntityWithLog(entity,positionService.AddPositionAsync,logService);
 
-				await _positionService.AddPositionAsync(item.Adapt<Position>());
-
-				TempData["Success"] = "The Position has been added!";
+   				TempData["Success"] = Helper.SuccessfullyAdded<Position>();
 
 				return RedirectToAction("Index");
 			}
-
-			return View(item);
+			return View(model);
 		}
 
 		// GET /position/edit/3
 		public async Task<ActionResult> Edit(int id)
 		{
-			var item = await _positionService.GetPositionByIdAsync(id);
+			var entity = await positionService.GetPositionByIdAsync(id);
 
-			if (item == null)
+			if (entity == null)
 			{
 				return NotFound();
 			}
 
-			return View(item);
+			return View(entity);
 		}
 
 		// POST /position/edit/4
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<ActionResult> Edit(PositionViewModel item)
+		public async Task<ActionResult> Edit(PositionViewModel model)
 		{
 			if (ModelState.IsValid)
-			{
-				var logToUpdate = await _logService.GetLogByIdAsync(item.LogID);
-				logToUpdate.DateUpdated = DateTime.Now;
+			{ 
+				var entity = model.Adapt<Position>();
+				await Helper.UpdateEntityWithLog(entity,positionService.UpdatePositionAsync,logService);
 
-				await _logService.UpdateLogAsync(logToUpdate);
-
-				await _positionService.UpdatePositionAsync(item.Adapt<Position>());
-				TempData["Success"] = "The Position has Updated!";
+				TempData["Success"] = Helper.SuccessfullyUpdated<Position>();
 
 				return RedirectToAction("Index");
 			}
 
-			return View(item);
+			return View(model);
 		}
 
 		//GET /position/edit/3
 		public async Task<ActionResult> Delete(int id)
 		{
-			var item = await _positionService.GetPositionByIdAsync(id);
+			var entity = await positionService.GetPositionByIdAsync(id);
 
-			if (item == null)
+			if (entity == null)
 			{
 				return NotFound();
 			}
 
-			return View(item.Adapt<PositionViewModel>());
+			var model = entity.Adapt<PositionViewModel>();
+			return View(model);
 		}
 
 
 		// POST /position/delete/4
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<ActionResult> Delete(PositionViewModel item)
+		public async Task<ActionResult> Delete(PositionViewModel model)
 		{
-			var log = await _positionService.GetPositionByIdAsync(item.ID);
+			var entity = await positionService.GetPositionByIdAsync(model.ID);
+			await positionService.DeletePositionAsync(entity);
+			await logService.DeleteManyLogsAsync(x => x.EntityID == entity.ID);
 
-			var logToDelete = await _logService.GetLogByIdAsync(log.LogID);
-			logToDelete.DateDeleted = DateTime.Now;
-			await _logService.UpdateLogAsync(logToDelete);
-
-			await _positionService.DeletePositionAsync(log);
-			TempData["Success"] = "The Position has been deleted!";
+			TempData["Success"] = Helper.SuccessfullyDeleted<Position>();
 
 			return RedirectToAction("Index");			
 		}
@@ -124,14 +117,14 @@ namespace Library.Web.Controllers
 					controllerName: "Home");
 			}
 
-			var result = await _positionService.GetPositionByIdAsync(id);
-			ViewData["detailId"] = result.ID;
+			var entity = await positionService.GetPositionByIdAsync(id);
+			ViewData["detailId"] = entity.ID;
 
-			if (result == null)
+			if (entity == null)
 			{
 				return NotFound();
 			}
-			return View(result);
+			return View(entity);
 		}
 
 	}

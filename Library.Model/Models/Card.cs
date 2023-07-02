@@ -15,10 +15,8 @@ namespace Library.Model.Models
         public DateTime ValidFrom { get; set; }
         public DateTime ValidTo { get; set; }
         public int ReaderID { get; set; }
-        public int LogID { get; set; }
 
         // Relations
         public StaffReader? StaffReader { get; set; }
-        public LogInfo? Logs { get; set; }
     }
 }

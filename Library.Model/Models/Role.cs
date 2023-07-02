@@ -12,8 +12,9 @@ namespace Library.Model.Models
         [Key]
         public int ID { get; set; }
         public string? RoleName { get; set; }
-        public int LogID { get; set; }
-        public ICollection<RoleUser>? RoleUsers { get; set; }
-        public LogInfo? Log { get; set; }
+
+        // relations
+        public ICollection<RoleUser>?RoleUsers { get; set; }
+
     }
 }

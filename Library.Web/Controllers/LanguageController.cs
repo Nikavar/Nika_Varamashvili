@@ -2,6 +2,7 @@
 using Library.Data.Repositories;
 using Library.Model.Models;
 using Library.Service;
+using Library.Web.Constants;
 using Library.Web.Models;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
@@ -10,17 +11,17 @@ namespace Library.Web.Controllers
 {
     public class LanguageController : Controller
     {
-        private readonly ILanguageService _languageService;
-        private readonly ILogService _logService;
+        private readonly ILanguageService languageService;
+        private readonly ILogService logService;
 
         public LanguageController(ILanguageService languageService, ILogService logService)
         {
-            _languageService = languageService;
-            _logService = logService;            
+            this.languageService = languageService;
+            this.logService = logService;            
         }
         public async Task<IActionResult> Index()
         {
-            var result = await _languageService.GetAllLanguagesAsync();
+            var result = await languageService.GetAllLanguagesAsync();
             return View(result);
         }
 
@@ -31,27 +32,24 @@ namespace Library.Web.Controllers
         // POST/language/Add
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Add(LanguageViewModel item)
+        public async Task<ActionResult> Add(LanguageViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var loggedLanguage = await _logService.AddLogAsync(new LogInfo { TableName = "Language", DateCreated = DateTime.Now });
-                item.LogID = loggedLanguage.LogID;
-
-                await _languageService.AddLanguageAsync(item.Adapt<Language>());
-
-                TempData["Success"] = "The Language has been added!";
+                var entity = model.Adapt<Language>();
+                await Helper.AddEntityWithLog(entity, languageService.AddLanguageAsync, logService);
+                TempData["Success"] = Helper.SuccessfullyAdded<Language>();
 
                 return RedirectToAction("Index");
             }
 
-            return View(item);
+            return View(model);
         }
 
         // GET /language/edit/3
         public async Task<ActionResult> Edit(int id)
         {
-            var item = await _languageService.GetLanguageByIdAsync(id);
+            var item = await languageService.GetLanguageByIdAsync(id);
 
             if (item == null)
             {
@@ -64,51 +62,45 @@ namespace Library.Web.Controllers
         // POST /language/edit/4
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(LanguageViewModel item)
+        public async Task<ActionResult> Edit(LanguageViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var logToUpdate = await _logService.GetLogByIdAsync(item.LogID);
-                logToUpdate.DateUpdated = DateTime.Now;
-
-                await _logService.UpdateLogAsync(logToUpdate);
-
-                await _languageService.UpdateLanguageAsync(item.Adapt<Language>());
-                TempData["Success"] = "The Language has Updated!";
+                var entity = model.Adapt<Language>();
+                await Helper.UpdateEntityWithLog(entity, languageService.UpdateLanguageAsync, logService);
+                TempData["Success"] = Helper.SuccessfullyUpdated<Language>();
 
                 return RedirectToAction("Index");
             }
 
-            return View(item);
+            return View(model);
         }
 
         //GET /language/edit/3
         public async Task<ActionResult> Delete(int id)
         {
-            var item = await _languageService.GetLanguageByIdAsync(id);
+            var entity = await languageService.GetLanguageByIdAsync(id);
 
-            if (item == null)
+            if (entity == null)
             {
                 return NotFound();
             }
 
-            return View(item.Adapt<LanguageViewModel>());
+            var model = entity.Adapt<LanguageViewModel>();
+            return View(model);
         }
 
 
         // POST /language/delete/4
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(LanguageViewModel item)
+        public async Task<ActionResult> Delete(LanguageViewModel model)
         {
-            var log = await _languageService.GetLanguageByIdAsync(item.Id);
+            var entity = await languageService.GetLanguageByIdAsync(model.Id);
+            await languageService.DeleteLanguageAsync(entity);
+            await logService.DeleteManyLogsAsync(x => x.EntityID == entity.Id);
 
-            var logToDelete = await _logService.GetLogByIdAsync(log.LogID);
-            logToDelete.DateDeleted = DateTime.Now;
-            await _logService.UpdateLogAsync(logToDelete);
-
-            await _languageService.DeleteLanguageAsync(log);
-            TempData["Success"] = "The Language has been deleted!";
+            TempData["Success"] = Helper.SuccessfullyDeleted<Language>();
 
             return RedirectToAction("Index");
         }
@@ -122,7 +114,7 @@ namespace Library.Web.Controllers
                     controllerName: "Home");
             }
 
-            var result = await _languageService.GetLanguageByIdAsync(id);
+            var result = await languageService.GetLanguageByIdAsync(id);
             ViewData["detailId"] = result.Id;
 
             if (result == null)

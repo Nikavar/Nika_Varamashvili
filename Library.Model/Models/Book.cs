@@ -16,13 +16,11 @@ namespace Library.Model.Models
         public int BookStatusId { get; set; }
         public int BookStorageId { get; set; }
         public int CategoryId { get; set; }
-        public int LogID { get; set; }
 
         // relations
         public Category? Category { get; set; }
         public BookStatus? BookStatus { get; set; }
         public BookStorage? BookStorage { get; set; }
-        public LogInfo? Log { get; set; }
         public ICollection<Subscriber>? Subscribers { get; set; }
         public ICollection<BookAuthor>? BookAuthors { get; set; }
         public ICollection<BookCategory>? BookCategories { get; set; }

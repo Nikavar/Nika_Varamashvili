@@ -1,5 +1,6 @@
 ﻿using Library.Model.Models;
 using Library.Service;
+using Library.Web.Constants;
 using Library.Web.Models;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
@@ -8,18 +9,18 @@ namespace Library.Web.Controllers
 {
     public class AuthorController : Controller
     {
-        private readonly IAuthorService _authorService;
-        private readonly ILogService _logService;
+        private readonly IAuthorService authorService;
+        private readonly ILogService logService;
 
         public AuthorController(IAuthorService authorService, ILogService logService)
         {
-            _authorService = authorService;
-            _logService = logService;
+            this.authorService = authorService;
+            this.logService = logService;
         }
 
         public async Task<IActionResult> Index()
         {
-            var result = await _authorService.GetAllAuthorsAsync();
+            var result = await this.authorService.GetAllAuthorsAsync();
             return View(result);
         }
 
@@ -30,27 +31,25 @@ namespace Library.Web.Controllers
         // POST/author/Add
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Add(AuthorViewModel item)
+        public async Task<ActionResult> Add(AuthorViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var loggedAuthor = await _logService.AddLogAsync(new LogInfo { TableName = "Authors", DateCreated = DateTime.Now });
-                item.LogID = loggedAuthor.LogID;
 
-                await _authorService.AddAuthorAsync(item.Adapt<Category>());
-
-                TempData["Success"] = "The Author has been added!";
+                var authorEntity = model.Adapt<Author>();
+                await Helper.AddEntityWithLog(authorEntity, authorService.AddAuthorAsync, logService);
+                TempData["Success"] = Helper.SuccessfullyAdded<Author>();
 
                 return RedirectToAction("Index");
             }
 
-            return View(item);
+            return View(model);
         }
 
         // GET /author/edit/3
         public async Task<ActionResult> Edit(int id)
         {
-            var item = await _authorService.GetAuthorByIdAsync(id);
+            var item = await authorService.GetAuthorByIdAsync(id);
 
             if (item == null)
             {
@@ -67,14 +66,10 @@ namespace Library.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var logToUpdate = await _logService.GetLogByIdAsync(item.LogID);
-                logToUpdate.DateUpdated = DateTime.Now;
+                var authorEntity = item.Adapt<Author>();
+                await Helper.UpdateEntityWithLog(authorEntity, authorService.UpdateAuthorAsync, logService);
 
-                await _logService.UpdateLogAsync(logToUpdate);
-
-                await _authorService.UpdateAuthorAsync(item.Adapt<Category>());
-                TempData["Success"] = "The Author has Updated!";
-
+                TempData["Success"] = Helper.SuccessfullyUpdated<Author>();
                 return RedirectToAction("Index");
             }
 
@@ -84,7 +79,7 @@ namespace Library.Web.Controllers
         //GET /author/edit/3
         public async Task<ActionResult> Delete(int id)
         {
-            var item = await _authorService.GetAuthorByIdAsync(id);
+            var item = await authorService.GetAuthorByIdAsync(id);
 
             if (item == null)
             {
@@ -98,16 +93,12 @@ namespace Library.Web.Controllers
         // POST /author/delete/4
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(AuthorViewModel item)
+        public async Task<ActionResult> Delete(AuthorViewModel model)
         {
-            var log = await _authorService.GetAuthorByIdAsync(item.Id);
-
-            var logToDelete = await _logService.GetLogByIdAsync(log.LogID);
-            logToDelete.DateDeleted = DateTime.Now;
-            await _logService.UpdateLogAsync(logToDelete);
-
-            await _authorService.DeleteAuthorAsync(log);
-            TempData["Success"] = "The Author has been deleted!";
+            var entity = model.Adapt<Author>();
+            await authorService.DeleteAuthorAsync(entity);
+            await logService.DeleteManyLogsAsync(x => x.EntityID == entity.Id);
+            TempData["Success"] = Helper.SuccessfullyDeleted<Author>();
 
             return RedirectToAction("Index");
         }
@@ -121,7 +112,7 @@ namespace Library.Web.Controllers
                     controllerName: "Home");
             }
 
-            var result = await _authorService.GetAuthorByIdAsync(id);
+            var result = await authorService.GetAuthorByIdAsync(id);
             ViewData["detailId"] = result.Id;
 
             if (result == null)

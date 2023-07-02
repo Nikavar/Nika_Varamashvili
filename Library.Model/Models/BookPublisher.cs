@@ -13,11 +13,9 @@ namespace Library.Model.Models
         public int Id { get; set; }
         public int PublisherId { get; set; }
         public int BookId { get; set; }
-        public int LogID { get; set; }
 
         // relations
         public Publisher? Publisher { get; set; }
         public Book? Book { get; set; }
-        public LogInfo? Log { get; set; }
     }
 }

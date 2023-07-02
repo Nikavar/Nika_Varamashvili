@@ -32,7 +32,7 @@ namespace Library.Web.Controllers
                     Id = x.Id,
                     TabName = x.TabName,
                     ParentId = x.ParentId,
-                    //Child = x.Child.Adapt<TabViewModel>()
+                    Child = x.Child.Adapt<List<TabViewModel>>()
                 }).ToList();
 
             return PartialView("~/Views/Shared/Partial/GetTabMenu.cshtml", model);

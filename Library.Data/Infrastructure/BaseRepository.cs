@@ -24,7 +24,7 @@ namespace Library.Data.Infrastructure
         protected LibraryContext? dataContext;
         protected readonly DbSet<T> dbSet;
 
-        protected IDbFactory DbFactory
+        protected IDbFactory? DbFactory
         {
             get;
             private set;
@@ -35,9 +35,15 @@ namespace Library.Data.Infrastructure
             get { return dataContext ?? (dataContext = DbFactory.Init()); }
         }
 
-        #endregion  
+        #endregion
 
         #region Constructor
+
+        public BaseRepository()
+        {
+            this.dataContext = new LibraryContext();
+            this.dbSet = DbContext.Set<T>();
+        }
 
         public BaseRepository(IDbFactory dbFactory)
         {
@@ -53,7 +59,6 @@ namespace Library.Data.Infrastructure
         {
             return await dbSet.ToListAsync();
         }
-
 
         public virtual async Task<IEnumerable<T>> GetManyAsync(Expression<Func<T, bool>> filter)                   
         {

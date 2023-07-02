@@ -22,17 +22,10 @@ namespace Library.Data.Configuration
             builder.Property(ur => ur.RoleID)
                 .HasColumnName("Role_Id");
 
-            builder.Property(ur => ur.LogID)
-                .HasColumnName("LogID");
-
-
             // relations
 
             builder.HasOne(u => u.User)
-                .WithMany(ur => ur.RoleUsers);
-
-            builder.HasOne(l => l.Log)
-                .WithMany(ur => ur.RoleUsers);
+                .WithMany(ur => ur.UserRoles);
 
             builder.HasOne(r => r.Role)
                 .WithMany(ur => ur.RoleUsers);

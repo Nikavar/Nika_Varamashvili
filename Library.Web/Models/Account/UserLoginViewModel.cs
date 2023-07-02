@@ -9,7 +9,7 @@ namespace Library.Web.Models.Account
 		[EmailAddress(ErrorMessage = "Invalid Email Address!")]
 		public string EmailAddress { get; set; }
 
-		[Required]
+		[Required(ErrorMessage = "I have to enter Your Password!")]
 		[DataType(DataType.Password)]
 		public string Password { get; set; }
 	}

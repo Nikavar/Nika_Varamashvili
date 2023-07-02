@@ -8,14 +8,13 @@ using System.Threading.Tasks;
 namespace Library.Model.Models
 {
     public class Category
-
     {
         [Key]
         public int Id { get; set; }
         public string? CategoryName { get; set; }
-        public int LogID { get; set; }
 
         // relations
-        public LogInfo Log { get; set; }
+        public ICollection<BookCategory>? BookCategories { get; set; }
+
     }
 }

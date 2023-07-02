@@ -15,12 +15,11 @@ namespace Library.Service
         Task<IEnumerable<StaffReader>> GetAllStaffReadersAsync();
         Task<IEnumerable<StaffReader>> GetManyStaffReadersAsync(Expression<Func<StaffReader, bool>> filter);
         Task<StaffReader> GetStaffReaderByIdAsync(int id);
-        Task AddStaffReaderAsync(StaffReader entity);
+        Task<StaffReader> AddStaffReaderAsync(StaffReader entity);
         Task UpdateStaffReaderAsync(StaffReader entity);
         Task DeleteStaffReaderAsync(StaffReader user);
         Task DeleteManyStaffReadersAsync(Expression<Func<StaffReader, bool>> filter);
         Task SaveStaffReaderAsync();
-        Task<StaffReader> GetLastStaffReader();
 
     }
 
@@ -37,10 +36,9 @@ namespace Library.Service
             this.unitOfWork = unitOfWork;
         }
 
-        public async Task AddStaffReaderAsync(StaffReader entity)
+        public async Task<StaffReader> AddStaffReaderAsync(StaffReader entity)
         {
-            await _staffReaderRepository.AddAsync(entity);
-            await _staffReaderRepository.SaveAsync();
+            return await _staffReaderRepository.AddAsync(entity);
         }
 
         public async Task DeleteManyStaffReadersAsync(Expression<Func<StaffReader, bool>> filter)
@@ -57,11 +55,6 @@ namespace Library.Service
         {
             return await _staffReaderRepository.GetAllAsync();
         }
-
-		public async Task<StaffReader> GetLastStaffReader()
-		{
-            return await _staffReaderRepository.GetLastStaffReader();
-		}
 
 		public Task<IEnumerable<StaffReader>> GetManyStaffReadersAsync(Expression<Func<StaffReader, bool>> filter)
         {

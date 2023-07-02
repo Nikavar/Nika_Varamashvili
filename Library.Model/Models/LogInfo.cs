@@ -13,23 +13,13 @@ namespace Library.Model.Models
         [Key]
         public int LogID { get; set; }
         public string? TableName { get; set; }
-        public DateTime? DateCreated { get; set; }
-        public DateTime? DateUpdated { get; set; }
+        public string? DateCreated { get; set; } = DateTime.Now.ToString("dd/MM/yyyy hh:mm tt");
+        public string? DateUpdated { get; set; }
         public DateTime? DateDeleted { get; set; }
         public int? UserID { get; set; }
+        public int? EntityID { get; set; }
         public string? LogStatus { get; set; }
         public string? LogContent { get; set; }
-
-        // relations
-        public ICollection<User>? Users { get; set; }
-        public ICollection<StaffReader>? StaffReaders { get; set; }
-        public ICollection<Position>? Positions { get; set; }
-        public ICollection<ReaderStatus>? ReaderStatuses { get; set; }   
-        public ICollection<Role>? Roles { get; set; }
-        public ICollection<RoleUser>? RoleUsers { get; set; }
-        public ICollection<Card>? Cards { get; set; }     
-        public ICollection<Publisher>? Publishers { get; set; }
-        public ICollection<BookPublisher>? BookPublishers { get; set; }
 
     }
 }

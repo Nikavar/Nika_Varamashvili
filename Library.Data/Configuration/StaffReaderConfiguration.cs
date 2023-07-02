@@ -19,13 +19,8 @@ namespace Library.Data.Configuration
             builder.Property(s => s.LastName).IsRequired().HasMaxLength(50);
             //builder.Property(s => s.Email).IsRequired();
             //builder.Property(s => s.PhoneNumber).IsRequired();
-            //builder.Property(s => s.LogID).IsRequired();
-
 
             builder.HasOne(p => p.Position)
-                .WithMany(st => st.StaffReaders);
-
-            builder.HasOne(l => l.Log)
                 .WithMany(st => st.StaffReaders);
 
             builder.HasOne(rs => rs.ReaderStatus)

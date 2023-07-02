@@ -17,13 +17,7 @@ namespace Library.Data.Configuration
 
             builder.Property(r => r.RoleName)
                 .HasMaxLength(50);
-
-            builder.Property(r => r.LogID)
-                .HasColumnName("LogID");
-
-            // relations Role => LogInfo
-            builder.HasOne(l => l.Log)
-                .WithMany(r => r.Roles);       
+     
         }
     }
 }

@@ -26,15 +26,10 @@ namespace Library.Data.Configuration
                     .IsRequired();
             builder.Property(c => c.ReaderID)
                    .IsRequired();
-            builder.Property(c => c.LogID)
-                .IsRequired();
 
             // relations
             builder.HasOne(sr => sr.StaffReader)
                    .WithMany(c => c.Cards);
-            builder.HasOne(l => l.Logs)
-                   .WithMany(c => c.Cards);
-
         }       
     }
 }

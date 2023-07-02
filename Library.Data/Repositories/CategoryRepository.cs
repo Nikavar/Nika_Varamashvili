@@ -8,17 +8,17 @@ using System.Threading.Tasks;
 
 namespace Library.Data.Repositories
 {
-    public class AuthorRepository : BaseRepository<Author>, IAuthorRepository
+
+    public class CategoryRepository : BaseRepository<Category>, ICategoryRepository
     {
-        public AuthorRepository(IDbFactory dbFactory) : base(dbFactory)
+        public CategoryRepository(IDbFactory dbFactory) : base(dbFactory)
         {
         }
     }
 
 
-    public interface IAuthorRepository : IBaseRepository<Author>
+    public interface ICategoryRepository : IBaseRepository<Category>
     {
 
     }
-
 }

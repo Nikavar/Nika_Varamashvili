@@ -1,10 +1,14 @@
 using Library.Data;
 using Library.Data.Infrastructure;
 using Library.Data.Repositories;
+using Library.Data.Settings;
 using Library.Service;
 using Library.Web.Mapping;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 string connString = builder.Configuration
@@ -27,6 +31,22 @@ builder.Services.AddDbContext<LibraryContext>(options =>
 //builder.Services.AddIdentity<IdentityUser, IdentityRole>()
 //                .AddEntityFrameworkStores<LibDBContext>()
 //                .AddDefaultTokenProviders();
+//builder.Services.Configure<AppSettings>(startup.cstartup.Configurationon.GetSection(nameof(AppSettings)));
+
+//JWT Authentication
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWTConfig:Key"]))
+    };
+});
+
+
+
+builder.Services.AddSingleton<IAppSettings>(sp => sp.GetRequiredService<IOptions<AppSettings>>().Value);
+
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<DbContext, LibraryContext>();
@@ -68,6 +88,8 @@ builder.Services.AddScoped<ILanguageService, LanguageService>();
 
 builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
 builder.Services.AddScoped<IAuthorService, AuthorService>();
+
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 
 var app = builder.Build();

@@ -12,8 +12,8 @@ namespace Library.Model.Models
         [Key]
         public int ReaderStatusID { get; set; }
         public string? ReaderStat { get; set; }
-        public int LogID { get; set; }
-        public LogInfo? Logs { get; set; }
+
+        // relations
         public ICollection<StaffReader>? StaffReaders { get; set; }
     }
 }

@@ -1,19 +1,18 @@
-﻿using DocumentFormat.OpenXml.Drawing.Wordprocessing;
-using DocumentFormat.OpenXml.Office2019.Excel.ThreadedComments;
-using DocumentFormat.OpenXml.Wordprocessing;
-using Library.Data.Repositories;
-using Library.Model.Models;
+﻿using Library.Model.Models;
 using Library.Service;
 using Library.Web.Constants;
+using Library.Web.Models;
 using Library.Web.Models.Account;
 using Mapster;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using System.Data.Entity;
-using System.Diagnostics.Eventing.Reader;
-using System.Diagnostics.Metrics;
-using System.Linq;
-using System.Text.Json;
+using System.IdentityModel.Tokens.Jwt;
+using System.Runtime.CompilerServices;
+using System.Text;
+using Library.Web.Constants;
+using Humanizer.Localisation;
+using DocumentFormat.OpenXml.Spreadsheet;
 
 namespace Library.Web.Controllers
 {
@@ -25,50 +24,64 @@ namespace Library.Web.Controllers
 		private readonly IRoleUserService _roleUserService;
 		private readonly ILogService _logService;
 		private readonly IPositionService _positionService;
+		private readonly ITokenService _tokenService;
+		private readonly IConfiguration _configuration;
+		
 		public AccountController
-		(
-			ILogService logService,
-			IUserService userService,
-			IStaffReaderService staffReaderService,
-			IRoleService roleService,
-			IRoleUserService roleUserService,
-			IPositionService positionService
-		)
-		{
-			_logService = logService;
-			_userService = userService;
-			_staffReaderService = staffReaderService;
-			_roleService = roleService;
-			_roleUserService = roleUserService;
-			_positionService = positionService;
-		}
-		public IActionResult Login()
+        (
+            ILogService logService,
+            IUserService userService,
+            IStaffReaderService staffReaderService,
+            IRoleService roleService,
+            IRoleUserService roleUserService,
+            IPositionService positionService,
+            ITokenService tokenService,
+			IConfiguration configuration
+        )
+        {
+            _logService = logService;
+            _userService = userService;
+            _staffReaderService = staffReaderService;
+            _roleService = roleService;
+            _roleUserService = roleUserService;
+            _positionService = positionService;
+            _tokenService = tokenService;
+			_configuration = configuration;
+        }
+        public IActionResult Login()
 		{
 			return View(new UserLoginViewModel());
 		}
 
 		[HttpPost]
-		public IActionResult Login(UserLoginViewModel model)
+		public async Task<IActionResult> Login(UserLoginViewModel model)
 		{
 			if (ModelState.IsValid)
 			{
-				var logUser = _userService.LoginUser(model.EmailAddress, model.Password);
-
-				if (logUser != null)
+				var loggedUser = await _userService.LoginUserAsync(model.EmailAddress, model.Password);
+                if (loggedUser != null)
 				{
-					return RedirectToAction("Index", "Home");
+					var token = Helper.TokenGeneration(loggedUser, _configuration);
+                    HttpContext.Response.Cookies.Append("Token", token);
+                    return RedirectToAction("Index", "Home");
 				}
 
 				else
 				{
-                    TempData["Error"] = "username or password is incorrect!";
+					TempData["Error"] = Warnings.UsernameOrPasswordIsIncorrect;
 					return View("Login");
 				}
 			}
 			return View("Login");
 		}
 
-		public async Task<IActionResult> Index()
+        public ActionResult Logout()
+        {
+            HttpContext.Response.Cookies.Delete("Token");
+            return RedirectToAction("Index", "Home");
+        }
+
+        public async Task<IActionResult> Index()
 		{
 			var users = await _userService.GetAllUsersAsync();
 			return View(users);
@@ -157,175 +170,101 @@ namespace Library.Web.Controllers
 		//}
 		#endregion
 
-		//public IActionResult Create()
-		//{
-		//	return View();
-		//}
-
-		//[HttpPost]
-		//[ValidateAntiForgeryToken]
-		//public async Task<IActionResult> Create(User user)
-		//{
-		//	if (ModelState.IsValid)
-		//	{
-		//		await _userService.AddUserAsync(user);
-		//		return RedirectToAction(nameof(Index));
-		//	}
-		//	return View(user);
-		//}
-
-
 		public async Task<IActionResult> Register()
 		{
 			var positions = await _positionService.GetAllPositionsAsync();
 			List<RegisterViewModel> positionLst = new List<RegisterViewModel>();
 
-			var list = (from p in positions select p.PositionName).ToList();
+			//var list = (from p in positions select p.PositionName).ToList();
 
-			list.Insert(0, "--- Select Positions ---");
-			ViewBag.message = list;
+			//list.Insert(0, "--- Select Positions ---");
+			//ViewBag.message = list;
 
-			return View(new RegisterViewModel());
+            ViewBag.message = positions;
+            return View(new RegisterViewModel());
 		}
 
-		[HttpPost]
+
+		private void SendEmail(string body, string email)
+		{
+			// create client
+			var client = new HttpClient();
+		}
+
+        [HttpPost]
 		public async Task<IActionResult> Register(RegisterViewModel model)
 		{
-
             if (ModelState.IsValid)
 			{
-				var checkedMail = _userService.CheckUserByMail(model.Email);
+				var isUserRegistered = await _userService.LoginUserAsync(model.Email, model.Password);
 
-				if (checkedMail != null)
+				if (isUserRegistered != null)
 				{
-					ViewBag.ErrorMessage = "This mail is already exists!";
+					ViewBag.ErrorMessage = Warnings.UserIsAlreadyRegistered;
 					return View("Index", "Home");
 				}
 
-				var newStaffReaderID = await AddNewStaffReader(model);
-				var lastUser = await AddNewUser(model, newStaffReaderID);
+				// Add & Log 'User' Entity In Database
+				var userEntity = model.Adapt<User>();
+                await Helper.AddEntityWithLog(userEntity, _userService.AddUserAsync,_logService);		
 
-				// Logged RoleUser
+                // Add & Log 'StaffReader' Entity In Database
+                var staffReaderEntity = model.Adapt<StaffReader>();
+                await Helper.AddEntityWithLog(staffReaderEntity, _staffReaderService.AddStaffReaderAsync, _logService);
 
-				var lastLoggedRoleUser = await _logService.AddLogAsync
-				(
-					new LogInfo 
-					{ 
-						TableName = "RoleUsers", 
-						DateCreated = DateTime.Now 
-					}
-				);
+                // Update User Entity 'StaffReaderID' property
+                userEntity.StaffReaderID = staffReaderEntity.ID;
+				await _userService.UpdateUserAsync(userEntity);
 
-				// Add RoleUser To DB
-				await _roleUserService.AddRoleUserAsync
-				(
-					new RoleUser 
-					{ 
-						LogID = lastLoggedRoleUser.LogID, 
-						RoleID = 2, 
-						UserID = lastUser.id 
-					}
-				);
+                // Assing Role of 'user' to new user by default
+                var role = _roleService.GetRoleByNameAsync(Roles.user.ToString());
+				var roleUserEntity = new RoleUser() { RoleID = role.ID, UserID = userEntity.id };
+                await Helper.AddEntityWithLog(roleUserEntity,_roleUserService.AddRoleUserAsync,_logService);
 
-				// Logged PositionStaff
-				var loggedPositionStaff = await _logService.AddLogAsync(
+                // Logged PositionStaff
+                var loggedPositionStaff = await _logService.AddLogAsync(
 						new LogInfo 
 						{ 
 							TableName= "PositionStaff",
-							DateCreated = DateTime.Now
 						}					
 					);
 
-				// To_DO
-				//var positionId = await _positionService.GetPositionByIdAsync("Manager");
+                if (userEntity != null)
+                {
+                    var token = Helper.TokenGeneration(staffReaderEntity.ID.ToString(), _configuration);
+                    var url = Request.Scheme + "://" + Request.Host + Url.Action("ConfirmEmail", "Account", new { token = token });
+                    await Helper.EmailLinkConfirmation(userEntity.Email, url, _configuration, staffReaderEntity);
+                }
 
-				return RedirectToAction("Index", "Home");
-				//return View();
+                return RedirectToAction("Index", "Home");
 			}
 
-			return View("Error","Account"); // => exeption + return View()
+			return View("Error","Account"); 
 		}
 
-		private async Task<int> AddNewStaffReader(RegisterViewModel model)
-		{
-			// logged row record for creating New StaffReader 
-			
-			var lastLoggedStaff = await _logService.AddLogAsync(new LogInfo() { TableName = "StaffReaders", DateCreated = DateTime.Now, UserID = null });
-
-			// Add & Save New StaffReader to DB
-			var newStaffReader = new StaffReader()
-			{
-				FirstName = model.FirstName,
-				LastName = model.LastName,
-				DOB = model.DOB,
-				PersonalNumber = model.PersonalNumber,
-				PassportNumber = model.PassportNumber,
-				PhoneNumber = model.PhoneNumber,
-				Email = model.Email,
-				Address = model.Address,
-				Gender = model.Gender,
-				PersonalPhoto = model.PersonalPhoto,
-                LogID = lastLoggedStaff.LogID
-            };
-
-			try
-			{
-				string staffReader_jsondata = JsonConvert.SerializeObject(newStaffReader, Formatting.Indented);
-                lastLoggedStaff.LogContent = staffReader_jsondata;
-                lastLoggedStaff.LogStatus = LogStatus.Info.ToString();
-
-				await _staffReaderService.AddStaffReaderAsync(newStaffReader);
-
-            }
-			catch (Exception ex)
-			{
-				lastLoggedStaff.LogStatus = LogStatus.Error.ToString();
-				lastLoggedStaff.LogContent = ex.Message;
-			}
-
-			finally
-			{
-                await _logService.UpdateLogAsync(lastLoggedStaff);
-			}
-
-			return newStaffReader.ID;
-		}
-		private async Task<User> AddNewUser(RegisterViewModel model, int lastStaffReaderID)
-		{			
-			LogInfo lastLoggedUser = await _logService.AddLogAsync(new LogInfo() { TableName = "Users", DateCreated = DateTime.Now, UserID = null });
-
-			var newUser = new User()
-			{
-				UserName = model.Email,
-				Password = model.Password,
-				LogID = lastLoggedUser.LogID,
-				StaffReaderID = lastStaffReaderID
-			};
-
-            try
+        public async Task<ActionResult> ConfirmEmail(string token)
+        {
+            var id = Helper.TokenDecryption(token);
+			var staffReader = await _staffReaderService.GetStaffReaderByIdAsync(id);
+           
+            if (staffReader == null)
             {
-                string staffReader_jsondata = JsonConvert.SerializeObject(newUser, Formatting.Indented);
-                lastLoggedUser.LogContent = staffReader_jsondata;
-                lastLoggedUser.LogStatus = LogStatus.Info.ToString();
-
-                await _userService.AddUserAsync(newUser);
-            }
-            catch (Exception ex)
-            {
-                lastLoggedUser.LogStatus = LogStatus.Error.ToString();
-                lastLoggedUser.LogContent = ex.Message;
+                ViewBag.ErrorMessage = "Some Error";
+                return View("Index", "Home");
             }
 
-            finally
-            {
-                await _logService.UpdateLogAsync(lastLoggedUser);
-            }
+            staffReader.IsConfirmed = true;
 
-            return newUser;
-		}
+			await _staffReaderService.UpdateStaffReaderAsync(staffReader);
 
-		public async Task<IActionResult> Edit(int id)
-		{
+			await Helper.UpdateEntityWithLog(staffReader, _staffReaderService.UpdateStaffReaderAsync, _logService);
+
+            ViewBag.ErrorMessage = Warnings.EmailWasConfirmed;
+
+            return View();
+        }
+        public async Task<IActionResult> Edit(int id)
+        {
 			var user = await _userService.GetUserByIdAsync(id);
 			return View(user);
 		}
@@ -341,7 +280,7 @@ namespace Library.Web.Controllers
 
 			if (ModelState.IsValid)
 			{
-				await _userService.UpdateUserAsync(user);
+				await Helper.UpdateEntityWithLog(user, _userService.UpdateUserAsync, _logService);
 				return RedirectToAction(nameof(Index));
 			}
 			return View(user);
@@ -358,7 +297,8 @@ namespace Library.Web.Controllers
 		public async Task<IActionResult> DeleteConfirmed(User user)
 		{
 			await _userService.DeleteUserAsync(user);
+			await _logService.DeleteManyLogsAsync(x=> x.EntityID == user.id);
 			return RedirectToAction(nameof(Index));
 		}
-	}
+    }
 }

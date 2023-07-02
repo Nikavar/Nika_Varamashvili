@@ -17,7 +17,6 @@ namespace Library.Data.Configuration
 
             builder.Property(p => p.PositionName)
                    .IsRequired();
-
         }
     }
 }

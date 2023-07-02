@@ -35,6 +35,8 @@ namespace Library.Data
         public DbSet<Tab>? Tabs { get; set; }
         public DbSet<BookStorage>? BookStorages { get; set; }
         public DbSet<Language>? Languages { get; set; }
+        public DbSet<Author>? Authors { get; set; }
+        public DbSet<Category>? Categories { get; set; }
         public DbSet<LogInfo>? LogInfo { get; set; }
 
         public virtual void Commit()
@@ -59,14 +61,16 @@ namespace Library.Data
             //modelBuilder.ApplyConfiguration(new BookPublisherConfiguration());
             modelBuilder.ApplyConfiguration(new RoleConfiguration());
             modelBuilder.ApplyConfiguration(new AuthorConfiguration());
+            modelBuilder.ApplyConfiguration(new CategoryConfiguration());
+
 
 
 
             modelBuilder.Entity<User>().HasData(
                  new List<User>
                 {
-                    new User{ id = 1, UserName = "user1", Password = "123", LogID = 0, StaffReaderID = 0 },
-                    new User{ id = 2, UserName = "user2", Password= "345", LogID = 0, StaffReaderID = 0 }
+                    new User{ id = 1, Email = "user1", Password = "123",StaffReaderID = 0 },
+                    new User{ id = 2, Email = "user2", Password= "345",StaffReaderID = 0 }
                 }
             );
         }

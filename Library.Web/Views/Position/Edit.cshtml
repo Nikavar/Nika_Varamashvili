@@ -27,11 +27,6 @@
                 <input asp-for="StartWorkingDate" class="form-control" style="margin: 5px 0 5px 0" />
                 <span asp-validation-for="StartWorkingDate" class="text-danger"></span>
             </div>
-            <div class="form-group" hidden>
-                <label asp-for="LogID" class="control-label"></label>
-                <input asp-for="LogID" class="form-control" />
-                <span asp-validation-for="LogID" class="text-danger"></span>
-            </div>
             <div class="form-group" style="margin: 10px 0 10px 0; width: 250px">
                 <input type="submit" value="Update" class="btn btn-success" style="width:100px; background-color:cadetblue" onclick="@("window.location.href='" + @Url.Action("Edit") + "'");" />
                 <input type="submit" value="Cancel" class="btn btn-secondary" style="width:100px; margin-left:21px" asp-action="Index"  />

@@ -1,5 +1,6 @@
 ﻿using Library.Model.Models;
 using Library.Service;
+using Library.Web.Constants;
 using Library.Web.Models;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
@@ -8,18 +9,18 @@ namespace Library.Web.Controllers
 {
     public class PublisherController : Controller
     {       
-        private readonly IPublisherService _publisherService;
-        private readonly ILogService _logService;
+        private readonly IPublisherService publisherService;
+        private readonly ILogService logService;
 
         public PublisherController(IPublisherService publisherService, ILogService logService)
         {
-            _publisherService = publisherService;
-            _logService = logService;
+            this.publisherService = publisherService;
+            this.logService = logService;
         }
 
         public async Task<IActionResult> Index()
         {
-            var publishers = await _publisherService.GetAllPublishersAsync();
+            var publishers = await publisherService.GetAllPublishersAsync();
             return View(publishers);
         }
 
@@ -30,68 +31,61 @@ namespace Library.Web.Controllers
         // POST/publisher/Add
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Add(PublisherViewModel item)
+        public async Task<ActionResult> Add(PublisherViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var loggedPublisher = await _logService.AddLogAsync(new LogInfo { TableName = "Publishers", DateCreated = DateTime.Now });
-                item.LogID = loggedPublisher.LogID;
+                var entity = model.Adapt<Publisher>();
+                await Helper.AddEntityWithLog(entity, publisherService.AddPublisherAsync, logService);
 
-                await _publisherService.AddPublisherAsync(item.Adapt<Publisher>());
-
-                TempData["Success"] = "The Publisher has been added!";
-
+                TempData["Success"] = Helper.SuccessfullyAdded<Publisher>();
                 return RedirectToAction("Index");
             }
 
-            return View(item);
+            return View(model);
         }
 
         // GET /publisher/edit/3
         public async Task<ActionResult> Edit(int id)
         {
-            var item = await _publisherService.GetPublisherByIdAsync(id);
+            var entity = await publisherService.GetPublisherByIdAsync(id);
 
-            if (item == null)
+            if (entity == null)
             {
                 return NotFound();
             }
 
-            return View(item);
+            return View(entity);
         }
 
         // POST /publisher/edit/4
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(PublisherViewModel item)
+        public async Task<ActionResult> Edit(PublisherViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var logToUpdate = await _logService.GetLogByIdAsync(item.LogID);
-                logToUpdate.DateUpdated = DateTime.Now;
-
-                await _logService.UpdateLogAsync(logToUpdate);
-
-                await _publisherService.UpdatePublisherAsync(item.Adapt<Publisher>());
-                TempData["Success"] = "The Publisher has Updated!";
+                var entity = model.Adapt<Publisher>();
+                await Helper.UpdateEntityWithLog(entity,publisherService.UpdatePublisherAsync, logService);
+                TempData["Success"] = Helper.SuccessfullyUpdated<Publisher>();
 
                 return RedirectToAction("Index");
             }
 
-            return View(item);
+            return View(model);
         }
 
         //GET /publisher/edit/3
         public async Task<ActionResult> Delete(int id)
         {
-            var item = await _publisherService.GetPublisherByIdAsync(id);
+            var entity = await publisherService.GetPublisherByIdAsync(id);
 
-            if (item == null)
+            if (entity == null)
             {
                 return NotFound();
             }
-
-            return View(item.Adapt<PublisherViewModel>());
+            var model = entity.Adapt<PublisherViewModel>();
+            return View(model);
         }
 
 
@@ -100,12 +94,13 @@ namespace Library.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Delete(PublisherViewModel item)
         {
-            var logToDelete = await _logService.GetLogByIdAsync(item.ID);
-            logToDelete.DateDeleted = DateTime.Now;
-            await _logService.UpdateLogAsync(logToDelete);
+            var entity = item.Adapt<Publisher>();
+            await publisherService.DeletePublisherAsync(entity);
+            
+            var log = await logService.GetLogByEntityId(entity.ID);
+            await logService.DeleteLogAsync(log);
 
-            await _publisherService.DeletePublisherAsync(item.Adapt<Publisher>());
-            TempData["Success"] = "The Publisher has been deleted!";
+            TempData["Success"] = Helper.SuccessfullyDeleted<Publisher>();
 
             return RedirectToAction("Index");
         }
@@ -119,7 +114,7 @@ namespace Library.Web.Controllers
                     controllerName: "Home");
             }
 
-            var result = await _publisherService.GetPublisherByIdAsync(id);
+            var result = await publisherService.GetPublisherByIdAsync(id);
             ViewData["detailId"] = result.ID;
 
             if (result == null)

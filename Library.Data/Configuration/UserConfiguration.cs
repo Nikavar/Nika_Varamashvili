@@ -17,7 +17,7 @@ namespace Library.Data.Configuration
         {
             builder.ToTable("Users");
 
-            builder.Property(u => u.UserName)
+            builder.Property(u => u.Email)
                 .HasMaxLength(30)
                 .IsUnicode(false);
 
@@ -28,16 +28,12 @@ namespace Library.Data.Configuration
             builder.Property(u => u.StaffReaderID)
                 .HasColumnName("StaffReader_Id");
 
-            builder.Property(u => u.LogID)
-                .HasColumnName("LogID");
 
             // relations
 
             builder.HasOne(sr => sr.StaffReader)
                 .WithMany(u => u.Users);
 
-            builder.HasOne(l => l.Log)
-                .WithMany(u => u.Users);
         }
     }
 }

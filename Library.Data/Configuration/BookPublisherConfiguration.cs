@@ -23,9 +23,6 @@ namespace Library.Data.Configuration
             builder.Property(bp => bp.BookId)
                 .HasColumnName("Book_Id");
 
-            builder.Property(bp => bp.LogID)
-                .HasColumnName("LogID");
-
             // relations
             builder.HasOne(bp => bp.Book)
                 .WithMany(bp => bp.BookPublishers);

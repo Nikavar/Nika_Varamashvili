@@ -15,10 +15,8 @@ namespace Library.Model.Models
         public string? Address { get; set; }
         public string? PhoneNumber { get; set; }
         public string? Email { get; set; }
-        public int? LogID { get; set; }
 
         // relations
-        public LogInfo? Log { get; set; }
         public ICollection<BookPublisher>? BookPublishers { get; set; }
     }
 }

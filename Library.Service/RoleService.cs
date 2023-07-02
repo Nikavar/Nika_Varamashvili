@@ -15,6 +15,7 @@ namespace Library.Service
         Task<IEnumerable<Role>> GetAllRolesAsync();
         Task<IEnumerable<Role>> GetManyRolesAsync(Expression<Func<Role, bool>> filter);
         Task<Role> GetRoleByIdAsync(params object[] key);
+        Role GetRoleByNameAsync(string name);
         Task<Role> AddRoleAsync(Role entity);
         Task UpdateRoleAsync(Role entity);
         Task DeleteRoleAsync(Role entity);
@@ -59,6 +60,11 @@ namespace Library.Service
         public async Task<Role> GetRoleByIdAsync(params object[] key)
         {
             return await _roleRepository.GetByIdAsync(key);
+        }
+
+        public Role GetRoleByNameAsync(string name)
+        {
+            return _roleRepository.GetRoleByNameAsync(name);
         }
 
         public async Task UpdateRoleAsync(Role entity)

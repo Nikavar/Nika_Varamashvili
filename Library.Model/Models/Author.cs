@@ -14,11 +14,8 @@ namespace Library.Model.Models
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public DateTime DoB { get; set; }
-        public int LogID { get; set; }
 
         // relations
-        public LogInfo? Log { get; set; }
         public ICollection<BookAuthor>? BookAuthors { get; set; }
-
     }
 }

@@ -20,14 +20,6 @@ namespace Library.Data.Configuration
                 .HasMaxLength(30)
                 .IsUnicode(false);
 
-            builder.Property(l => l.DateCreated)
-                .HasColumnType("date")
-                .HasColumnName("DateCreated");
-
-            builder.Property(l => l.DateUpdated)
-                .HasColumnType("date")
-            .HasColumnName("DateUpdated");
-
             builder.Property(l => l.DateDeleted)
                 .HasColumnType("date")
             .HasColumnName("DateDeleted");

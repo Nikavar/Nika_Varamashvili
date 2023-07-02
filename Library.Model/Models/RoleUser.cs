@@ -13,9 +13,9 @@ namespace Library.Model.Models
         public int ID { get; set; }
         public int UserID { get; set; }
         public int RoleID { get; set; }
-        public int LogID { get; set; }
+
+        // relations
         public User? User { get; set; }
         public Role? Role { get; set; }
-        public LogInfo? Log { get; set; }
     }
 }

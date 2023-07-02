@@ -15,7 +15,8 @@ namespace Library.Data.Configuration
         {
             builder.ToTable("Categories");
 
-            builder.HasKey()
+            builder.Property(c => c.CategoryName)
+                            .IsUnicode(true);
         }
     }
 }

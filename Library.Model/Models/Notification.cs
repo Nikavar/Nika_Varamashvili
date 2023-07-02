@@ -15,12 +15,10 @@ namespace Library.Model.Models
         public int StaffId { get; set; }
         public string? NotificationText { get; set; }
         public DateTime SendTime { get; set; }
-        public int LogID { get; set; }
 
         // relations
         public Subscriber? Subscriber { get; set; }
         public StaffReader? StaffReader { get; set; }
-        public LogInfo? Log { get; set; }
 
     }
 }
