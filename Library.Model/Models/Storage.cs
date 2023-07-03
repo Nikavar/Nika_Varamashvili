@@ -14,5 +14,8 @@ namespace Library.Model.Models
         public int ClosetNumber { get; set; }
         public int ShelfNumber { get; set; }
 
+        // relations
+        public ICollection<Storage>? Storages { get; set;}
+
     }
 }

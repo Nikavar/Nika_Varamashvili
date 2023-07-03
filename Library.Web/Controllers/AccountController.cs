@@ -13,6 +13,8 @@ using System.Text;
 using Library.Web.Constants;
 using Humanizer.Localisation;
 using DocumentFormat.OpenXml.Spreadsheet;
+using WebMatrix.WebData;
+using Windows.ApplicationModel.Email;
 
 namespace Library.Web.Controllers
 {
@@ -74,6 +76,69 @@ namespace Library.Web.Controllers
 			}
 			return View("Login");
 		}
+
+		public ActionResult ForgetPassword()
+		{
+			return View();
+		}
+
+		[HttpPost]
+		public async Task<ActionResult> ForgetPassword(ForgetPasswordViewModel model)		
+		{
+			if (ModelState.IsValid)
+			{
+				var entity = await _userService.GetManyUsersAsync(x => x.Email == model.Email);
+				if (entity != null)
+				{
+					string To = model.Email, ToMailText, Password, SMTPPort, Host;
+					string token = Helper.TokenGeneration(model.Email, _configuration);
+					if (token == null)
+					{
+						// If user does not exist or is not confirmed.
+						ViewBag.ErrorMessage = Warnings.UserNotExistsOrNotConfirmed;
+						return View("Index");
+					}
+					else
+					{
+						//Create URL with above token
+						var lnkHref = "<a href='" + Url.Action("ResetPassword", "Account", new { email = model.Email, code = token }, "http") + "'>Reset Password</a>";
+						//HTML Template for Send email
+						string subject = "Your changed password";
+						string body = "<b>Please find the Password Reset Link. </b><br/>" + lnkHref;
+						//Get and set the AppSettings using configuration manager.
+						Helper.AppSettings(out ToMailText, out Password, out SMTPPort, out Host, _configuration);
+						//Call send email methods.
+						string From = _configuration.GetSection("MailSettings:From").Value;
+						Helper.SendEmail(From, subject, body, To, ToMailText, Password, SMTPPort, Host);
+					}
+				}
+			}
+			return View();
+		}
+
+        public ActionResult ResetPassword(string code)
+        {
+            ResetPasswordViewModel model = new ResetPasswordViewModel();
+            model.Token = code;
+            return View(model);
+        }
+        [HttpPost]
+        public ActionResult ResetPassword(ResetPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                bool resetResponse = WebSecurity.ResetPassword(model.Token, model.Password);
+                if (resetResponse)
+                {
+                    ViewBag.Message = Warnings.SuccesfullyChanged;
+                }
+                else
+                {
+                    ViewBag.Message = Warnings.SomethingWasWrong;
+                }
+            }
+            return View(model);
+        }
 
         public ActionResult Logout()
         {
@@ -184,13 +249,6 @@ namespace Library.Web.Controllers
             return View(new RegisterViewModel());
 		}
 
-
-		private void SendEmail(string body, string email)
-		{
-			// create client
-			var client = new HttpClient();
-		}
-
         [HttpPost]
 		public async Task<IActionResult> Register(RegisterViewModel model)
 		{
@@ -203,18 +261,14 @@ namespace Library.Web.Controllers
 					ViewBag.ErrorMessage = Warnings.UserIsAlreadyRegistered;
 					return View("Index", "Home");
 				}
-
-				// Add & Log 'User' Entity In Database
-				var userEntity = model.Adapt<User>();
-                await Helper.AddEntityWithLog(userEntity, _userService.AddUserAsync,_logService);		
-
                 // Add & Log 'StaffReader' Entity In Database
                 var staffReaderEntity = model.Adapt<StaffReader>();
                 await Helper.AddEntityWithLog(staffReaderEntity, _staffReaderService.AddStaffReaderAsync, _logService);
 
-                // Update User Entity 'StaffReaderID' property
+				// Add & Log 'User' Entity In Database
+				var userEntity = model.Adapt<User>();
                 userEntity.StaffReaderID = staffReaderEntity.ID;
-				await _userService.UpdateUserAsync(userEntity);
+                await Helper.AddEntityWithLog(userEntity, _userService.AddUserAsync,_logService);		
 
                 // Assing Role of 'user' to new user by default
                 var role = _roleService.GetRoleByNameAsync(Roles.user.ToString());
@@ -233,7 +287,7 @@ namespace Library.Web.Controllers
                 {
                     var token = Helper.TokenGeneration(staffReaderEntity.ID.ToString(), _configuration);
                     var url = Request.Scheme + "://" + Request.Host + Url.Action("ConfirmEmail", "Account", new { token = token });
-                    await Helper.EmailLinkConfirmation(userEntity.Email, url, _configuration, staffReaderEntity);
+                    await Helper.EmailLinkConfirmation(userEntity.Email, url, staffReaderEntity, _configuration);
                 }
 
                 return RedirectToAction("Index", "Home");
@@ -249,20 +303,18 @@ namespace Library.Web.Controllers
            
             if (staffReader == null)
             {
-                ViewBag.ErrorMessage = "Some Error";
+                ViewBag.ErrorMessage = Warnings.SomethingWasWrong;
                 return View("Index", "Home");
             }
 
             staffReader.IsConfirmed = true;
-
 			await _staffReaderService.UpdateStaffReaderAsync(staffReader);
-
 			await Helper.UpdateEntityWithLog(staffReader, _staffReaderService.UpdateStaffReaderAsync, _logService);
-
             ViewBag.ErrorMessage = Warnings.EmailWasConfirmed;
 
             return View();
         }
+
         public async Task<IActionResult> Edit(int id)
         {
 			var user = await _userService.GetUserByIdAsync(id);

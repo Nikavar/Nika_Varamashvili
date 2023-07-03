@@ -101,7 +101,7 @@ namespace Library.Web.Controllers
 		{
 			var entity = await positionService.GetPositionByIdAsync(model.ID);
 			await positionService.DeletePositionAsync(entity);
-			await logService.DeleteManyLogsAsync(x => x.EntityID == entity.ID);
+			await logService.DeleteManyLogsAsync(x => x.EntityID == entity.ID && x.TableName == entity.GetType().Name);
 
 			TempData["Success"] = Helper.SuccessfullyDeleted<Position>();
 

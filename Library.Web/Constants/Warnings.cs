@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using Library.Model.Models;
+using System.Drawing;
 
 namespace Library.Web.Constants
 {
@@ -12,5 +13,11 @@ namespace Library.Web.Constants
 		public const string ConfirmEmailSubject = "Please Confirm your email!";
 		public const string EmailWasConfirmed = "Your Email was Confirmed!";
 		public const string ConfirmationEmailBody = "Dear, \n{FirstName} {LastName}, \nPlease Confirm your email address <a href=\"{#URL#}\"> CLICK here </a>";
+		public const string UserNotExistsOrNotConfirmed = "User does not exist or is not confirmed";
+		public const string SuccesfullyChanged = "Successfully Changed";
+        public const string SomethingWasWrong = "Something was Wrong";
+
+
+
     }
 }

@@ -90,7 +90,7 @@ namespace Library.Web.Constants
             }
         }
 
-        public static async Task EmailLinkConfirmation(string EmailTo, string url, IConfiguration configuration, StaffReader staffReader)
+        public static async Task EmailLinkConfirmation(string EmailTo, string url, StaffReader staffReader, IConfiguration configuration)
         {
             var emailBody = Warnings.ConfirmationEmailBody;
 
@@ -100,6 +100,8 @@ namespace Library.Web.Constants
             await SendEmailAsync(EmailTo, Warnings.ConfirmEmailSubject, emailBody, configuration);
         }
 
+
+        // Send Email for confirmation a link
         public static async Task SendEmailAsync(string email, string subject, string message, IConfiguration configuration)
         {
             var smtpClient = new SmtpClient(configuration.GetSection("MailSettings:Host").Value, configuration.GetValue<int>("MailSettings:Port"))
@@ -122,12 +124,35 @@ namespace Library.Web.Constants
             await smtpClient.SendMailAsync(mailMessage);
         }
 
-        // Generates token for Email Confirmation
-        public static string TokenGeneration(string id, IConfiguration configuration)
+		// Forget & Reset Password
+		public static void AppSettings(out string ToMailText, out string Password, out string SMTPPort, out string Host, IConfiguration configuration)
+		{
+			ToMailText = configuration.GetSection("MailSettings:ToMailText").Value;
+			Password = configuration.GetSection("MailSettings:Password").Value;
+			SMTPPort = configuration.GetSection("MailSettings:Port").Value;
+			Host = configuration.GetSection("MailSettings:Host").Value;
+		}
+		public static void SendEmail(string From, string Subject, string Body, string To, string ToMailText, string Password, string SMTPPort, string Host)
+		{
+			System.Net.Mail.MailMessage mail = new System.Net.Mail.MailMessage();
+			mail.To.Add(To);
+			mail.From = new MailAddress(From);
+			mail.Subject = Subject;
+			mail.Body = Body;
+			SmtpClient smtp = new SmtpClient();
+			smtp.Host = Host;
+			smtp.Port = Convert.ToInt16(SMTPPort);
+			smtp.Credentials = new NetworkCredential(From, Password);
+			smtp.EnableSsl = true;
+			smtp.Send(mail);
+		}
+
+		// Generates token for Email Confirmation
+		public static string TokenGeneration(string parameter, IConfiguration configuration)
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, id),
+                new Claim(ClaimTypes.NameIdentifier, parameter),
             };
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetSection("JWTConfig:Key").Value));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
@@ -165,9 +190,9 @@ namespace Library.Web.Constants
         {
             var handler = new JwtSecurityTokenHandler();
             var jwtToken = handler.ReadJwtToken(token);
-            var jwtData = jwtToken.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier);
+            var jwtClaims = jwtToken.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier);
             
-            return jwtData != null ? int.Parse(jwtData.Value) : -1;
+            return jwtClaims != null ? int.Parse(jwtClaims.Value) : -1;
         }
     }
 }
