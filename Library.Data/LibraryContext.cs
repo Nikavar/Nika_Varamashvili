@@ -37,6 +37,7 @@ namespace Library.Data
         public DbSet<Language>? Languages { get; set; }
         public DbSet<Author>? Authors { get; set; }
         public DbSet<Category>? Categories { get; set; }
+        public DbSet<Email>? EmailTemplates { get; set; }
         public DbSet<LogInfo>? LogInfo { get; set; }
 
         public virtual void Commit()
@@ -62,7 +63,7 @@ namespace Library.Data
             modelBuilder.ApplyConfiguration(new RoleConfiguration());
             modelBuilder.ApplyConfiguration(new AuthorConfiguration());
             modelBuilder.ApplyConfiguration(new CategoryConfiguration());
-
+            modelBuilder.ApplyConfiguration(new EmailConfiguration());
 
 
 

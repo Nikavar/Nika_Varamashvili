@@ -21,14 +21,14 @@ namespace Library.Web.Controllers
 			this.logService = logService;
 		}
 
-		public async Task<IActionResult> Index()
+		public async Task<ActionResult> Index()
 		{
 			var result = await positionService.GetAllPositionsAsync();
 			return View(result);
 		}
 
 		// GET/position/index
-		public IActionResult Add() => View();
+		public ActionResult Add() => View();
 
 
 		// POST/position/Add

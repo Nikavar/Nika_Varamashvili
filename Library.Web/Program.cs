@@ -92,6 +92,9 @@ builder.Services.AddScoped<IAuthorService, AuthorService>();
 builder.Services.AddScoped<IStorageRepository, StorageRepository>();
 builder.Services.AddScoped<IStorageService, StorageService>();
 
+builder.Services.AddTransient<IEmailRepository, EmailRepository>();
+builder.Services.AddTransient<IEmailService, EmailService>();
+
 builder.Services.AddScoped<ITokenService, TokenService>();
 
 

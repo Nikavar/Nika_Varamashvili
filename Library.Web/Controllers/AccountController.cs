@@ -92,6 +92,7 @@ namespace Library.Web.Controllers
 				{
 					string To = model.Email, ToMailText, Password, SMTPPort, Host;
 					string token = Helper.TokenGeneration(model.Email, _configuration);
+
 					if (token == null)
 					{
 						// If user does not exist or is not confirmed.
@@ -140,6 +141,25 @@ namespace Library.Web.Controllers
             return View(model);
         }
 
+        public async Task<ActionResult> ConfirmEmail(string token)
+        {
+            var id = Helper.TokenDecryption(token);
+            var staffReader = await _staffReaderService.GetStaffReaderByIdAsync(id);
+
+            if (staffReader == null)
+            {
+                ViewBag.ErrorMessage = Warnings.SomethingWasWrong;
+                return View("Index", "Home");
+            }
+
+            staffReader.IsConfirmed = true;
+            await _staffReaderService.UpdateStaffReaderAsync(staffReader);
+            await Helper.UpdateEntityWithLog(staffReader, _staffReaderService.UpdateStaffReaderAsync, _logService);
+            ViewBag.ErrorMessage = Warnings.EmailWasConfirmed;
+
+            return View();
+        }
+
         public ActionResult Logout()
         {
             HttpContext.Response.Cookies.Delete("Token");
@@ -157,83 +177,6 @@ namespace Library.Web.Controllers
 			var user = await _userService.GetUserByIdAsync(id);
 			return View(user);
 		}
-
-		#region Old Code for Identity
-		//public async Task<IActionResult> Login(UserLoginViewModel model)
-		//{
-		//    //var isSuccess = await _userService.LoginUser(model.EmailAddress, model.Password);
-
-
-		//    //var isSuccess = await _loginUser.AuthenticateUser(model.EmailAddress, model.Password);
-
-		//    //if (isSuccess != null)
-		//    //{
-		//    //    ViewBag.username = string.Format("Successfully logged-in", model.EmailAddress);
-		//    //    return RedirectToAction("Index", "Home");
-		//    //}
-
-		//    //else
-		//    //{
-		//    //    ViewBag.username = string.Format("Login failed", model.EmailAddress);
-		//    //    return View(model);
-		//    //}
-		//}
-
-
-		//private readonly UserManager<IdentityUser> _userManager;
-		//private readonly SignInManager<IdentityUser> _signInManager;
-
-		//private readonly IUserService userService;
-
-		//public AccountController(IUserService userService)
-		//{
-		//    this.userService = userService;            
-		//}
-
-		//public AccountController(Microsoft.AspNetCore.Identity.UserManager<IdentityUser> userManager, 
-		//                        SignInManager<IdentityUser> signInManager)
-		//{
-		//    _userManager = userManager;
-		//    _signInManager = signInManager;
-		//}
-
-		//public IActionResult Login()
-		//{
-		//    return View(new LoginViewModel());
-		//}
-
-		//[HttpPost]
-		//public async Task<IActionResult> Login(LoginViewModel model)
-		//{
-		//    if (!ModelState.IsValid) return View(model);
-		//    //var user = await _userManager.FindByEmailAsync(model.EmailAddress);
-
-		//    var user = userService.GetUserById(model.UserId);
-
-		//    if (user != null)
-		//    {
-		//        //var password = await _userManager.CheckPasswordAsync(user, model.Password);
-
-		//        //userService.CreateUser(user);
-
-
-		//        //if (password)
-		//        //{
-		//        //    var result = await _signInManager.PasswordSignInAsync(user, model.Password, false, false);
-		//        //    if (result.Succeeded)
-		//        //    {
-		//        //        return RedirectToAction("Index", "home");
-		//        //    }
-
-		//        //    TempData["Error"] = "Please, Try Again!";                    
-		//        //    return View(model);
-		//        //}
-		//    }
-		//    TempData["Error"] = "Wrong, Try Again";
-
-		//    return View(model);
-		//}
-		#endregion
 
 		public async Task<IActionResult> Register()
 		{
@@ -287,6 +230,7 @@ namespace Library.Web.Controllers
                 {
                     var token = Helper.TokenGeneration(staffReaderEntity.ID.ToString(), _configuration);
                     var url = Request.Scheme + "://" + Request.Host + Url.Action("ConfirmEmail", "Account", new { token = token });
+
                     await Helper.EmailLinkConfirmation(userEntity.Email, url, staffReaderEntity, _configuration);
                 }
 
@@ -295,25 +239,6 @@ namespace Library.Web.Controllers
 
 			return View("Error","Account"); 
 		}
-
-        public async Task<ActionResult> ConfirmEmail(string token)
-        {
-            var id = Helper.TokenDecryption(token);
-			var staffReader = await _staffReaderService.GetStaffReaderByIdAsync(id);
-           
-            if (staffReader == null)
-            {
-                ViewBag.ErrorMessage = Warnings.SomethingWasWrong;
-                return View("Index", "Home");
-            }
-
-            staffReader.IsConfirmed = true;
-			await _staffReaderService.UpdateStaffReaderAsync(staffReader);
-			await Helper.UpdateEntityWithLog(staffReader, _staffReaderService.UpdateStaffReaderAsync, _logService);
-            ViewBag.ErrorMessage = Warnings.EmailWasConfirmed;
-
-            return View();
-        }
 
         public async Task<IActionResult> Edit(int id)
         {

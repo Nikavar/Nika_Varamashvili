@@ -1,44 +1,44 @@
-﻿using Library.Data.Infrastructure;
-using Library.Data.Repositories;
-using Library.Model.Models;
+﻿using Library.Model.Models;
 using Library.Service;
 using Library.Web.Constants;
 using Library.Web.Models;
+using Library.Web.Models.Account;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.Host;
+using Windows.Graphics.Printing.PrintSupport;
 
 namespace Library.Web.Controllers
 {
-    public class LanguageController : Controller
+    public class EmailController : Controller
     {
-        private readonly ILanguageService languageService;
-        private readonly ILogService logService;
+        private readonly IEmailService emailService;
+        private readonly ILogService logService;       
 
-        public LanguageController(ILanguageService languageService, ILogService logService)
+        public EmailController(IEmailService emailService, ILogService logService)
         {
-            this.languageService = languageService;
-            this.logService = logService;            
+            this.emailService = emailService;
+            this.logService = logService;
         }
+
         public async Task<ActionResult> Index()
         {
-            var result = await languageService.GetAllLanguagesAsync();
+            var result = await emailService.GetAllEmailsAsync();
             return View(result);
         }
 
-        // GET/language/index
-        public ActionResult Add() => View();
-
+        public IActionResult Add() => View();
 
         // POST/language/Add
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Add(LanguageViewModel model)
+        public async Task<ActionResult> Add(EmailTemplateViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var entity = model.Adapt<Language>();
-                await Helper.AddEntityWithLog(entity, languageService.AddLanguageAsync, logService);
-                TempData["Success"] = Helper.SuccessfullyAdded<Language>();
+                var entity = model.Adapt<Email>();
+                await Helper.AddEntityWithLog(entity, emailService.AddEmailAsync, logService);
+                TempData["Success"] = Helper.SuccessfullyAdded<Email>();
 
                 return RedirectToAction("Index");
             }
@@ -46,10 +46,10 @@ namespace Library.Web.Controllers
             return View(model);
         }
 
-        // GET /language/edit/3
+        // GET /email/edit/3
         public async Task<ActionResult> Edit(int id)
         {
-            var item = await languageService.GetLanguageByIdAsync(id);
+            var item = await emailService.GetEmailByIdAsync(id);
 
             if (item == null)
             {
@@ -59,16 +59,16 @@ namespace Library.Web.Controllers
             return View(item);
         }
 
-        // POST /language/edit/4
+        // POST /email/edit/4
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(LanguageViewModel model)
+        public async Task<ActionResult> Edit(EmailTemplateViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var entity = model.Adapt<Language>();
-                await Helper.UpdateEntityWithLog(entity, languageService.UpdateLanguageAsync, logService);
-                TempData["Success"] = Helper.SuccessfullyUpdated<Language>();
+                var entity = model.Adapt<Email>();
+                await Helper.UpdateEntityWithLog(entity, emailService.UpdateEmailAsync, logService);
+                TempData["Success"] = Helper.SuccessfullyUpdated<Email>();
 
                 return RedirectToAction("Index");
             }
@@ -76,31 +76,31 @@ namespace Library.Web.Controllers
             return View(model);
         }
 
-        //GET /language/edit/3
+        //GET /email/edit/3
         public async Task<ActionResult> Delete(int id)
         {
-            var entity = await languageService.GetLanguageByIdAsync(id);
+            var entity = await emailService.GetEmailByIdAsync(id);
 
             if (entity == null)
             {
                 return NotFound();
             }
 
-            var model = entity.Adapt<LanguageViewModel>();
+            var model = entity.Adapt<EmailTemplateViewModel>();
             return View(model);
         }
 
 
-        // POST /language/delete/4
+        // POST /email/delete/4
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Delete(LanguageViewModel model)
         {
-            var entity = await languageService.GetLanguageByIdAsync(model.Id);
-            await languageService.DeleteLanguageAsync(entity);
+            var entity = await emailService.GetEmailByIdAsync(model.Id);
+            await emailService.DeleteEmailAsync(entity);
             await logService.DeleteManyLogsAsync(x => x.EntityID == entity.Id);
 
-            TempData["Success"] = Helper.SuccessfullyDeleted<Language>();
+            TempData["Success"] = Helper.SuccessfullyDeleted<Email>();
 
             return RedirectToAction("Index");
         }
@@ -114,7 +114,7 @@ namespace Library.Web.Controllers
                     controllerName: "Home");
             }
 
-            var result = await languageService.GetLanguageByIdAsync(id);
+            var result = await emailService.GetEmailByIdAsync(id);
             ViewData["detailId"] = result.Id;
 
             if (result == null)

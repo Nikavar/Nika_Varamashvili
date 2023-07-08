@@ -12,6 +12,6 @@ namespace Library.Web.Models
 		public string? Description { get; set; }
 
 		[ForeignKey("ParentId")]
-        public List<TabViewModel> Child { get; set; }
+        public List<TabViewModel>? Child { get; set; }
     }
 }

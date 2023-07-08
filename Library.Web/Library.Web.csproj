@@ -65,6 +65,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Views\Email\Details.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <EmbeddedResource Update="Models\Resources\ValidationMessages.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ValidationMessages.Designer.cs</LastGenOutput>

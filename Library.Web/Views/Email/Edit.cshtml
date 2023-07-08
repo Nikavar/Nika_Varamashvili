@@ -1,0 +1,52 @@
+﻿@model Library.Model.Models.Email;
+
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<br/>
+
+<h4 style="color:grey; font-size:larger">Edit Author</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">               
+            <div class="form-group" style="width:225px; margin: 10px 0 10px 0">
+                <label asp-for="TemplateName" class="control-label"></label>
+                <input asp-for="TemplateName" class="form-control" style="margin: 5px 0 5px 0" />
+                <span asp-validation-for="TemplateName" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="width: 225px; margin: 10px 0 10px 0">
+                <label asp-for="From" class="control-label"></label>
+                <input asp-for="From" class="form-control" style="margin: 5px 0 5px 0" />
+                <span asp-validation-for="From" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="width: 225px; margin: 10px 0 10px 0">
+                <label asp-for="To" class="control-label"></label>
+                <input asp-for="To" class="form-control" style="margin: 5px 0 5px 0" />
+                <span asp-validation-for="To" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="width: 225px; margin: 10px 0 10px 0">
+                <label asp-for="Subject" class="control-label"></label>
+                <input asp-for="Subject" class="form-control" style="margin: 5px 0 5px 0" />
+                <span asp-validation-for="Subject" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="width: 225px; margin: 10px 0 10px 0">
+                <label asp-for="Body" class="control-label"></label>
+                <input asp-for="Body" class="form-control" style="margin: 5px 0 5px 0" />
+                <span asp-validation-for="Body" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="margin: 10px 0 10px 0; width: 250px">
+                <input type="submit" value="Update" class="btn btn-success" style="width:100px; background-color:cadetblue" onclick="@("window.location.href='" + @Url.Action("Edit") + "'");" />
+                <input type="submit" value="Cancel" class="btn btn-secondary" style="width:100px; margin-left:21px" asp-action="Index"  />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

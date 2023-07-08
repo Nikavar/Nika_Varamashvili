@@ -18,7 +18,7 @@ namespace Library.Web.Controllers
             this.logService = logService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<ActionResult> Index()
         {
             var result = await this.authorService.GetAllAuthorsAsync();
             return View(result);

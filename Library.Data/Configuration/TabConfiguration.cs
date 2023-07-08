@@ -21,7 +21,6 @@ namespace Library.Data.Configuration
 
 			builder.Property(x => x.ParentId)
 				.HasColumnName("ParentId");
-
 		}
 	}
 }
