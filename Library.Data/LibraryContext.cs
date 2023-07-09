@@ -38,6 +38,7 @@ namespace Library.Data
         public DbSet<Author>? Authors { get; set; }
         public DbSet<Category>? Categories { get; set; }
         public DbSet<Email>? EmailTemplates { get; set; }
+        public DbSet<Storage>? Storages { get; set; }
         public DbSet<LogInfo>? LogInfo { get; set; }
 
         public virtual void Commit()

@@ -4,6 +4,7 @@ using Library.Data.Repositories;
 using Library.Data.Settings;
 using Library.Service;
 using Library.Web.Mapping;
+using Library.Web.Models.BookTest;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -94,6 +95,8 @@ builder.Services.AddScoped<IStorageService, StorageService>();
 
 builder.Services.AddTransient<IEmailRepository, EmailRepository>();
 builder.Services.AddTransient<IEmailService, EmailService>();
+
+builder.Services.AddScoped<IBookRepository, BookRepository>();
 
 builder.Services.AddScoped<ITokenService, TokenService>();
 

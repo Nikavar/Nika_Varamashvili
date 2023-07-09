@@ -1,0 +1,151 @@
+﻿@using Library.Web.Models.BookTest.Enums
+@model Library.Web.Models.BookTest.BookTest
+
+@{
+    var Author = Enum.GetValues(typeof(Author));
+    var Genre = Enum.GetValues(typeof(Genre));
+    var Language = Enum.GetValues(typeof(Language));
+    var Publisher = Enum.GetValues(typeof(Publisher));
+    var Shelf = Enum.GetValues(typeof(Shelf));
+}
+
+<nav>
+    <h1>Add Book</h1>
+</nav>
+
+
+<main>
+
+    <form method="post">  
+        
+        <input name="Name" placeholder="Name" asp-for="Name" />
+        <span asp-validation-for="Name"></span>
+
+        <input name="Description" placeholder="Description" asp-for="Description" />
+        <span asp-validation-for="Description"></span>
+
+        <div>
+
+            <select name="Author" asp-for="Author">
+                <option value="@null">Author</option>
+                @foreach (var item in Author)
+                {
+                    <option value="@item">@item</option>
+                }
+            </select>
+            <span asp-validation-for="Author"></span>
+
+            <select name="Genre" asp-for="Genre">
+                <option value="@null">Genre</option>
+                @foreach (var item in Genre)
+                {
+                    <option value="@item">@item</option>
+                }
+            </select>
+            <span asp-validation-for="Genre"></span>
+
+            <select name="Publicher" asp-for="Publicher">
+                <option value="@null">Publicher</option>
+                @foreach (var item in Publisher)
+                {
+                    <option value="@item">@item</option>
+                }
+            </select>
+            <span asp-validation-for="Publicher"></span>
+
+            <select name="Shelf" asp-for="Shelf">
+                <option value="@null">Shelf</option>
+                @foreach (var item in Shelf)
+                {
+                    <option value="@item">@item</option>
+                }
+            </select>
+            <span asp-validation-for="Shelf"></span>
+
+            <select name="Language" asp-for="Language">
+                <option value="@null">Language</option>
+                @foreach (var item in Language)
+                {
+                    <option value="@item">@item</option>
+                }
+            </select>
+            <span asp-validation-for="Language"></span>
+
+        </div>
+
+
+        <button type="submit">Save</button>    
+
+
+    </form>
+
+
+</main>
+
+
+
+
+<style>
+
+    nav {
+        display: flex;
+        justify-content: flex-start;
+        margin-left: 50px;
+        font-size: 40px;
+        font-family: monospace;
+        font-weight: 100;
+    }
+
+    main {
+        margin-inline: 10px;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    input[name=Name] {
+        width: 200px;
+        padding: 10px;
+        outline: none;
+    }
+
+    input[name=Description] {
+        width: 600px;
+        padding: 10px 10px 162px 10px;
+        outline: none;
+    }
+
+
+    form div {
+        width: 550px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    select {
+        width: 265px;
+        height: 40px;
+        outline: none;
+    }
+
+    button {
+        position: absolute;
+        bottom: 61px;
+        right: 133px;
+        width: 105px;
+        height: 40px;
+        background: #8b8b8b;
+        color: #fff;
+        border: none;
+    }
+
+    span {
+        color: red;
+    }
+
+</style>
+

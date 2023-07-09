@@ -16,6 +16,7 @@ namespace Library.Model.Models
         public int BookStatusId { get; set; }
         public int BookStorageId { get; set; }
         public int CategoryId { get; set; }
+        public string Description { get; set; }
 
         // relations
         public Category? Category { get; set; }

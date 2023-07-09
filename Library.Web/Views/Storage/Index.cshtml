@@ -1,0 +1,91 @@
+﻿@model IEnumerable<Library.Web.Models.StorageViewModel>
+
+
+<nav>
+
+    <h1>
+        Shelves
+    </h1>
+
+
+    <h1>
+        <a asp-action="AddShelve"><i class="bi bi-plus-lg"></i></a>
+    </h1>
+
+</nav>
+
+
+<main>
+
+
+    <!--<form asp-action="DeleteShelve" method="post">-->
+    @foreach (var item in Model)
+    {
+        <div>
+            <input disabled type="text" name="Name" placeholder="Name" value="@item.ClosetNumber" />
+
+            <input disabled type="text" name="Location" placeholder="Location" value="@item.ShelfNumber" />
+
+            <input disabled type="number" name="Capacity" placeholder="Capacity" value="@item.Capacity" />
+
+
+            <a asp-route-id="@item.Id" asp-action="Delete"><i class="bi bi-x-lg"></i></a>
+
+            <a asp-route-id="@item.Id" asp-action="Edit"><i class="bi bi-pencil-fill"></i></a>
+        </div>
+    }
+
+    <!-- </form> -->
+
+
+</main>
+
+<!------>
+
+<style>
+
+
+    nav {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        gap: 27px;
+    }
+
+        nav h1 {
+            font-size: 40px;
+            font-family: sans-serif;
+        }
+
+    main {
+        padding: 20px;
+        display: grid;
+        gap: 20px;
+        justify-content: center;
+    }
+
+
+        main div {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            align-items: center;
+        }
+
+            main div a {
+                font-size: 30px
+            }
+
+    i {
+        color: black;
+    }
+
+    input[name=Name], input[name=Capacity] {
+        padding: 10px 40px 10px 10px;
+    }
+
+    input[name=Location] {
+        padding: 10px 160px 10px 10px;
+    }
+
+</style>

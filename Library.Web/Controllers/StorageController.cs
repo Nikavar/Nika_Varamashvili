@@ -21,7 +21,8 @@ namespace Library.Web.Controllers
         public async Task<IActionResult> Index()
         {
             var storages = await storageService.GetAllStoragesAsync();
-            return View(storages);
+            var model = storages.Adapt<IEnumerable<StorageViewModel>>();
+            return View(model);
         }
 
         // GET/publisher/index
@@ -62,6 +63,7 @@ namespace Library.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(StorageViewModel model)
         {
+
             if (ModelState.IsValid)
             {
                 var entity = model.Adapt<Storage>();

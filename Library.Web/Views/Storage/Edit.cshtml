@@ -1,0 +1,81 @@
+﻿@model Library.Web.Models.StorageViewModel
+
+    <nav>
+
+        <h1>
+            Edit Shelves
+        </h1>
+
+    </nav>
+
+    <main>
+
+    <form method="post">
+
+        <input asp-for="ClosetNumber" type="text" name="ClosetNumber" placeholder="ClosetNumber" />
+        <span asp-validation-for="ClosetNumber" class="text-danger"></span>
+
+        <input asp-for="ShelfNumber" type="text" name="ShelfNumber" placeholder="ShelfNumber" />
+        <span asp-validation-for="ShelfNumber" class="text-danger"></span>
+
+            <input asp-for="Capacity" type="number" name="Capacity" placeholder="Capacity"  />
+            <span asp-validation-for="Capacity" class="text-danger"></span>
+
+            <button type="submit" >Save</button>
+        </form>
+
+    </main>
+
+
+    <style>
+
+        nav
+        {
+            padding-left: 59px;
+            padding-top: 40px;
+        }
+
+        nav h1
+        {
+            font-size: 2em;
+            font-family: sans-serif;
+            font-weight: 100;
+        }
+
+        main
+        {
+            padding: 60px;
+        }
+
+        form
+        {
+            display: inline-grid;
+            gap: 10px;
+        }
+
+        input
+        {
+            padding: 10px 114px 10px 10px;
+            outline: none;
+        }
+
+        ::-webkit-inner-spin-button
+        {
+            display: none;
+        }
+
+        span
+        {
+            color: red;
+            font-size: 16px;
+            font-family: sans-serif;
+        }
+
+        button
+        {
+            width: 100px;
+            padding: 10px;
+        }
+
+
+    </style>

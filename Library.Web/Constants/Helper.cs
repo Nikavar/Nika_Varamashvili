@@ -10,6 +10,12 @@ using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 using System.Security.Policy;
+using Microsoft.AspNetCore.Mvc;
+using DocumentFormat.OpenXml.Vml.Office;
+using System.Security.Cryptography.Pkcs;
+using System.Configuration;
+using Windows.ApplicationModel.Email;
+using Library.Web.Models.Account;
 
 namespace Library.Web.Constants
 {
@@ -106,8 +112,8 @@ namespace Library.Web.Constants
         {
             var smtpClient = new SmtpClient(configuration.GetSection("MailSettings:Host").Value, configuration.GetValue<int>("MailSettings:Port"))
             {
-                UseDefaultCredentials = false,
                 EnableSsl = true,
+                UseDefaultCredentials = false,
                 Credentials = new NetworkCredential(configuration.GetSection("MailSettings:From").Value, configuration.GetSection("MailSettings:Password").Value)
             };
 
@@ -124,8 +130,9 @@ namespace Library.Web.Constants
             await smtpClient.SendMailAsync(mailMessage);
         }
 
-		// Forget & Reset Password
-		public static void AppSettings(out string ToMailText, out string Password, out string SMTPPort, out string Host, IConfiguration configuration)
+        // Forget & Reset Password
+        #region Forget & Reset Password
+        public static void AppSettings(out string ToMailText, out string Password, out string SMTPPort, out string Host, IConfiguration configuration)
 		{
 			ToMailText = configuration.GetSection("MailSettings:ToMailText").Value;
 			Password = configuration.GetSection("MailSettings:Password").Value;
@@ -139,6 +146,8 @@ namespace Library.Web.Constants
 			mail.From = new MailAddress(From);
 			mail.Subject = Subject;
 			mail.Body = Body;
+            mail.IsBodyHtml = true;
+
 			SmtpClient smtp = new SmtpClient();
 			smtp.Host = Host;
 			smtp.Port = Convert.ToInt16(SMTPPort);
@@ -147,8 +156,53 @@ namespace Library.Web.Constants
 			smtp.Send(mail);
 		}
 
-		// Generates token for Email Confirmation
-		public static string TokenGeneration(string parameter, IConfiguration configuration)
+        public static async Task SendEmailTemplateAsync(Email template, IEmailService emailService, IConfiguration config)
+        {
+            //string From = template.GetType().GetProperty("From").GetValue(template).ToString();
+            //string To = template.GetType().GetProperty("To").GetValue(template).ToString();
+            //string Subject = template.GetType().GetProperty("Subject").GetValue(template).ToString();
+            //string Body = template.GetType().GetProperty("Body").GetValue(template).ToString();
+
+            string From = template.From;
+            string To = template.To;
+            string Subject = template.Subject;
+            string Body = template.Body;
+
+            // Mail Settings
+            MailMessage mail = new MailMessage();
+
+            if (From != null)
+                mail.From = new MailAddress(From);
+
+            if (To != null)
+                mail.To.Add(To);
+
+            if (Subject != null)
+                mail.Subject = Subject;
+
+            if (Body != null)
+                mail.Body = Body;
+
+           // var emailTemplate = await emailService.GetManyEmailsAsync(x => x.TemplateType == type);
+
+
+            // Smtp Settings
+
+            SmtpClient smtp = new SmtpClient();
+            smtp.EnableSsl = true;
+            smtp.Host = config.GetSection("MailSettings:Host").Value;
+            bool hasPortNumber = int.TryParse(config.GetSection("MailSettings:Port").Value, out int port);
+            smtp.Port = hasPortNumber == true? port : 0;
+                
+            string Password = config.GetSection("MailSettings:Password").Value;
+            smtp.Credentials = new NetworkCredential(From, Password);
+            await smtp.SendMailAsync(mail);            
+
+        }
+        #endregion
+
+        // Generates token for Email Confirmation
+        public static string TokenGeneration(string parameter, IConfiguration configuration)
         {
             var claims = new List<Claim>
             {

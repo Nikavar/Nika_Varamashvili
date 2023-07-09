@@ -27,6 +27,7 @@ namespace Library.Web.Controllers
 		private readonly ILogService _logService;
 		private readonly IPositionService _positionService;
 		private readonly ITokenService _tokenService;
+		private readonly IEmailService _emailService;
 		private readonly IConfiguration _configuration;
 		
 		public AccountController
@@ -38,6 +39,7 @@ namespace Library.Web.Controllers
             IRoleUserService roleUserService,
             IPositionService positionService,
             ITokenService tokenService,
+            IEmailService emailService,
 			IConfiguration configuration
         )
         {
@@ -48,6 +50,7 @@ namespace Library.Web.Controllers
             _roleUserService = roleUserService;
             _positionService = positionService;
             _tokenService = tokenService;
+			_emailService = emailService;
 			_configuration = configuration;
         }
         public IActionResult Login()
@@ -90,7 +93,6 @@ namespace Library.Web.Controllers
 				var entity = await _userService.GetManyUsersAsync(x => x.Email == model.Email);
 				if (entity != null)
 				{
-					string To = model.Email, ToMailText, Password, SMTPPort, Host;
 					string token = Helper.TokenGeneration(model.Email, _configuration);
 
 					if (token == null)
@@ -102,15 +104,31 @@ namespace Library.Web.Controllers
 					else
 					{
 						//Create URL with above token
-						var lnkHref = "<a href='" + Url.Action("ResetPassword", "Account", new { email = model.Email, code = token }, "http") + "'>Reset Password</a>";
-						//HTML Template for Send email
-						string subject = "Your changed password";
-						string body = "<b>Please find the Password Reset Link. </b><br/>" + lnkHref;
-						//Get and set the AppSettings using configuration manager.
-						Helper.AppSettings(out ToMailText, out Password, out SMTPPort, out Host, _configuration);
-						//Call send email methods.
-						string From = _configuration.GetSection("MailSettings:From").Value;
-						Helper.SendEmail(From, subject, body, To, ToMailText, Password, SMTPPort, Host);
+						//var lnkHref = "<a href='" + Url.Action("ResetPassword", "Account", new { email = model.Email, code = token }, "http") + "'>Reset Password</a>";
+                       
+                        var url = Request.Scheme + "://" + Request.Host + Url.Action("ResetPassword", "Account", new { email = model.Email, code = token }, "http") + "'>Reset Password</a>";
+
+                        // ------------------------------------------------
+                        ////HTML Template for Send email
+                        //string subject = "Your changed password";
+                        //string body = "<b>Please find the Password Reset Link. </b><br/>" + lnkHref;
+                        ////Get and set the AppSettings using configuration manager.
+                        //Helper.AppSettings(out ToMailText, out Password, out SMTPPort, out Host, _configuration);
+                        ////Call send email methods.
+                        //string From = _configuration.GetSection("MailSettings:From").Value;
+                        ////Helper.SendEmail(From, subject, body, To, ToMailText, Password, SMTPPort, Host);
+                        // ------------------------------------------------------
+
+                        var type = typeof(ForgetPasswordViewModel).Name.ToString();
+						var emailTemplate = await _emailService.GetManyEmailsAsync(x=>x.TemplateType == type);
+						var template = emailTemplate.FirstOrDefault();
+
+						if(template != null)
+						{
+							template.To = model.Email;
+							await _emailService.UpdateEmailAsync(template);
+							await Helper.SendEmailTemplateAsync(template,_emailService, _configuration);
+						}
 					}
 				}
 			}
@@ -123,6 +141,7 @@ namespace Library.Web.Controllers
             model.Token = code;
             return View(model);
         }
+
         [HttpPost]
         public ActionResult ResetPassword(ResetPasswordViewModel model)
         {
@@ -228,10 +247,23 @@ namespace Library.Web.Controllers
 
                 if (userEntity != null)
                 {
+                    //Create URL with above token
                     var token = Helper.TokenGeneration(staffReaderEntity.ID.ToString(), _configuration);
-                    var url = Request.Scheme + "://" + Request.Host + Url.Action("ConfirmEmail", "Account", new { token = token });
+                    var url = Request.Scheme + "://" + Request.Host + Url.Action("ConfirmEmail", "Account", new { email = model.Email, code = token }, "http") + "'>Confirm Password</a>";
 
-                    await Helper.EmailLinkConfirmation(userEntity.Email, url, staffReaderEntity, _configuration);
+                    var type = typeof(RegisterViewModel).Name.ToString();
+                    var emailTemplate = await _emailService.GetManyEmailsAsync(x => x.TemplateType == type);
+                    var template = emailTemplate.FirstOrDefault();
+
+                    if (template != null)
+                    {
+                        template.To = model.Email;
+                        await _emailService.UpdateEmailAsync(template);
+                        await Helper.SendEmailTemplateAsync(template, _emailService, _configuration);
+                    }
+
+
+                    //await Helper.EmailLinkConfirmation(userEntity.Email, url, staffReaderEntity, _configuration);
                 }
 
                 return RedirectToAction("Index", "Home");

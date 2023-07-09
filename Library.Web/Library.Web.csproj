@@ -53,6 +53,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="Views\Book\Index.cshtml" />
+    <None Include="Views\Home\Privacy.cshtml" />
     <None Include="wwwroot\js\position.js" />
   </ItemGroup>
 
