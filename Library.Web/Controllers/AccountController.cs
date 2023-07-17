@@ -15,12 +15,15 @@ using Humanizer.Localisation;
 using DocumentFormat.OpenXml.Spreadsheet;
 using WebMatrix.WebData;
 using Windows.ApplicationModel.Email;
+using DocumentFormat.OpenXml.Wordprocessing;
+using System.Runtime.InteropServices;
 
 namespace Library.Web.Controllers
 {
 	public class AccountController : Controller
 	{
-		private readonly IUserService _userService;
+
+        private readonly IUserService _userService;
 		private readonly IStaffReaderService _staffReaderService;
 		private readonly IRoleService _roleService;
 		private readonly IRoleUserService _roleUserService;
@@ -127,7 +130,8 @@ namespace Library.Web.Controllers
 						{
 							template.To = model.Email;
 							await _emailService.UpdateEmailAsync(template);
-							await Helper.SendEmailTemplateAsync(template,_emailService, _configuration);
+
+							await Helper.SendEmailTemplateAsync(template, _emailService, _configuration);
 						}
 					}
 				}
@@ -185,10 +189,23 @@ namespace Library.Web.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string find = "", int pg = 1)
 		{
 			var users = await _userService.GetAllUsersAsync();
-			return View(users);
+			pg = pg < 1 ? 1 : pg;
+
+			find = string.IsNullOrEmpty(find) ? string.Empty : find.ToLower();
+			int recsCount = users.Where(x=>x.Email.ToLower().StartsWith(find)).Count();
+
+			var model = new PagerModel(recsCount, pg, Helper.pageSize);
+			int recSkip = (pg - 1) * Helper.pageSize;
+
+			var data = users.Skip(recSkip).Take(model.PageSize).ToList();
+			data = data.FindAll(x => x.Email.ToLower().StartsWith(find));
+
+			this.ViewBag.Pager = model;
+
+			return View(data);
 		}
 
 		public async Task<IActionResult> Details(int id)
@@ -259,6 +276,7 @@ namespace Library.Web.Controllers
                     {
                         template.To = model.Email;
                         await _emailService.UpdateEmailAsync(template);
+
                         await Helper.SendEmailTemplateAsync(template, _emailService, _configuration);
                     }
 

@@ -16,6 +16,7 @@ namespace Library.Web.Constants
 		public const string UserNotExistsOrNotConfirmed = "User does not exist or is not confirmed";
 		public const string SuccesfullyChanged = "Successfully Changed";
         public const string SomethingWasWrong = "Something was Wrong";
+		public const int pageSize = 10;
 
 
 

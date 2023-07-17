@@ -16,11 +16,15 @@ using System.Security.Cryptography.Pkcs;
 using System.Configuration;
 using Windows.ApplicationModel.Email;
 using Library.Web.Models.Account;
+using System.Drawing;
 
 namespace Library.Web.Constants
 {
     public static class Helper
     {
+        public static int pageSize = 10;
+
+        #region GenericWarnings
         public static string SuccessfullyAdded<T>()
         {
             return "New " + typeof(T).Name + " has Successfully Added";
@@ -34,6 +38,10 @@ namespace Library.Web.Constants
             return "The " + typeof(T).Name + " has Successfully Deleted";
         }
 
+        #endregion
+
+
+        #region EntityOperationsWithLogs
         public static async Task AddEntityWithLog<TEntity>(TEntity entity, Func<TEntity, Task<TEntity>> AddEntityAsync, ILogService logService) where TEntity : class
         {
             var log = new LogInfo { TableName = typeof(TEntity).Name };
@@ -96,6 +104,8 @@ namespace Library.Web.Constants
             }
         }
 
+        #endregion
+
         public static async Task EmailLinkConfirmation(string EmailTo, string url, StaffReader staffReader, IConfiguration configuration)
         {
             var emailBody = Warnings.ConfirmationEmailBody;
@@ -131,7 +141,7 @@ namespace Library.Web.Constants
         }
 
         // Forget & Reset Password
-        #region Forget & Reset Password
+
         public static void AppSettings(out string ToMailText, out string Password, out string SMTPPort, out string Host, IConfiguration configuration)
 		{
 			ToMailText = configuration.GetSection("MailSettings:ToMailText").Value;
@@ -156,6 +166,8 @@ namespace Library.Web.Constants
 			smtp.Send(mail);
 		}
 
+
+        #region EmailTemplateOperations
         public static async Task SendEmailTemplateAsync(Email template, IEmailService emailService, IConfiguration config)
         {
             //string From = template.GetType().GetProperty("From").GetValue(template).ToString();
@@ -171,16 +183,15 @@ namespace Library.Web.Constants
             // Mail Settings
             MailMessage mail = new MailMessage();
 
+            // Check Logic!
+
             if (From != null)
                 mail.From = new MailAddress(From);
 
             if (To != null)
                 mail.To.Add(To);
 
-            if (Subject != null)
                 mail.Subject = Subject;
-
-            if (Body != null)
                 mail.Body = Body;
 
            // var emailTemplate = await emailService.GetManyEmailsAsync(x => x.TemplateType == type);
@@ -201,6 +212,8 @@ namespace Library.Web.Constants
         }
         #endregion
 
+
+        #region TokenOperations
         // Generates token for Email Confirmation
         public static string TokenGeneration(string parameter, IConfiguration configuration)
         {
@@ -248,5 +261,10 @@ namespace Library.Web.Constants
             
             return jwtClaims != null ? int.Parse(jwtClaims.Value) : -1;
         }
+
+        #endregion
+
+
     }
 }
+

@@ -16,22 +16,6 @@ using System.Linq.Expressions;
 
 namespace Library.Service
 {
-    public interface IUserService
-    {
-        Task<IEnumerable<User>> GetAllUsersAsync();
-        Task<IEnumerable<User>> GetManyUsersAsync(Expression<Func<User, bool>> filter);
-        Task<User> GetUserByIdAsync(int id);
-        Task<User> AddUserAsync(User entity);
-        Task UpdateUserAsync(User entity);
-        Task DeleteUserAsync(User entity);
-        Task DeleteManyUsersAsync(Expression<Func<User, bool>> filter);
-        Task SaveUserAsync();
-        
-
-        // Login & Register User
-        Task<User> LoginUserAsync(string userName, string password);
-        Task LogoutUserAsync(User user);
-    }
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
@@ -93,5 +77,22 @@ namespace Library.Service
         {
            await _userRepository.LogoutUserAsync(user);
         }
+    }
+
+    public interface IUserService
+    {
+        Task<IEnumerable<User>> GetAllUsersAsync();
+        Task<IEnumerable<User>> GetManyUsersAsync(Expression<Func<User, bool>> filter);
+        Task<User> GetUserByIdAsync(int id);
+        Task<User> AddUserAsync(User entity);
+        Task UpdateUserAsync(User entity);
+        Task DeleteUserAsync(User entity);
+        Task DeleteManyUsersAsync(Expression<Func<User, bool>> filter);
+        Task SaveUserAsync();
+
+
+        // Login & Register User
+        Task<User> LoginUserAsync(string userName, string password);
+        Task LogoutUserAsync(User user);
     }
 }

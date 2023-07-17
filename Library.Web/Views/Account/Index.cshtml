@@ -1,8 +1,85 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model IEnumerable<Library.Model.Models.User>
+
+@{
+	ViewData["Title"] = "Index";
+
+	PagerModel pager = new PagerModel();
+	int pageNo = 0;
+
+	if (ViewBag.Pager != null)
+	{
+		pager = ViewBag.Pager;
+		pageNo = pager.CurrentPage;
+	}
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<br />
+
+<p>
+	<input type="submit" value="Add New User" class="btn btn-outline-secondary btn-sm"
+		   onclick="@("window.location.href='" + @Url.Action("Add") + "'");" />
+</p>
+
+<form class="form-inline" >
+	<div class="form-group">
+		<table style="margin-left:60%">
+			<tr>
+				<td>
+					<label for="findLabel">Find</label>
+				</td>
+				<td>
+					<input type="text" name="find" id="find" class="form-control mx-sm-2" style ="width:300px" aria-describedby="findHelpInline">
+				</td>
+				<td style="margin-left:10px">
+					<button type="submit" style="margin-left:50px; width: 100px; height:38px; border:1px solid gray">Search</button>
+				</td>
+			</tr>
+		</table>
+	</div>
+<table class="table">
+	<thead>
+		<tr>
+			<th style="width:10%">
+				@Html.DisplayNameFor(model => model.id)
+			</th>
+			<th style="width:40%">
+				@Html.DisplayNameFor(model => model.Email)
+			</th>
+			<th style="width:20%">
+				@Html.DisplayNameFor(model => model.Password)
+			</th>
+
+			<th style="width:30%"></th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var item in Model)
+		{
+			<tr>
+				<td style="width:10%">
+					@Html.DisplayFor(modelItem => item.id)
+				</td>
+				<td style="width:40%">
+					@Html.DisplayFor(modelItem => item.Email)
+				</td>
+				<td style="width:20%">
+					@Html.DisplayFor(modelItem => item.Password)
+				</td>
+
+				<td style="height:50px">
+					<a class="btn btn-outline-secondary" style="width:80px" asp-action="Edit" asp-route-id="@item.id">Edit</a>
+					<a class="btn btn-outline-secondary" style="width:80px" asp-action="Details" asp-route-id="@item.id">Details</a>
+					<a class="btn btn-danger" style="width: 80px; border-color:dimgray; border-width:1px" asp-action="Delete" asp-route-id="@item.id">Delete</a>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
+</form>
+
+<partial name="_pager" model="@pager" />
+
+<br />
+<tfoot>
+</tfoot>
+

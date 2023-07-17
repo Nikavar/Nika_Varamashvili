@@ -1,4 +1,5 @@
-﻿using Library.Model.Models;
+﻿using DocumentFormat.OpenXml.Wordprocessing;
+using Library.Model.Models;
 using Library.Service;
 using Library.Web.Constants;
 using Library.Web.Models;
@@ -20,10 +21,19 @@ namespace Library.Web.Controllers
             this.logService = logService;
         }
 
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> Index(int pg = 1)
         {
-            var result = await this.authorService.GetAllAuthorsAsync();
-            return View(result);
+            var authors = await this.authorService.GetAllAuthorsAsync();
+                pg = pg < 1 ? 1 : pg;
+                int recsCount = authors.Count();
+
+                var model = new PagerModel(recsCount, pg, Helper.pageSize);
+                int recSkip = (pg - 1) * Helper.pageSize;
+                var data = authors.Skip(recSkip).Take(model.PageSize).ToList();
+                this.ViewBag.Pager = model;
+
+                return View(data);
+            
         }
 
         // GET/author/index

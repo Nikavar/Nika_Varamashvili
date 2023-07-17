@@ -80,4 +80,8 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <ItemGroup>
+    <SourceGeneratorInput Remove="Models\PagerModel.cs" />
+  </ItemGroup>
+
 </Project>
