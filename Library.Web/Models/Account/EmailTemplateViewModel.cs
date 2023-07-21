@@ -7,13 +7,14 @@ namespace Library.Web.Models.Account
         [Key]
         public int Id { get; set; }
         [Required]
-        public string TemplateType { get; set; }
+        public string? TemplateType { get; set; }
         [Required]
-        public string From { get; set; }
+        public string? From { get; set; }
         [Required]
-        public string To { get; set; }
-        public string Subject { get; set; }
-        public string Body { get; set; }
-        public string Description { get; set; }
+        public string? To { get; set; }
+        public string? Subject { get; set; }
+
+        [DataType(DataType.MultilineText)]
+        public string? Body { get; set; }
     }
 }

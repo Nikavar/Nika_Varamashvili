@@ -43,10 +43,11 @@
 				@Html.DisplayNameFor(model => model.id)
 			</th>
 			<th style="width:40%">
-				@Html.DisplayNameFor(model => model.Email)
+				@Html.ActionLink("Email", "Index", new {sortBy = ViewBag.SortEmailParameter})
+					 
 			</th>
 			<th style="width:20%">
-				@Html.DisplayNameFor(model => model.Password)
+				@Html.ActionLink("Password", "Index", new {sortBy = ViewBag.SortPasswordParameter})
 			</th>
 
 			<th style="width:30%"></th>

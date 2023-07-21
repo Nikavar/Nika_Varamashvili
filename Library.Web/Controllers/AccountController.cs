@@ -189,7 +189,7 @@ namespace Library.Web.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        public async Task<IActionResult> Index(string find = "", int pg = 1)
+        public async Task<IActionResult> Index(string sortBy, string find = "", int pg = 1)
 		{
 			var users = await _userService.GetAllUsersAsync();
 			pg = pg < 1 ? 1 : pg;
@@ -204,6 +204,28 @@ namespace Library.Web.Controllers
 			data = data.FindAll(x => x.Email.ToLower().StartsWith(find));
 
 			this.ViewBag.Pager = model;
+
+			ViewBag.SortEmailParameter = string.IsNullOrEmpty(sortBy) ? "Email desc" : "";
+			ViewBag.SortPasswordParameter = sortBy == "Password" ? "Password desc" : "Password";
+
+			switch (sortBy)
+			{
+				case "Email desc":
+					data = data.OrderByDescending(x => x.Email).ToList();
+					break;
+
+				case "Password desc":
+					data = data.OrderByDescending(x => x.Password).ToList();
+					break;
+
+				case "Password":
+					data = data.OrderBy(x => x.Password).ToList();
+					break;
+
+				default:
+					data = data.OrderBy(x => x.Email).ToList();
+					break;
+			}
 
 			return View(data);
 		}

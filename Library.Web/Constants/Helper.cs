@@ -176,7 +176,7 @@ namespace Library.Web.Constants
             //string Body = template.GetType().GetProperty("Body").GetValue(template).ToString();
 
             string From = template.From;
-            string To = template.To;
+            //string To = template.To;
             string Subject = template.Subject;
             string Body = template.Body;
 
@@ -187,9 +187,6 @@ namespace Library.Web.Constants
 
             if (From != null)
                 mail.From = new MailAddress(From);
-
-            if (To != null)
-                mail.To.Add(To);
 
                 mail.Subject = Subject;
                 mail.Body = Body;
