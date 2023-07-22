@@ -36,9 +36,9 @@ namespace Library.Web.Controllers
             if (ModelState.IsValid)
             {
                 var entity = model.Adapt<Storage>();
-                await Helper.AddEntityWithLog(entity, storageService.AddStorageAsync, logService);
+                await EntityMethods.AddEntityWithLog(entity, storageService.AddStorageAsync, logService);
 
-                TempData["Success"] = Helper.SuccessfullyAdded<Storage>();
+                TempData["Success"] = Warnings.SuccessfullyAddedGeneric<Storage>();
                 return RedirectToAction("Index");
             }
 
@@ -67,8 +67,8 @@ namespace Library.Web.Controllers
             if (ModelState.IsValid)
             {
                 var entity = model.Adapt<Storage>();
-                await Helper.UpdateEntityWithLog(entity, storageService.UpdateStorageAsync, logService);
-                TempData["Success"] = Helper.SuccessfullyUpdated<Storage>();
+                await EntityMethods.UpdateEntityWithLog(entity, storageService.UpdateStorageAsync, logService);
+                TempData["Success"] = Warnings.SuccessfullyUpdatedGeneric<Storage>();
 
                 return RedirectToAction("Index");
             }
@@ -100,7 +100,7 @@ namespace Library.Web.Controllers
             var log = await logService.GetLogByEntityId(entity.Id);
             await logService.DeleteLogAsync(log);
 
-            TempData["Success"] = Helper.SuccessfullyDeleted<Storage>();
+            TempData["Success"] = Warnings.SuccessfullyDeletedGeneric<Storage>();
 
             return RedirectToAction("Index");
         }

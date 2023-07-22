@@ -18,7 +18,22 @@ namespace Library.Web.Constants
         public const string SomethingWasWrong = "Something was Wrong";
 		public const int pageSize = 10;
 
+        //public static int pageSize = 10;
 
+        #region GenericWarnings
+        public static string SuccessfullyAddedGeneric<T>()
+        {
+            return "New " + typeof(T).Name + " has Successfully Added";
+        }
+        public static string SuccessfullyUpdatedGeneric<T>()
+        {
+            return "The " + typeof(T).Name + " has Successfully Updated";
+        }
+        public static string SuccessfullyDeletedGeneric<T>()
+        {
+            return "The " + typeof(T).Name + " has Successfully Deleted";
+        }
 
+        #endregion
     }
 }

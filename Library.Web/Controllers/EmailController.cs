@@ -37,8 +37,8 @@ namespace Library.Web.Controllers
             if (ModelState.IsValid)
             {
                 var entity = model.Adapt<Email>();
-                await Helper.AddEntityWithLog(entity, emailService.AddEmailAsync, logService);
-                TempData["Success"] = Helper.SuccessfullyAdded<Email>();
+                await EntityMethods.AddEntityWithLog(entity, emailService.AddEmailAsync, logService);
+                TempData["Success"] = Warnings.SuccessfullyAddedGeneric<Email>();
 
                 return RedirectToAction("Index");
             }
@@ -67,8 +67,8 @@ namespace Library.Web.Controllers
             if (ModelState.IsValid)
             {
                 var entity = model.Adapt<Email>();
-                await Helper.UpdateEntityWithLog(entity, emailService.UpdateEmailAsync, logService);
-                TempData["Success"] = Helper.SuccessfullyUpdated<Email>();
+                await EntityMethods.UpdateEntityWithLog(entity, emailService.UpdateEmailAsync, logService);
+                TempData["Success"] = Warnings.SuccessfullyAddedGeneric<Email>();
 
                 return RedirectToAction("Index");
             }
@@ -100,7 +100,7 @@ namespace Library.Web.Controllers
             await emailService.DeleteEmailAsync(entity);
             await logService.DeleteManyLogsAsync(x => x.EntityID == entity.Id);
 
-            TempData["Success"] = Helper.SuccessfullyDeleted<Email>();
+            TempData["Success"] = Warnings.SuccessfullyDeletedGeneric<Email>();
 
             return RedirectToAction("Index");
         }

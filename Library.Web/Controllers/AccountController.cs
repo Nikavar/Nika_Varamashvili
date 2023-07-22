@@ -177,7 +177,7 @@ namespace Library.Web.Controllers
 
             staffReader.IsConfirmed = true;
             await _staffReaderService.UpdateStaffReaderAsync(staffReader);
-            await Helper.UpdateEntityWithLog(staffReader, _staffReaderService.UpdateStaffReaderAsync, _logService);
+            await EntityMethods.UpdateEntityWithLog(staffReader, _staffReaderService.UpdateStaffReaderAsync, _logService);
             ViewBag.ErrorMessage = Warnings.EmailWasConfirmed;
 
             return View();
@@ -197,8 +197,8 @@ namespace Library.Web.Controllers
 			find = string.IsNullOrEmpty(find) ? string.Empty : find.ToLower();
 			int recsCount = users.Where(x=>x.Email.ToLower().StartsWith(find)).Count();
 
-			var model = new PagerModel(recsCount, pg, Helper.pageSize);
-			int recSkip = (pg - 1) * Helper.pageSize;
+			var model = new PagerModel(recsCount, pg, Warnings.pageSize);
+			int recSkip = (pg - 1) * Warnings.pageSize;
 
 			var data = users.Skip(recSkip).Take(model.PageSize).ToList();
 			data = data.FindAll(x => x.Email.ToLower().StartsWith(find));
@@ -264,17 +264,17 @@ namespace Library.Web.Controllers
 				}
                 // Add & Log 'StaffReader' Entity In Database
                 var staffReaderEntity = model.Adapt<StaffReader>();
-                await Helper.AddEntityWithLog(staffReaderEntity, _staffReaderService.AddStaffReaderAsync, _logService);
+                await EntityMethods.AddEntityWithLog(staffReaderEntity, _staffReaderService.AddStaffReaderAsync, _logService);
 
 				// Add & Log 'User' Entity In Database
 				var userEntity = model.Adapt<User>();
                 userEntity.StaffReaderID = staffReaderEntity.ID;
-                await Helper.AddEntityWithLog(userEntity, _userService.AddUserAsync,_logService);		
+                await EntityMethods.AddEntityWithLog(userEntity, _userService.AddUserAsync,_logService);		
 
                 // Assing Role of 'user' to new user by default
                 var role = _roleService.GetRoleByNameAsync(Roles.user.ToString());
 				var roleUserEntity = new RoleUser() { RoleID = role.ID, UserID = userEntity.id };
-                await Helper.AddEntityWithLog(roleUserEntity,_roleUserService.AddRoleUserAsync,_logService);
+                await EntityMethods.AddEntityWithLog(roleUserEntity,_roleUserService.AddRoleUserAsync,_logService);
 
                 // Logged PositionStaff
                 var loggedPositionStaff = await _logService.AddLogAsync(
@@ -329,7 +329,7 @@ namespace Library.Web.Controllers
 
 			if (ModelState.IsValid)
 			{
-				await Helper.UpdateEntityWithLog(user, _userService.UpdateUserAsync, _logService);
+				await EntityMethods.UpdateEntityWithLog(user, _userService.UpdateUserAsync, _logService);
 				return RedirectToAction(nameof(Index));
 			}
 			return View(user);

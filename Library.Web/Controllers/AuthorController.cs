@@ -27,8 +27,8 @@ namespace Library.Web.Controllers
                 pg = pg < 1 ? 1 : pg;
                 int recsCount = authors.Count();
 
-                var model = new PagerModel(recsCount, pg, Helper.pageSize);
-                int recSkip = (pg - 1) * Helper.pageSize;
+                var model = new PagerModel(recsCount, pg, Warnings.pageSize);
+                int recSkip = (pg - 1) * Warnings.pageSize;
                 var data = authors.Skip(recSkip).Take(model.PageSize).ToList();
                 this.ViewBag.Pager = model;
 
@@ -49,8 +49,8 @@ namespace Library.Web.Controllers
             {
 
                 var authorEntity = model.Adapt<Author>();
-                await Helper.AddEntityWithLog(authorEntity, authorService.AddAuthorAsync, logService);
-                TempData["Success"] = Helper.SuccessfullyAdded<Author>();
+                await EntityMethods.AddEntityWithLog(authorEntity, authorService.AddAuthorAsync, logService);
+                TempData["Success"] = Warnings.SuccessfullyAddedGeneric<Author>();
 
                 return RedirectToAction("Index");
             }
@@ -79,9 +79,9 @@ namespace Library.Web.Controllers
             if (ModelState.IsValid)
             {
                 var authorEntity = item.Adapt<Author>();
-                await Helper.UpdateEntityWithLog(authorEntity, authorService.UpdateAuthorAsync, logService);
+                await EntityMethods.UpdateEntityWithLog(authorEntity, authorService.UpdateAuthorAsync, logService);
 
-                TempData["Success"] = Helper.SuccessfullyUpdated<Author>();
+                TempData["Success"] = Warnings.SuccessfullyAddedGeneric<Author>();
                 return RedirectToAction("Index");
             }
 
@@ -110,7 +110,7 @@ namespace Library.Web.Controllers
             var entity = model.Adapt<Author>();
             await authorService.DeleteAuthorAsync(entity);
             await logService.DeleteManyLogsAsync(x => x.EntityID == entity.Id);
-            TempData["Success"] = Helper.SuccessfullyDeleted<Author>();
+            TempData["Success"] = Warnings.SuccessfullyAddedGeneric<Author>();
 
             return RedirectToAction("Index");
         }

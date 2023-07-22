@@ -39,9 +39,9 @@ namespace Library.Web.Controllers
 			if (ModelState.IsValid)
 			{
 				var entity = model.Adapt<Position>();
-				await Helper.AddEntityWithLog(entity,positionService.AddPositionAsync,logService);
+				await EntityMethods.AddEntityWithLog(entity,positionService.AddPositionAsync,logService);
 
-   				TempData["Success"] = Helper.SuccessfullyAdded<Position>();
+   				TempData["Success"] = Warnings.SuccessfullyAddedGeneric<Position>();
 
 				return RedirectToAction("Index");
 			}
@@ -69,9 +69,9 @@ namespace Library.Web.Controllers
 			if (ModelState.IsValid)
 			{ 
 				var entity = model.Adapt<Position>();
-				await Helper.UpdateEntityWithLog(entity,positionService.UpdatePositionAsync,logService);
+				await EntityMethods.UpdateEntityWithLog(entity,positionService.UpdatePositionAsync,logService);
 
-				TempData["Success"] = Helper.SuccessfullyUpdated<Position>();
+				TempData["Success"] = Warnings.SuccessfullyUpdatedGeneric<Position>();
 
 				return RedirectToAction("Index");
 			}
@@ -103,7 +103,7 @@ namespace Library.Web.Controllers
 			await positionService.DeletePositionAsync(entity);
 			await logService.DeleteManyLogsAsync(x => x.EntityID == entity.ID && x.TableName == entity.GetType().Name);
 
-			TempData["Success"] = Helper.SuccessfullyDeleted<Position>();
+			TempData["Success"] =Warnings.SuccessfullyDeletedGeneric<Position>();
 
 			return RedirectToAction("Index");			
 		}

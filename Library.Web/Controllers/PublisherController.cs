@@ -38,9 +38,9 @@ namespace Library.Web.Controllers
             if (ModelState.IsValid)
             {
                 var entity = model.Adapt<Publisher>();
-                await Helper.AddEntityWithLog(entity, publisherService.AddPublisherAsync, logService);
+                await EntityMethods.AddEntityWithLog(entity, publisherService.AddPublisherAsync, logService);
 
-                TempData["Success"] = Helper.SuccessfullyAdded<Publisher>();
+                TempData["Success"] = Warnings.SuccessfullyAddedGeneric<Publisher>();
                 return RedirectToAction("Index");
             }
 
@@ -68,8 +68,8 @@ namespace Library.Web.Controllers
             if (ModelState.IsValid)
             {
                 var entity = model.Adapt<Publisher>();
-                await Helper.UpdateEntityWithLog(entity,publisherService.UpdatePublisherAsync, logService);
-                TempData["Success"] = Helper.SuccessfullyUpdated<Publisher>();
+                await EntityMethods.UpdateEntityWithLog(entity,publisherService.UpdatePublisherAsync, logService);
+                TempData["Success"] = Warnings.SuccessfullyAddedGeneric<Publisher>();
 
                 return RedirectToAction("Index");
             }
@@ -102,7 +102,7 @@ namespace Library.Web.Controllers
             var log = await logService.GetLogByEntityId(entity.ID);
             await logService.DeleteLogAsync(log);
 
-            TempData["Success"] = Helper.SuccessfullyDeleted<Publisher>();
+            TempData["Success"] = Warnings.SuccessfullyDeletedGeneric<Publisher>();
 
             return RedirectToAction("Index");
         }

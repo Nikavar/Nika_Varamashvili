@@ -39,8 +39,8 @@ namespace Library.Web.Controllers
             if (ModelState.IsValid)
             {
                 var entity = model.Adapt<Language>();
-                await Helper.AddEntityWithLog(entity, languageService.AddLanguageAsync, logService);
-                TempData["Success"] = Helper.SuccessfullyAdded<Language>();
+                await EntityMethods.AddEntityWithLog(entity, languageService.AddLanguageAsync, logService);
+                TempData["Success"] = Warnings.SuccessfullyAddedGeneric<Language>();
 
                 return RedirectToAction("Index");
             }
@@ -69,8 +69,8 @@ namespace Library.Web.Controllers
             if (ModelState.IsValid)
             {
                 var entity = model.Adapt<Language>();
-                await Helper.UpdateEntityWithLog(entity, languageService.UpdateLanguageAsync, logService);
-                TempData["Success"] = Helper.SuccessfullyUpdated<Language>();
+                await EntityMethods.UpdateEntityWithLog(entity, languageService.UpdateLanguageAsync, logService);
+                TempData["Success"] = Warnings.SuccessfullyUpdatedGeneric<Language>();
 
                 return RedirectToAction("Index");
             }
@@ -102,7 +102,7 @@ namespace Library.Web.Controllers
             await languageService.DeleteLanguageAsync(entity);
             await logService.DeleteManyLogsAsync(x => x.EntityID == entity.Id);
 
-            TempData["Success"] = Helper.SuccessfullyDeleted<Language>();
+            TempData["Success"] = Warnings.SuccessfullyDeletedGeneric<Language>();
 
             return RedirectToAction("Index");
         }
