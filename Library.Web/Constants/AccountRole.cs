@@ -1,6 +1,6 @@
 ﻿namespace Library.Web.Constants
 {
-    public enum Roles
+    public enum AccountRole
     {
         admin,
         user,

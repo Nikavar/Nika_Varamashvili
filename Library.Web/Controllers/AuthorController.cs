@@ -27,8 +27,8 @@ namespace Library.Web.Controllers
                 pg = pg < 1 ? 1 : pg;
                 int recsCount = authors.Count();
 
-                var model = new PagerModel(recsCount, pg, Warnings.pageSize);
-                int recSkip = (pg - 1) * Warnings.pageSize;
+                var model = new PagerModel(recsCount, pg, StaticParameters.pageSize);
+                int recSkip = (pg - 1) * StaticParameters.pageSize;
                 var data = authors.Skip(recSkip).Take(model.PageSize).ToList();
                 this.ViewBag.Pager = model;
 

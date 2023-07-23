@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using System.Runtime.CompilerServices;
 using System.Text;
-using Library.Web.Constants;
 using Humanizer.Localisation;
 using DocumentFormat.OpenXml.Spreadsheet;
 using WebMatrix.WebData;
@@ -69,7 +68,7 @@ namespace Library.Web.Controllers
 				var loggedUser = await _userService.LoginUserAsync(model.EmailAddress, model.Password);
                 if (loggedUser != null)
 				{
-					var token = Helper.TokenGeneration(loggedUser, _configuration);
+					var token = TokenMethods.TokenGeneration(loggedUser, _configuration);
                     HttpContext.Response.Cookies.Append("Token", token);
                     return RedirectToAction("Index", "Home");
 				}
@@ -96,7 +95,7 @@ namespace Library.Web.Controllers
 				var entity = await _userService.GetManyUsersAsync(x => x.Email == model.Email);
 				if (entity != null)
 				{
-					string token = Helper.TokenGeneration(model.Email, _configuration);
+					string token = TokenMethods.TokenGeneration(model.Email, _configuration);
 
 					if (token == null)
 					{
@@ -111,7 +110,7 @@ namespace Library.Web.Controllers
 						int staffReaderId = (int)entity.FirstOrDefault().StaffReaderID;
 
 						var staffReader = await _staffReaderService.GetStaffReaderByIdAsync(staffReaderId);
-					    await Helper.SendEmailTemplateAsync<ForgetPasswordViewModel> (model, _emailService, _configuration, staffReader);
+					    await EmailMethods.SendEmailTemplateAsync<ForgetPasswordViewModel> (model, _emailService, _configuration, staffReader);
 					}
 				}
 			}
@@ -145,7 +144,7 @@ namespace Library.Web.Controllers
 
         public async Task<ActionResult> ConfirmEmail(string token)
         {
-            var id = Helper.TokenDecryption(token);
+            var id = TokenMethods.TokenDecryption(token);
             var staffReader = await _staffReaderService.GetStaffReaderByIdAsync(id);
 
             if (staffReader == null)
@@ -176,8 +175,8 @@ namespace Library.Web.Controllers
 			find = string.IsNullOrEmpty(find) ? string.Empty : find.ToLower();
 			int recsCount = users.Where(x=>x.Email.ToLower().StartsWith(find)).Count();
 
-			var model = new PagerModel(recsCount, pg, Warnings.pageSize);
-			int recSkip = (pg - 1) * Warnings.pageSize;
+			var model = new PagerModel(recsCount, pg, StaticParameters.pageSize);
+			int recSkip = (pg - 1) * StaticParameters.pageSize;
 
 			var data = users.Skip(recSkip).Take(model.PageSize).ToList();
 			data = data.FindAll(x => x.Email.ToLower().StartsWith(find));
@@ -251,7 +250,7 @@ namespace Library.Web.Controllers
                 await EntityMethods.AddEntityWithLog(userEntity, _userService.AddUserAsync,_logService);		
 
                 // Assing Role of 'user' to new user by default
-                var role = _roleService.GetRoleByNameAsync(Roles.user.ToString());
+                var role = _roleService.GetRoleByNameAsync(AccountRole.user.ToString());
 				var roleUserEntity = new RoleUser() { RoleID = role.ID, UserID = userEntity.id };
                 await EntityMethods.AddEntityWithLog(roleUserEntity,_roleUserService.AddRoleUserAsync,_logService);
 
@@ -266,10 +265,10 @@ namespace Library.Web.Controllers
                 if (userEntity != null)
                 {
                     //Create URL with above token
-                    var token = Helper.TokenGeneration(staffReaderEntity.ID.ToString(), _configuration);
+                    var token = TokenMethods.TokenGeneration(staffReaderEntity.ID.ToString(), _configuration);
                     var url = Request.Scheme + "://" + Request.Host + Url.Action("ConfirmEmail", "Account", new { email = model.Email, code = token }, "http") + "'>Confirm Password</a>";
 
-                    await Helper.SendEmailTemplateAsync<RegisterViewModel>(model, _emailService, _configuration);
+                    await EmailMethods.SendEmailTemplateAsync<RegisterViewModel>(model, _emailService, _configuration);
                 }
 
                 return RedirectToAction("Index", "Home");
