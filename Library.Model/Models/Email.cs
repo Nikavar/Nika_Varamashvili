@@ -18,8 +18,9 @@ namespace Library.Model.Models
 
         [Required]
         public string? From { get; set; }
-        [Required]
-        public string? To { get; set; }
+
+        //[Required]
+        //public string? To { get; set; }
         public string? Subject { get; set; }
 
         [DataType(DataType.MultilineText)]

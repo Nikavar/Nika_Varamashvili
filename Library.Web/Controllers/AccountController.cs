@@ -106,37 +106,16 @@ namespace Library.Web.Controllers
 					}
 					else
 					{
-						//Create URL with above token
-						//var lnkHref = "<a href='" + Url.Action("ResetPassword", "Account", new { email = model.Email, code = token }, "http") + "'>Reset Password</a>";
-                       
+                      
                         var url = Request.Scheme + "://" + Request.Host + Url.Action("ResetPassword", "Account", new { email = model.Email, code = token }, "http") + "'>Reset Password</a>";
+						int staffReaderId = (int)entity.FirstOrDefault().StaffReaderID;
 
-                        // ------------------------------------------------
-                        ////HTML Template for Send email
-                        //string subject = "Your changed password";
-                        //string body = "<b>Please find the Password Reset Link. </b><br/>" + lnkHref;
-                        ////Get and set the AppSettings using configuration manager.
-                        //Helper.AppSettings(out ToMailText, out Password, out SMTPPort, out Host, _configuration);
-                        ////Call send email methods.
-                        //string From = _configuration.GetSection("MailSettings:From").Value;
-                        ////Helper.SendEmail(From, subject, body, To, ToMailText, Password, SMTPPort, Host);
-                        // ------------------------------------------------------
-
-                        var type = typeof(ForgetPasswordViewModel).Name.ToString();
-						var emailTemplate = await _emailService.GetManyEmailsAsync(x=>x.TemplateType == type);
-						var template = emailTemplate.FirstOrDefault();
-
-						if(template != null)
-						{
-							template.To = model.Email;
-							await _emailService.UpdateEmailAsync(template);
-
-							await Helper.SendEmailTemplateAsync(template, _emailService, _configuration);
-						}
+						var staffReader = await _staffReaderService.GetStaffReaderByIdAsync(staffReaderId);
+					    await Helper.SendEmailTemplateAsync<ForgetPasswordViewModel> (model, _emailService, _configuration, staffReader);
 					}
 				}
 			}
-			return View();
+			return View("ForgetPassword");
 		}
 
         public ActionResult ResetPassword(string code)
@@ -290,20 +269,7 @@ namespace Library.Web.Controllers
                     var token = Helper.TokenGeneration(staffReaderEntity.ID.ToString(), _configuration);
                     var url = Request.Scheme + "://" + Request.Host + Url.Action("ConfirmEmail", "Account", new { email = model.Email, code = token }, "http") + "'>Confirm Password</a>";
 
-                    var type = typeof(RegisterViewModel).Name.ToString();
-                    var emailTemplate = await _emailService.GetManyEmailsAsync(x => x.TemplateType == type);
-                    var template = emailTemplate.FirstOrDefault();
-
-                    if (template != null)
-                    {
-                        template.To = model.Email;
-                        await _emailService.UpdateEmailAsync(template);
-
-                        await Helper.SendEmailTemplateAsync(template, _emailService, _configuration);
-                    }
-
-
-                    //await Helper.EmailLinkConfirmation(userEntity.Email, url, staffReaderEntity, _configuration);
+                    await Helper.SendEmailTemplateAsync<RegisterViewModel>(model, _emailService, _configuration);
                 }
 
                 return RedirectToAction("Index", "Home");
