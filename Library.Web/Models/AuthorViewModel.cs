@@ -9,6 +9,5 @@ namespace Library.Web.Models
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public DateTime DoB { get; set; }
-        public int LogID { get; set; }
     }
 }

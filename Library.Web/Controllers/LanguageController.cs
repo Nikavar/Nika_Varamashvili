@@ -39,7 +39,7 @@ namespace Library.Web.Controllers
             if (ModelState.IsValid)
             {
                 var entity = model.Adapt<Language>();
-                await EntityMethods.AddEntityWithLog(entity, languageService.AddLanguageAsync, logService);
+                await HelperMethods.AddEntityWithLog(entity, languageService.AddLanguageAsync, logService);
                 TempData["Success"] = Warnings.SuccessfullyAddedGeneric<Language>();
 
                 return RedirectToAction("Index");
@@ -69,7 +69,7 @@ namespace Library.Web.Controllers
             if (ModelState.IsValid)
             {
                 var entity = model.Adapt<Language>();
-                await EntityMethods.UpdateEntityWithLog(entity, languageService.UpdateLanguageAsync, logService);
+                await HelperMethods.UpdateEntityWithLog(entity, languageService.UpdateLanguageAsync, logService);
                 TempData["Success"] = Warnings.SuccessfullyUpdatedGeneric<Language>();
 
                 return RedirectToAction("Index");

@@ -1,0 +1,33 @@
+﻿@using Library.Service;
+@*@using @Library.Service.IUserService;
+@using _userservice;*@
+
+
+
+@if (!(bool)ViewData["isAuthenticated"] && ViewData["isAuthenticated"] != null)
+{
+    <li class="navbar-nav flex-grow-1" style="margin-left:850px">
+    <a class="nav-link text-dark" asp-area="" asp-controller="account" asp-action="login">
+        <i class="bi bi-box-arrow-in-right"></i> Log in
+    </a>
+    </li>
+    <li class="navbar-nav flex-grow-1">
+        <a class="nav-link text-dark" asp-area="" asp-controller="account" asp-action="register">
+            <i class="bi bi-person-plus"></i> Register
+        </a>
+        </li>
+}
+
+else
+{
+    <li class="navbar-nav flex-grow-1">
+    <a class="nav-link text-dark" asp-area="" asp-controller="account" asp-action="logout">
+        <i class="bi bi-person-badge"></i> Hello User
+    </a>
+</li>
+<li style="height:50px">
+    <a class="btn btn-outline-danger btn-sm" asp-controller="Account" asp-action="Logout">
+        <i class="bi bi-box-arrow-in-right"></i> Log Out
+    </a>
+</li>	
+}			

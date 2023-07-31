@@ -37,7 +37,7 @@ namespace Library.Web.Controllers
             if (ModelState.IsValid)
             {
                 var entity = model.Adapt<Email>();
-                await EntityMethods.AddEntityWithLog(entity, emailService.AddEmailAsync, logService);
+                await HelperMethods.AddEntityWithLog(entity, emailService.AddEmailAsync, logService);
                 TempData["Success"] = Warnings.SuccessfullyAddedGeneric<Email>();
 
                 return RedirectToAction("Index");
@@ -67,7 +67,7 @@ namespace Library.Web.Controllers
             if (ModelState.IsValid)
             {
                 var entity = model.Adapt<Email>();
-                await EntityMethods.UpdateEntityWithLog(entity, emailService.UpdateEmailAsync, logService);
+                await HelperMethods.UpdateEntityWithLog(entity, emailService.UpdateEmailAsync, logService);
                 TempData["Success"] = Warnings.SuccessfullyAddedGeneric<Email>();
 
                 return RedirectToAction("Index");

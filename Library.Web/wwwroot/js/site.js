@@ -1,23 +1,4 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-// Write your JavaScript code.
-
-
-let isReader = true;
-
-function showHidePositions() {
-	if (isReader)
-		$('#positionsDiv').hide();
-	else {
-		$('#positionsDiv').show();
-	}
-	isReader = !isReader;
-};
-
-
-
-//document.getElementById('register-form').addEventListener('submit', function (evt) {
+﻿//document.getElementById('register-form').addEventListener('submit', function (evt) {
 //    evt.preventDefault();
 //    const firstname = document.getElementById('first_name');
 //    const lastname = document.getElementById('last_name');

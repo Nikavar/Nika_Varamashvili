@@ -10,6 +10,10 @@
     @*<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />*@
     <link rel="stylesheet" href="~/LibraryManagementSystem.styles.css" asp-append-version="true" />
 
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
     <script src="https://cdn.tiny.cloud/1/oo2v4hbe7s3kdjgfycjxazifss03z0de5ib174q2q5co6grm/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
     <script>
         tinymce.init({
@@ -43,45 +47,40 @@
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        <li class="navbar-nav flex-grow-1">
+                            <a class="nav-link text-dark" asp-controller="Account" asp-action="Index"> <i class="badge-info bg-info"></i> Test1 </a>
                         </li>
-                    </ul>
+                        <li class ="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" 
+                               data-toggle="dropdown" aria-haspopup="true" aria-expended="false">
+                            <i class="bi bi-gear"></i> Management
+                            </a>
 
-					@*   For Recursion Tabs generated from DB*@
-                 <div class="container">
-                        <main role="main" class="pb-3">
-                            <div id="menu">
+                            @*Management Tabs*@
+
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" asp-controller="Account" asp-action="Index"><i class="bi bi-person"></i>&nbsp;Accounts&nbsp;</a>
+                                <a class="dropdown-item" asp-controller="Book" asp-action="Index"><i class=" bi bi-book"></i>&nbsp;Books&nbsp;</a>
+                                <a class="dropdown-item" asp-controller="Email" asp-action="Index"><i class="bi bi-envelope"></i>&nbsp;Emails&nbsp;</a>
+                                <a class="dropdown-item" asp-controller="Author" asp-action="Index"><i class="bi bi-author"></i>&nbsp;Authors&nbsp;</a>
+                                <a class="dropdown-item" asp-controller="Language" asp-action="Index"><i class="bi bi-language"></i>&nbsp;Language&nbsp;</a>
+                                <a class="dropdown-item" asp-controller="Position" asp-action="Index"><i class="bi bi-language"></i>&nbsp;Positions&nbsp;</a>
+                                <a class="dropdown-item" asp-controller="Publisher" asp-action="Index"><i class="bi bi-language"></i>&nbsp;Publishers&nbsp;</a>
+                                <a class="dropdown-item" asp-controller="Storage" asp-action="Index"><i class="bi bi-language"></i>&nbsp;Storages&nbsp;</a>
+                                @*<a class="dropdown-item" asp-controller="Tab" asp-action="Index"><i class="bi bi-language"></i>&nbsp;Tabs&nbsp;</a>*@
                             </div>
-                            @*@RenderBody()*@
-                        </main>
-                    </div>
-					<ul class="navbar-nav ml-auto">
-						<li class="nav-item dropdown">
-							<div class="dropdown">
-								<button class="btn btn-outline-danger dropdown-toggle" type="button" id="profile-btn" data-toggle="dropdown"
-										aria-expanded="false">
-                                    <i class="bi bi-person-badge"></i> Hello "varnikoloz" @*@User.GetUserName(User)*@ @* Warning *@
- 								</button>                                   
-							</div>
-						</li>
-					</ul>
+                        </li>                     
+                       
+                        <partial name="_Identity.cshtml" />
                     
-
-                    <ul class="navbar-nav ml-auto">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="account" asp-action="register">Register</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="account" asp-action="login">Login</a>
-                        </li>
                     </ul>
-                </div>
+                </div>               
             </div>
         </nav>
     
@@ -92,13 +91,13 @@
                 <main role="main">
                     @if (TempData["Success"] != null)
                     {
-                        <div class="alert alert-success">
+                        <div class="alert alert-success" style="text-align:center">
                             @TempData["Success"]
                         </div>
                     }
                     @if (TempData["Error"] != null)
                     {
-                        <div class="alert alert-danger">
+                        <div class="alert alert-danger" style="text-align:center">
                             @TempData["Error"]
                         </div>
                     }

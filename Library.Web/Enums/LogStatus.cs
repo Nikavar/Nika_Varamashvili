@@ -1,6 +1,6 @@
 ﻿using DocumentFormat.OpenXml.EMMA;
 
-namespace Library.Web.Constants
+namespace Library.Web.Enums
 {
     enum LogStatus
     {

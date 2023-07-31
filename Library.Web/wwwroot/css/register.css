@@ -1,0 +1,19 @@
+﻿@import url('register.css');
+body {
+
+}
+
+input:focus::placeholder {
+    color: transparent;
+}
+
+.form-left-row-style{
+    margin: 15px 0px 15px 0px;
+    width: 300px;
+}
+
+.form-right-row-style {
+    margin: 15px 0px 15px 0px; 
+    width: 400px;
+}
+

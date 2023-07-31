@@ -8,6 +8,5 @@ namespace Library.Web.Models
         public int Id { get; set; }
         public string? LanguageName { get; set; }
         public string? LanguageCode { get; set; }
-        public int LogID { get; set; }
     }
 }

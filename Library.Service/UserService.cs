@@ -63,9 +63,9 @@ namespace Library.Service
             await _userRepository.DeleteManyAsync(filter);
         }
 
-        public async Task<User> LoginUserAsync(string userName, string password)
+        public async Task<User> LoginUserAsync(string username, string password)
         {
-            return await _userRepository.LoginUserAsync(userName,password);
+            return await _userRepository.LoginUserAsync(username,password);
         }
 
         public async Task SaveUserAsync()

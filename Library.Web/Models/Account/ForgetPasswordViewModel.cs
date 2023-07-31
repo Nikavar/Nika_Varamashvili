@@ -9,5 +9,7 @@ namespace Library.Web.Models.Account
 		[Display(Name = "Email")]
 		[EmailAddress(ErrorMessage = "Invalid Email Address")]
 		public string? Email { get; set; }
+
+		public string? ForgetURL { get; set; }
 	}
 }

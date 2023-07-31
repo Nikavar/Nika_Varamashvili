@@ -16,10 +16,16 @@ using WebMatrix.WebData;
 using Windows.ApplicationModel.Email;
 using DocumentFormat.OpenXml.Wordprocessing;
 using System.Runtime.InteropServices;
+using Library.Web.Enums;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using DocumentFormat.OpenXml.Drawing.Wordprocessing;
+using System.Data;
+using System.Diagnostics.Eventing.Reader;
 
 namespace Library.Web.Controllers
 {
-	public class AccountController : Controller
+    public class AccountController : Controller
 	{
 
         private readonly IUserService _userService;
@@ -65,21 +71,35 @@ namespace Library.Web.Controllers
 		{
 			if (ModelState.IsValid)
 			{
-				var loggedUser = await _userService.LoginUserAsync(model.EmailAddress, model.Password);
-                if (loggedUser != null)
+				if(string.IsNullOrEmpty(model.EmailAddress) && string.IsNullOrEmpty(model.Password))
 				{
-					var token = TokenMethods.TokenGeneration(loggedUser, _configuration);
-                    HttpContext.Response.Cookies.Append("Token", token);
-                    return RedirectToAction("Index", "Home");
+					TempData["Error"] = Warnings.UsernameOrPasswordIsIncorrect;
+					return View(model);
 				}
 
 				else
 				{
-					TempData["Error"] = Warnings.UsernameOrPasswordIsIncorrect;
-					return View("Login");
+
+                    var password = HelperMethods.ComputeSha256Hash(model.Password);
+                    var loggedUser = await _userService.LoginUserAsync(model.EmailAddress,password);
+
+					if (loggedUser != null)
+					{
+						var token = HelperMethods.TokenGeneration(loggedUser, _configuration);
+						HttpContext.Response.Cookies.Append("Token", token);
+						ViewData["isAuthenticated"] = true;
+						return RedirectToAction("Index", "Home");
+					}
+
+					else
+					{ 
+						TempData["Error"] = Warnings.UsernameOrPasswordIsIncorrect;
+						return View(model);
+					}
+
 				}
 			}
-			return View("Login");
+			return View(model);
 		}
 
 		public ActionResult ForgetPassword()
@@ -95,7 +115,7 @@ namespace Library.Web.Controllers
 				var entity = await _userService.GetManyUsersAsync(x => x.Email == model.Email);
 				if (entity != null)
 				{
-					string token = TokenMethods.TokenGeneration(model.Email, _configuration);
+					string token = HelperMethods.TokenGeneration(model.Email, _configuration);
 
 					if (token == null)
 					{
@@ -107,10 +127,11 @@ namespace Library.Web.Controllers
 					{
                       
                         var url = Request.Scheme + "://" + Request.Host + Url.Action("ResetPassword", "Account", new { email = model.Email, code = token }, "http") + "'>Reset Password</a>";
-						int staffReaderId = (int)entity.FirstOrDefault().StaffReaderID;
+						model.ForgetURL = url;
 
+						int staffReaderId = (int)entity.FirstOrDefault().StaffReaderID;
 						var staffReader = await _staffReaderService.GetStaffReaderByIdAsync(staffReaderId);
-					    await EmailMethods.SendEmailTemplateAsync<ForgetPasswordViewModel> (model, _emailService, _configuration, staffReader);
+					    await HelperMethods.SendEmailTemplateAsync<ForgetPasswordViewModel> (model, _emailService, _configuration, staffReader);
 					}
 				}
 			}
@@ -144,7 +165,7 @@ namespace Library.Web.Controllers
 
         public async Task<ActionResult> ConfirmEmail(string token)
         {
-            var id = TokenMethods.TokenDecryption(token);
+            var id = HelperMethods.TokenDecryption(token);
             var staffReader = await _staffReaderService.GetStaffReaderByIdAsync(id);
 
             if (staffReader == null)
@@ -155,7 +176,7 @@ namespace Library.Web.Controllers
 
             staffReader.IsConfirmed = true;
             await _staffReaderService.UpdateStaffReaderAsync(staffReader);
-            await EntityMethods.UpdateEntityWithLog(staffReader, _staffReaderService.UpdateStaffReaderAsync, _logService);
+            await HelperMethods.UpdateEntityWithLog(staffReader, _staffReaderService.UpdateStaffReaderAsync, _logService);
             ViewBag.ErrorMessage = Warnings.EmailWasConfirmed;
 
             return View();
@@ -164,7 +185,8 @@ namespace Library.Web.Controllers
         public ActionResult Logout()
         {
             HttpContext.Response.Cookies.Delete("Token");
-            return RedirectToAction("Index", "Home");
+			ViewData["isAuthenticated"] = false;
+            return RedirectToAction("Login", "Account");
         }
 
         public async Task<IActionResult> Index(string sortBy, string find = "", int pg = 1)
@@ -214,18 +236,27 @@ namespace Library.Web.Controllers
 			return View(user);
 		}
 
+		[HttpGet]
 		public async Task<IActionResult> Register()
 		{
+			RegisterViewModel model = new RegisterViewModel();
+			model.Positions = new List<SelectListItem>();
 			var positions = await _positionService.GetAllPositionsAsync();
-			List<RegisterViewModel> positionLst = new List<RegisterViewModel>();
 
-			//var list = (from p in positions select p.PositionName).ToList();
+			model.Positions.Add(new SelectListItem { Text = "-- select position --", Value = "" });
 
-			//list.Insert(0, "--- Select Positions ---");
-			//ViewBag.message = list;
+			foreach (var pos in positions)
+			{
+				model.Positions.Add(new SelectListItem
+				{
+					Text = pos.PositionName,
+					Value = pos.ID.ToString()
+				});
+			}
 
-            ViewBag.message = positions;
-            return View(new RegisterViewModel());
+			ViewData["Positions"] = model.Positions;
+
+			return View(model);
 		}
 
         [HttpPost]
@@ -233,48 +264,49 @@ namespace Library.Web.Controllers
 		{
             if (ModelState.IsValid)
 			{
-				var isUserRegistered = await _userService.LoginUserAsync(model.Email, model.Password);
+				var account = await _userService.GetManyUsersAsync(x => x.Email.ToLower() == model.Email.ToLower());
 
-				if (isUserRegistered != null)
+				if (account.FirstOrDefault() == null && model.Password != null)
 				{
-					ViewBag.ErrorMessage = Warnings.UserIsAlreadyRegistered;
-					return View("Index", "Home");
+					// Add & Log 'StaffReader' Entity In Database
+					var staffReaderEntity = model.Adapt<StaffReader>();
+					await HelperMethods.AddEntityWithLog(staffReaderEntity, _staffReaderService.AddStaffReaderAsync, _logService);
+
+					// Add & Log 'User' Entity In Database
+					var userEntity = model.Adapt<User>();
+					var hashedPassword = HelperMethods.ComputeSha256Hash(model.Password);
+					userEntity.Password = hashedPassword;
+
+					userEntity.StaffReaderID = staffReaderEntity.ID;
+					await HelperMethods.AddEntityWithLog(userEntity, _userService.AddUserAsync, _logService);
+
+					// Assing Role of 'user' to new user by default
+					var role = _roleService.GetRoleByNameAsync(AccountRole.user.ToString());
+					var roleUserEntity = new RoleUser() { RoleID = role.ID, UserID = userEntity.id };
+					await HelperMethods.AddEntityWithLog(roleUserEntity, _roleUserService.AddRoleUserAsync, _logService);
+
+					// Logged PositionStaff
+					var loggedPositionStaff = await _logService.AddLogAsync(
+							new LogInfo
+							{
+								TableName = "PositionStaff",
+							}
+						);
+
+					if (userEntity != null)
+					{
+						//Create URL with above token
+						var token = HelperMethods.TokenGeneration(staffReaderEntity.ID.ToString(), _configuration);
+						var url = Request.Scheme + "://" + Request.Host + Url.Action("ConfirmEmail", "Account", new { email = model.Email, code = token }, "http") + "'>Confirm Password</a>";
+
+						await HelperMethods.SendEmailTemplateAsync<RegisterViewModel>(model, _emailService, _configuration);
+					}
+					
+					return View("RegisterCompleted");
 				}
-                // Add & Log 'StaffReader' Entity In Database
-                var staffReaderEntity = model.Adapt<StaffReader>();
-                await EntityMethods.AddEntityWithLog(staffReaderEntity, _staffReaderService.AddStaffReaderAsync, _logService);
-
-				// Add & Log 'User' Entity In Database
-				var userEntity = model.Adapt<User>();
-                userEntity.StaffReaderID = staffReaderEntity.ID;
-                await EntityMethods.AddEntityWithLog(userEntity, _userService.AddUserAsync,_logService);		
-
-                // Assing Role of 'user' to new user by default
-                var role = _roleService.GetRoleByNameAsync(AccountRole.user.ToString());
-				var roleUserEntity = new RoleUser() { RoleID = role.ID, UserID = userEntity.id };
-                await EntityMethods.AddEntityWithLog(roleUserEntity,_roleUserService.AddRoleUserAsync,_logService);
-
-                // Logged PositionStaff
-                var loggedPositionStaff = await _logService.AddLogAsync(
-						new LogInfo 
-						{ 
-							TableName= "PositionStaff",
-						}					
-					);
-
-                if (userEntity != null)
-                {
-                    //Create URL with above token
-                    var token = TokenMethods.TokenGeneration(staffReaderEntity.ID.ToString(), _configuration);
-                    var url = Request.Scheme + "://" + Request.Host + Url.Action("ConfirmEmail", "Account", new { email = model.Email, code = token }, "http") + "'>Confirm Password</a>";
-
-                    await EmailMethods.SendEmailTemplateAsync<RegisterViewModel>(model, _emailService, _configuration);
-                }
-
-                return RedirectToAction("Index", "Home");
 			}
 
-			return View("Error","Account"); 
+			return View("Error"); 
 		}
 
         public async Task<IActionResult> Edit(int id)
@@ -294,7 +326,7 @@ namespace Library.Web.Controllers
 
 			if (ModelState.IsValid)
 			{
-				await EntityMethods.UpdateEntityWithLog(user, _userService.UpdateUserAsync, _logService);
+				await HelperMethods.UpdateEntityWithLog(user, _userService.UpdateUserAsync, _logService);
 				return RedirectToAction(nameof(Index));
 			}
 			return View(user);

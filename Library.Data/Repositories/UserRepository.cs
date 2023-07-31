@@ -18,9 +18,9 @@ namespace Library.Data.Repositories
 
         }
 
-        public async Task<User> LoginUserAsync(string userName, string password)
+        public async Task<User> LoginUserAsync(string username, string password)
         {
-            return await dbSet.Where(u => u.Email == userName && u.Password == password).FirstOrDefaultAsync();
+            return await dbSet.Where(u => u.Email == username && u.Password == password).FirstOrDefaultAsync();
 		}
 
 		public Task LogoutUserAsync(User user)

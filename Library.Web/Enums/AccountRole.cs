@@ -1,4 +1,4 @@
-﻿namespace Library.Web.Constants
+﻿namespace Library.Web.Enums
 {
     public enum AccountRole
     {

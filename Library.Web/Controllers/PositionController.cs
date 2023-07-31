@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Library.Web.Controllers
 {
-	public class PositionController : Controller
+    public class PositionController : Controller
 	{
 		private readonly IPositionService positionService;
 		private readonly ILogService logService;
@@ -39,7 +39,7 @@ namespace Library.Web.Controllers
 			if (ModelState.IsValid)
 			{
 				var entity = model.Adapt<Position>();
-				await EntityMethods.AddEntityWithLog(entity,positionService.AddPositionAsync,logService);
+				await HelperMethods.AddEntityWithLog(entity,positionService.AddPositionAsync,logService);
 
    				TempData["Success"] = Warnings.SuccessfullyAddedGeneric<Position>();
 
@@ -69,7 +69,7 @@ namespace Library.Web.Controllers
 			if (ModelState.IsValid)
 			{ 
 				var entity = model.Adapt<Position>();
-				await EntityMethods.UpdateEntityWithLog(entity,positionService.UpdatePositionAsync,logService);
+				await HelperMethods.UpdateEntityWithLog(entity,positionService.UpdatePositionAsync,logService);
 
 				TempData["Success"] = Warnings.SuccessfullyUpdatedGeneric<Position>();
 

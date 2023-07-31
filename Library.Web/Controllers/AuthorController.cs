@@ -49,7 +49,7 @@ namespace Library.Web.Controllers
             {
 
                 var authorEntity = model.Adapt<Author>();
-                await EntityMethods.AddEntityWithLog(authorEntity, authorService.AddAuthorAsync, logService);
+                await HelperMethods.AddEntityWithLog(authorEntity, authorService.AddAuthorAsync, logService);
                 TempData["Success"] = Warnings.SuccessfullyAddedGeneric<Author>();
 
                 return RedirectToAction("Index");
@@ -79,7 +79,7 @@ namespace Library.Web.Controllers
             if (ModelState.IsValid)
             {
                 var authorEntity = item.Adapt<Author>();
-                await EntityMethods.UpdateEntityWithLog(authorEntity, authorService.UpdateAuthorAsync, logService);
+                await HelperMethods.UpdateEntityWithLog(authorEntity, authorService.UpdateAuthorAsync, logService);
 
                 TempData["Success"] = Warnings.SuccessfullyAddedGeneric<Author>();
                 return RedirectToAction("Index");
@@ -110,7 +110,7 @@ namespace Library.Web.Controllers
             var entity = model.Adapt<Author>();
             await authorService.DeleteAuthorAsync(entity);
             await logService.DeleteManyLogsAsync(x => x.EntityID == entity.Id);
-            TempData["Success"] = Warnings.SuccessfullyAddedGeneric<Author>();
+            TempData["Error"] = Warnings.SuccessfullyDeletedGeneric<Author>();
 
             return RedirectToAction("Index");
         }
