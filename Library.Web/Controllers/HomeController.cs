@@ -1,6 +1,8 @@
-﻿using Library.Web.Models;
+﻿using DocumentFormat.OpenXml.InkML;
+using Library.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using http = Windows.Web.Http;
 
 namespace Library.Web.Controllers
 {
@@ -15,7 +17,10 @@ namespace Library.Web.Controllers
 
 		public IActionResult Index()
 		{
-			return View();
+			if(Request.Cookies["Token"] != null)
+				return View();
+
+			return RedirectToAction("Login", "Account");
 		}
 
  

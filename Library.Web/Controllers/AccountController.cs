@@ -87,7 +87,7 @@ namespace Library.Web.Controllers
 					{
 						var token = HelperMethods.TokenGeneration(loggedUser, _configuration);
 						HttpContext.Response.Cookies.Append("Token", token);
-						ViewData["isAuthenticated"] = true;
+
 						return RedirectToAction("Index", "Home");
 					}
 
@@ -99,7 +99,7 @@ namespace Library.Web.Controllers
 
 				}
 			}
-			return View(model);
+			return View("Login","Account");
 		}
 
 		public ActionResult ForgetPassword()
@@ -185,7 +185,6 @@ namespace Library.Web.Controllers
         public ActionResult Logout()
         {
             HttpContext.Response.Cookies.Delete("Token");
-			ViewData["isAuthenticated"] = false;
             return RedirectToAction("Login", "Account");
         }
 

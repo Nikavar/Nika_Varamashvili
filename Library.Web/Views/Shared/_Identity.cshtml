@@ -1,10 +1,24 @@
-﻿@using Library.Service;
-@*@using @Library.Service.IUserService;
-@using _userservice;*@
+﻿@using Library.Model.Models;
+@using Library.Web.Models.Account;
+@using Windows.Web.Http;
+@using Library.Service;
+@using Library.Web;
+
+@inject IUserService userservice;
 
 
+@{
+    var cookie = Context.Request.Cookies["Token"];
+    var userId = -1;
 
-@if (!(bool)ViewData["isAuthenticated"] && ViewData["isAuthenticated"] != null)
+    if(cookie != null)
+        userId = Convert.ToInt32(HelperMethods.TokenDecryption(cookie));
+
+    var user = await userservice.GetUserByIdAsync(userId);    
+}
+
+
+@if (cookie == null || cookie == "")
 {
     <li class="navbar-nav flex-grow-1" style="margin-left:850px">
     <a class="nav-link text-dark" asp-area="" asp-controller="account" asp-action="login">
@@ -20,9 +34,10 @@
 
 else
 {
-    <li class="navbar-nav flex-grow-1">
+    <li class="navbar-nav flex-grow-1" style="margin-left:850px">
     <a class="nav-link text-dark" asp-area="" asp-controller="account" asp-action="logout">
-        <i class="bi bi-person-badge"></i> Hello User
+
+        <i class="bi bi-person-badge"></i> Hello @user.Email;
     </a>
 </li>
 <li style="height:50px">
