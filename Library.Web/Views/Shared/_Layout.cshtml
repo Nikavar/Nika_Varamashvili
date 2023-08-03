@@ -1,4 +1,20 @@
-﻿<!DOCTYPE html>
+﻿@using Library.Service;
+@using Library.Web;
+@inject IUserService userService;
+
+@{
+    var cookie = Context.Request.Cookies["Token"];
+    var userId = -1;
+
+    if (cookie != null)
+        userId = Convert.ToInt32(HelperMethods.TokenDecryption(cookie));
+
+    var isAdmin = await userService.IsInRole(userId, "Admin");
+}
+
+
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -53,26 +69,30 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        <li class ="nav-item dropdown">
-							<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" 
-                               data-toggle="dropdown" aria-haspopup="true" aria-expended="false">
-                            <i class="bi bi-gear"></i> Management
-                            </a>
 
-                            @*Management Tabs*@
+                        @if (userId != -1 && isAdmin)
+                        {
+                            <li class ="nav-item dropdown">
+							    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" 
+                                   data-toggle="dropdown" aria-haspopup="true" aria-expended="false">
+                                <i class="bi bi-gear"></i> Management
+                                </a>
 
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" asp-controller="Account" asp-action="Index"><i class="bi bi-person"></i>&nbsp;Accounts&nbsp;</a>
-                                <a class="dropdown-item" asp-controller="Book" asp-action="Index"><i class=" bi bi-book"></i>&nbsp;Books&nbsp;</a>
-                                <a class="dropdown-item" asp-controller="Email" asp-action="Index"><i class="bi bi-envelope"></i>&nbsp;Emails&nbsp;</a>
-                                <a class="dropdown-item" asp-controller="Author" asp-action="Index"><i class="bi bi-author"></i>&nbsp;Authors&nbsp;</a>
-                                <a class="dropdown-item" asp-controller="Language" asp-action="Index"><i class="bi bi-language"></i>&nbsp;Language&nbsp;</a>
-                                <a class="dropdown-item" asp-controller="Position" asp-action="Index"><i class="bi bi-language"></i>&nbsp;Positions&nbsp;</a>
-                                <a class="dropdown-item" asp-controller="Publisher" asp-action="Index"><i class="bi bi-language"></i>&nbsp;Publishers&nbsp;</a>
-                                <a class="dropdown-item" asp-controller="Storage" asp-action="Index"><i class="bi bi-language"></i>&nbsp;Storages&nbsp;</a>
-                                @*<a class="dropdown-item" asp-controller="Tab" asp-action="Index"><i class="bi bi-language"></i>&nbsp;Tabs&nbsp;</a>*@
-                            </div>
-                        </li>                     
+                                @*Management Tabs*@
+
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" asp-controller="Account" asp-action="Index"><i class="bi bi-person"></i>&nbsp;Accounts&nbsp;</a>
+                                    <a class="dropdown-item" asp-controller="Book" asp-action="Index"><i class=" bi bi-book"></i>&nbsp;Books&nbsp;</a>
+                                    <a class="dropdown-item" asp-controller="Email" asp-action="Index"><i class="bi bi-envelope"></i>&nbsp;Emails&nbsp;</a>
+                                    <a class="dropdown-item" asp-controller="Author" asp-action="Index"><i class="bi bi-author"></i>&nbsp;Authors&nbsp;</a>
+                                    <a class="dropdown-item" asp-controller="Language" asp-action="Index"><i class="bi bi-language"></i>&nbsp;Language&nbsp;</a>
+                                    <a class="dropdown-item" asp-controller="Position" asp-action="Index"><i class="bi bi-language"></i>&nbsp;Positions&nbsp;</a>
+                                    <a class="dropdown-item" asp-controller="Publisher" asp-action="Index"><i class="bi bi-language"></i>&nbsp;Publishers&nbsp;</a>
+                                    <a class="dropdown-item" asp-controller="Storage" asp-action="Index"><i class="bi bi-language"></i>&nbsp;Storages&nbsp;</a>
+                                    @*<a class="dropdown-item" asp-controller="Tab" asp-action="Index"><i class="bi bi-language"></i>&nbsp;Tabs&nbsp;</a>*@
+                                </div>
+                            </li>                   
+                        }
                        
                         <partial name="_Identity.cshtml" />
                     

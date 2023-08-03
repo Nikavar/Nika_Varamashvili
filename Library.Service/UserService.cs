@@ -13,6 +13,7 @@ using System.Security.Claims;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using System.Collections.Immutable;
 
 namespace Library.Service
 {
@@ -20,12 +21,16 @@ namespace Library.Service
     {
         private readonly IUserRepository _userRepository;
         private readonly IStaffReaderRepository _staffReaderRepository;
+        private readonly IRoleUserRepository _roleUserRepository;
+        private readonly IRoleRepository _roleRepository;
         private readonly IUnitOfWork unitOfWork;
 
-        public UserService(IUserRepository userRepository, IStaffReaderRepository staffReader, IUnitOfWork unitOfWork)
+        public UserService(IRoleRepository _roleRepository, IRoleUserRepository _roleUserRepository, IUserRepository userRepository, IStaffReaderRepository staffReader, IUnitOfWork unitOfWork)
         {
             this._userRepository = userRepository;
             this._staffReaderRepository = staffReader;
+            this._roleUserRepository = _roleUserRepository;
+            this._roleRepository = _roleRepository;
             this.unitOfWork = unitOfWork;
         }
 
@@ -77,6 +82,23 @@ namespace Library.Service
         {
            await _userRepository.LogoutUserAsync(user);
         }
+
+        public async Task<bool> IsInRole(int id, string role)
+        {
+            var users = await _userRepository.GetAllAsync();
+            var roles = await _roleRepository.GetAllAsync();
+            var roleUsers = await _roleUserRepository.GetAllAsync();
+
+            var result = (from u in users.ToList()
+                         join ru in roleUsers.ToList()
+                         on u.id equals ru.UserID
+                         join r in roles.ToList()
+                         on ru.RoleID equals r.ID
+                         where u.id == id && r?.RoleName?.ToLower() == role.ToLower()
+                         select u).ToList();
+
+            return result.Count > 0 ? true : false;
+        }
     }
 
     public interface IUserService
@@ -94,5 +116,6 @@ namespace Library.Service
         // Login & Register User
         Task<User> LoginUserAsync(string userName, string password);
         Task LogoutUserAsync(User user);
+        Task<bool> IsInRole(int id, string role);
     }
 }
