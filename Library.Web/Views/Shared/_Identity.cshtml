@@ -15,6 +15,7 @@
         userId = Convert.ToInt32(HelperMethods.TokenDecryption(cookie));
 
     var user = await userservice.GetUserByIdAsync(userId);    
+    //User.Identity.Name
 }
 
 

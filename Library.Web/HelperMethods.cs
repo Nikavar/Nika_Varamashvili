@@ -11,7 +11,7 @@ using System.Text;
 using Library.Web.Models.Account;
 using System.Security.Cryptography;
 using Library.Web.Enums;
-
+using Windows.UI.Xaml;
 
 namespace Library.Web
 {
@@ -35,95 +35,49 @@ namespace Library.Web
             }
         }
 
-        public static async Task SendEmailTemplateAsync<TModel>(TModel model, IEmailService emailService, IConfiguration config, StaffReader? staffReader = null) where TModel : class
+        public static async Task SendEmailAsync<TModel>(TModel model, IEmailService emailService, IConfiguration config, string emailTo) where TModel : class
         {
-            var emailTemplate = await emailService.GetManyEmailsAsync(x => x.TemplateType == model.GetType().Name);
-            var template = emailTemplate.FirstOrDefault();
 
-            string from = template.GetType().GetProperty("From").GetValue(template).ToString();
-            string subject = template.GetType().GetProperty("Subject").GetValue(template).ToString();
-            string body = template.GetType().GetProperty("Body").GetValue(template).ToString();
+            Type modelType = model.GetType();
 
-            //emailBody = emailBody.Replace("{#URL#}", url);
+            var _templateData = await emailService.GetManyEmailsAsync(x => x.TemplateType.ToLower() == modelType.Name.ToLower());
+            var body = _templateData?.FirstOrDefault()?.Body;
+            var subject = _templateData?.FirstOrDefault()?.Subject;
 
-            string firstName, lastName, to;
+            PropertyInfo[] properties = modelType.GetProperties();
 
-            if (model is RegisterViewModel)
+            foreach (PropertyInfo property in properties)
             {
-                firstName = model.GetType().GetProperty("FirstName").GetValue(model).ToString();
-                lastName = model.GetType().GetProperty("LastName").GetValue(model).ToString();
-                to = model.GetType().GetProperty("Email").GetValue(model).ToString();
+                string placeholder = "{" + property.Name + "}";
+                string value = property?.GetValue(model)?.ToString();
+                body = body?.Replace(placeholder, value);
             }
 
-            else
-            {
-                firstName = staffReader.FirstName;
-                lastName = staffReader.LastName;
-                to = staffReader.Email;
-            }
+            if (subject != null && body != null)
+                await SendEmailTemplateAsync(emailTo, subject, config, body);
+        }
 
-            // Body Replacement
-
-            if (!string.IsNullOrEmpty(body) && body != null)
-            {
-                body = body.Replace("{FirstName}", firstName);
-                body = body.Replace("{LastName}", lastName);
-            }
-
-            //var smtpClient = new SmtpClient(config.GetSection("MailSettings:Host").Value, Convert.ToInt32(config.GetSection("MailSettings:Port").Value))
-            //{
-            //    EnableSsl = true,
-            //    UseDefaultCredentials = false,
-            //    Credentials = new NetworkCredential(config.GetSection("MailSettings:Mail").Value, config.GetSection("MailSettings:Password").Value)
-            //};
-
-            //var mailMessage = new MailMessage
-            //{
-            //    From = new MailAddress(config.GetSection("MailSettings:Mail").Value),
-            //    Subject = subject,
-            //    Body = body,
-            //    IsBodyHtml = true
-            //};
-
-            //mailMessage.To.Add(to);
-            //mailMessage.To.Add(config.GetSection("MailSettings:BccMail").Value);
-            //await smtpClient.SendMailAsync(mailMessage);
-
-
-            #region Old Code for Mail Settings
-
-            //// v.1
-            bool hasPortNumber = int.TryParse(config.GetSection("MailSettings:Port").Value, out int port);
-            var _port = hasPortNumber == true ? port : 0;
-            var _host = config.GetSection("MailSettings:Host").Value;
-
-            var username = config.GetSection("MailSettings:Username").Value;
-			var password = config.GetSection("MailSettings:Password").Value;
-
-
-            SmtpClient smtpClient = new SmtpClient(_host, _port)
+        private static async Task SendEmailTemplateAsync(string email, string subject, IConfiguration config, string body)
+        {
+            var smtpClient = new SmtpClient(config.GetSection("MailSettings:Host").Value, Convert.ToInt32(config.GetSection("MailSettings:Port").Value))
             {
                 EnableSsl = true,
                 UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(username, password)
+                Credentials = new NetworkCredential(config.GetSection("MailSettings:Username").Value, config.GetSection("MailSettings:Password").Value)
             };
 
-            // Mail Settings
-            MailMessage mailMessage = new MailMessage()
+            var mailMessage = new MailMessage
             {
-                From = new MailAddress(from),
+                From = new MailAddress(config.GetSection("MailSettings:From").Value),
                 Subject = subject,
                 Body = body,
                 IsBodyHtml = true
             };
 
-            mailMessage.To.Add(to);
-			mailMessage.To.Add(config.GetSection("MailSettings:BccMail").Value);
-			await smtpClient.SendMailAsync(mailMessage);
-			
-			#endregion
-		}
-
+            mailMessage.To.Add(email);
+            mailMessage.To.Add(config.GetSection("MailSettings:BccMail").Value);
+            await smtpClient.SendMailAsync(mailMessage);
+        }        
         public static async Task AddEntityWithLog<TEntity>(TEntity entity, Func<TEntity, Task<TEntity>> AddEntityAsync, ILogService logService) where TEntity : class
         {
             var log = new LogInfo { TableName = typeof(TEntity).Name };
@@ -143,17 +97,18 @@ namespace Library.Web
                     log.EntityID = (int)idProperty.GetValue(entity);
                 }
             }
+
             catch (Exception ex)
             {
                 log.LogContent = ex.Message;
                 log.LogStatus = LogStatus.Error.ToString();
             }
+
             finally
             {
                 await logService.AddLogAsync(log);
             }
         }
-
         public static async Task UpdateEntityWithLog<TEntity>(TEntity entity, Func<TEntity, Task> UpdateEntityAsync, ILogService logService) where TEntity : class
         {
             PropertyInfo idProperty = entity.GetType().GetProperty("id") ?? entity.GetType().GetProperty("ID")
@@ -185,9 +140,6 @@ namespace Library.Web
                 await logService.UpdateLogAsync(log);
             }
         }
-
-        #region TokenOperations
-        // Generates token for Email Confirmation
         public static string TokenGeneration(string parameter, IConfiguration configuration)
         {
             var claims = new List<Claim>
@@ -203,8 +155,6 @@ namespace Library.Web
              );
             return new JwtSecurityTokenHandler().WriteToken(Token);
         }
-
-        // Generates token for User Login
         public static string TokenGeneration(User user, IConfiguration configuration)
         {
             var claims = new[]
@@ -224,8 +174,6 @@ namespace Library.Web
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-
-        // Provides descryption for token key
         public static int TokenDecryption(string token)
         {
             var handler = new JwtSecurityTokenHandler();
@@ -235,7 +183,6 @@ namespace Library.Web
             return jwtClaims != null ? int.Parse(jwtClaims.Value) : -1;
         }
 
-        #endregion
     }
 }
 

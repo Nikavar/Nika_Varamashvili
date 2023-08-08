@@ -49,8 +49,8 @@ namespace Library.Web.Models.Account
 		[Display(Name = "Email")]
 		[Required(ErrorMessage = "Please enter the Email Address!")]
 		[EmailAddress(ErrorMessage = "Email Address u entered is wrong!")]
-		[RegularExpression("^((?=.*?)(?=.*?[a-z])(?=.*?[0-9])|(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[^a-zA-Z0-9])|(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[^a-zA-Z0-9])|(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^a-zA-Z0-9])).{8,}$",
-			ErrorMessage = "Passwords must have at least 8 characters and contain at least 2 of 3 the following: lowercase letters, numbers (0-9), and symbols.")]
+		[RegularExpression("^((?=.*?)(?=.*?[a-z])|(?=.*?[A-Z])(?=.*?[a-z])|(?=.*?[A-Z])|(?=.*?[a-z])(?=.*?[^a-zA-Z])).{8,}$",
+			ErrorMessage = "Passwords must have at least 8 characters and contain at least 2 of 3 the following: lowercase letters and symbols.")]
 
 		public string? Email { get; set; }
 

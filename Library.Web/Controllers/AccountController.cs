@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using DocumentFormat.OpenXml.Drawing.Wordprocessing;
 using System.Data;
 using System.Diagnostics.Eventing.Reader;
+using Library.Web.Models.Email;
 
 namespace Library.Web.Controllers
 {
@@ -112,8 +113,10 @@ namespace Library.Web.Controllers
 		{
 			if (ModelState.IsValid)
 			{
-				var entity = await _userService.GetManyUsersAsync(x => x.Email == model.Email);
-				if (entity != null)
+				var entity = await _staffReaderService.GetManyStaffReadersAsync(x => x.Email == model.Email);
+				var staffReader = entity.FirstOrDefault();
+
+				if (staffReader != null)
 				{
 					string token = HelperMethods.TokenGeneration(model.Email, _configuration);
 
@@ -126,12 +129,18 @@ namespace Library.Web.Controllers
 					else
 					{
                       
-                        var url = Request.Scheme + "://" + Request.Host + Url.Action("ResetPassword", "Account", new { email = model.Email, code = token }, "http") + "'>Reset Password</a>";
-						model.ForgetURL = url;
+                        var link = Url.Action("ResetPassword", "Account", new { email = model.Email, code = token }, Request.Scheme);
 
-						int staffReaderId = (int)entity.FirstOrDefault().StaffReaderID;
-						var staffReader = await _staffReaderService.GetStaffReaderByIdAsync(staffReaderId);
-					    await HelperMethods.SendEmailTemplateAsync<ForgetPasswordViewModel> (model, _emailService, _configuration, staffReader);
+                        //var link = Url.Action("ResetPassword", "Account", new { emailToken = token }, Request.Scheme);
+                        
+						var emailmodel = new ResetPassword
+                        {
+                            FirstName = staffReader.FirstName,
+                            LastName = staffReader.LastName,
+                            PasswordResetLink = link,
+                        };
+
+                        await HelperMethods.SendEmailAsync(emailmodel, _emailService, _configuration, model.Email);
 					}
 				}
 			}
@@ -296,10 +305,22 @@ namespace Library.Web.Controllers
 					{
 						//Create URL with above token
 						var token = HelperMethods.TokenGeneration(staffReaderEntity.ID.ToString(), _configuration);
-						var url = Request.Scheme + "://" + Request.Host + Url.Action("ConfirmEmail", "Account", new { email = model.Email, code = token }, "http") + "'>Confirm Password</a>";
+                        var url = Url.Action("ConfirmEmail", "Account", new { email = model.Email, emailToken = token }, Request.Scheme);
+						
+						//var url = Request.Scheme + "://" + Request.Host + Url.Action("ConfirmEmail", "Account", new { email = model.Email, code = token }, "http") + "'>Confirm Password</a>";
 
-						await HelperMethods.SendEmailTemplateAsync<RegisterViewModel>(model, _emailService, _configuration);
-					}
+                        var emailModel = new EmailConfirmation
+						{
+							FirstName = model.FirstName,
+							LastName = model.LastName,
+							ConfirmationLink = url
+						};
+						
+						
+						await HelperMethods.SendEmailAsync(emailModel, _emailService, _configuration, model.Email);
+
+                        //await EmailUtil.CreateTextAndSend(DataUtil.EmailHtmlPath, DataUtil.ConfirmEmailSubject, person.Email, emailmodel);
+                    }
 					
 					return View("RegisterCompleted");
 				}
