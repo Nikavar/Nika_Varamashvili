@@ -57,6 +57,78 @@ function allowNumbers() {
 	}
 };
 
+function allowEmail() {
+	let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
+	let email = $("#email").val();
+
+	if (!regex.test(email))
+		document.getElementById("emailError").innerHTML = "Given input is not a correct email format";
+
+	else
+		document.getElementById("emailError").innerHTML = "";
+};
+
+function validate_password() {
+	let pass = document.getElementById('pass').value;
+	let confirm_pass = document.getElementById('confirm_pass').value;
+
+	if (pass == "" && confirm_pass == "") {
+			document.getElementById('wrong_pass_alert').innerHTML = "";
+	}
+
+	else if (pass == "" && confirm_pass != "") {
+			document.getElementById('wrong_pass_alert').style.color = 'red';
+			document.getElementById('wrong_pass_alert').innerHTML
+				= '☒ input pass above to compare them!';
+	}
+
+	else if (pass != "" && confirm_pass == "")
+	{
+		document.getElementById('wrong_pass_alert').innerHTML = "";
+	}
+
+	else if (pass != confirm_pass) {
+		document.getElementById('wrong_pass_alert').style.color = 'red';
+		document.getElementById('wrong_pass_alert').innerHTML
+			= '☒ Use same password';
+	}
+
+	else {
+		document.getElementById('wrong_pass_alert').style.color = 'green';
+		document.getElementById('wrong_pass_alert').innerHTML =
+			'🗹 Password Matched';
+	}
+
+}
+function validate_confirm_password() {
+	var pass = document.getElementById('pass').value;
+	var confirm_pass = document.getElementById('confirm_pass').value;
+
+	if (confirm_pass == "") {
+		document.getElementById('wrong_pass_alert').innerHTML = "";
+	}
+
+
+	else if (pass == "" && confirm_pass != "") {
+		document.getElementById('wrong_pass_alert').style.color = 'red';
+		document.getElementById('wrong_pass_alert').innerHTML
+			= '☒ input pass above to compare them!';
+	}
+
+	else if (pass != confirm_pass) {
+		document.getElementById('wrong_pass_alert').style.color = 'red';
+		document.getElementById('wrong_pass_alert').innerHTML
+			= '☒ Use same password';
+	}
+
+
+	else {
+		document.getElementById('wrong_pass_alert').style.color = 'green';
+		document.getElementById('wrong_pass_alert').innerHTML =
+			'🗹 Password Matched';
+	}
+}
+
 //function fullValidation(){
 //	if ($(#firstNameError).val() == "")
 //		document.getElementById("firstNameError").innerHTML = "Input First Name";

@@ -128,20 +128,21 @@
 								<span asp-validation-for="PersonalPhoto" class="text-danger"></span>
 								</div>*@
 								<div>
-									<input asp-for="Email" placeholder="enter your email" class="form-control form-right-row-style" />
-									<span asp-validation-for="Email" class="text-danger"></span>
+									<input asp-for="Email" placeholder="enter your email" class="form-control form-right-row-style" onkeyup="allowEmail()" id="email" name="email"/>
+									<span asp-validation-for="Email" class="text-danger" id="emailError"></span>
 								</div>
 								<div>
 									<input asp-for="ConfirmEmail" placeholder="confirm email" class="form-control form-right-row-style" />
 									<span asp-validation-for="ConfirmEmail" class="text-danger"></span>
 								</div>
+
 								<div>
-									<input asp-for="Password" placeholder="password" class="form-control form-right-row-style" />
-									<span asp-validation-for="Password" class="text-danger"></span>
+									<input asp-for="Password" type="password" id="pass" name="pass" placeholder="password" onkeyup="validate_password()" class="form-control form-right-row-style" required"" />
+									<span asp-validation-for="Password" class="text-danger" id="passError"></span>
 								</div>
 								<div>
-									<input asp-for="ConfirmPassword" placeholder="confirm password" class="form-control form-right-row-style" />
-									<span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+									<input asp-for="ConfirmPassword" id="confirm_pass" name="confirm-pass" placeholder="confirm password" onkeyup="validate_confirm_password()" class="form-control form-right-row-style" required />
+									<span asp-validation-for="ConfirmPassword" class="text-danger" id="wrong_pass_alert"></span>
 								</div>
 									<button type="submit" class="btn btn-primary" asp-controller="Account" asp-action="Register">Register</button>
 							</div>
