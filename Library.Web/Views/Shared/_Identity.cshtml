@@ -3,6 +3,7 @@
 @using Windows.Web.Http;
 @using Library.Service;
 @using Library.Web;
+@using Library.Web.HelperMethods;
 
 @inject IUserService userservice;
 
@@ -12,7 +13,7 @@
     var userId = -1;
 
     if(cookie != null)
-        userId = Convert.ToInt32(HelperMethods.TokenDecryption(cookie));
+        userId = Convert.ToInt32(TokenHelper.TokenDecryption(cookie));
 
     var user = await userservice.GetUserByIdAsync(userId);    
     //User.Identity.Name

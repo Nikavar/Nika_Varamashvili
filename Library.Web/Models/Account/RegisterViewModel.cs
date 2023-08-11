@@ -11,7 +11,6 @@ namespace Library.Web.Models.Account
 		public int Id { get; set; }
 		public int PositionId { get; set; }
 		public List<SelectListItem>? Positions { get; set; }
-
 		[Display(Name = "First Name:")]
 		[Required(ErrorMessage = "Please enter first name!")]
 		public string? FirstName { get; set; }

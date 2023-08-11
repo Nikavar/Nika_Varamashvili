@@ -17,6 +17,7 @@ namespace Library.Web.Constants
 		public const string SuccesfullyChanged = "Successfully Changed";
         public const string SomethingWasWrong = "Something was Wrong";
         public const string ConfirmYourEmail = "please confirm your email by clicking on the confirmation link we have emailed you";
+        public const string PasswordsMatch = "Passwords are the same";
 
         #region GenericWarnings
         public static string SuccessfullyAddedGeneric<T>()

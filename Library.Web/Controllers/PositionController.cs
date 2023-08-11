@@ -39,7 +39,7 @@ namespace Library.Web.Controllers
 			if (ModelState.IsValid)
 			{
 				var entity = model.Adapt<Position>();
-				await HelperMethods.AddEntityWithLog(entity,positionService.AddPositionAsync,logService);
+				await HelperMethods.LogHelper.AddEntityWithLog(entity,positionService.AddPositionAsync,logService);
 
    				TempData["Success"] = Warnings.SuccessfullyAddedGeneric<Position>();
 
@@ -69,7 +69,7 @@ namespace Library.Web.Controllers
 			if (ModelState.IsValid)
 			{ 
 				var entity = model.Adapt<Position>();
-				await HelperMethods.UpdateEntityWithLog(entity,positionService.UpdatePositionAsync,logService);
+				await HelperMethods.LogHelper.UpdateEntityWithLog(entity,positionService.UpdatePositionAsync,logService);
 
 				TempData["Success"] = Warnings.SuccessfullyUpdatedGeneric<Position>();
 

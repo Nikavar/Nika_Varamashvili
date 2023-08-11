@@ -1,5 +1,7 @@
 ﻿@using Library.Service;
 @using Library.Web;
+@using Library.Web.HelperMethods;
+
 @inject IUserService userService;
 
 @{
@@ -7,7 +9,7 @@
     var userId = -1;
 
     if (cookie != null)
-        userId = Convert.ToInt32(HelperMethods.TokenDecryption(cookie));
+        userId = Convert.ToInt32(TokenHelper.TokenDecryption(cookie));
 
     var isAdmin = await userService.IsInRole(userId, "Admin");
 }
@@ -132,6 +134,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

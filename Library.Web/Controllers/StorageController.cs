@@ -36,7 +36,7 @@ namespace Library.Web.Controllers
             if (ModelState.IsValid)
             {
                 var entity = model.Adapt<Storage>();
-                await HelperMethods.AddEntityWithLog(entity, storageService.AddStorageAsync, logService);
+                await HelperMethods.LogHelper.AddEntityWithLog(entity, storageService.AddStorageAsync, logService);
 
                 TempData["Success"] = Warnings.SuccessfullyAddedGeneric<Storage>();
                 return RedirectToAction("Index");
@@ -67,7 +67,7 @@ namespace Library.Web.Controllers
             if (ModelState.IsValid)
             {
                 var entity = model.Adapt<Storage>();
-                await HelperMethods.UpdateEntityWithLog(entity, storageService.UpdateStorageAsync, logService);
+                await HelperMethods.LogHelper.UpdateEntityWithLog(entity, storageService.UpdateStorageAsync, logService);
                 TempData["Success"] = Warnings.SuccessfullyUpdatedGeneric<Storage>();
 
                 return RedirectToAction("Index");
