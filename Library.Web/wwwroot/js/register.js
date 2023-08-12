@@ -57,6 +57,23 @@ function allowNumbers() {
 	}
 };
 
+function allowPersonalId() {
+	if ($("#personalId").val() == "")
+		document.getElementById("personalIdError").innerHTML = "";
+
+	else if (!($("#personalId").val() >= 0 || $("#personalId").val() <= 9)) {
+		document.getElementById("personalIdError").innerHTML = "Given input must be the digits";
+	}
+
+	else if ($("#personalId").val().length != 11) {
+		document.getElementById("personalIdError").innerHTML = "personal id must contain 11 digits";
+	}
+
+	else {
+		document.getElementById("personalIdError").innerHTML = "";
+	}
+};
+
 function allowEmail() {
 	let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
 	let email = $("#email").val();

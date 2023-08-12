@@ -84,7 +84,8 @@
 								<span asp-validation-for="DOB" class="text-danger"></span>
 							</div>
 							<div>
-								<input asp-for="PersonalNumber" placeholder="personal id" class="form-control form-left-row-style" />
+								<input asp-for="PersonalNumber" placeholder="personal id" class="form-control form-left-row-style" id="personalId" onkeyup="allowPersonalId()"/>
+								<span asp-validation-for="DOB" class="text-danger" id="personalIdError"></span>
 							</div>
 							<div>
 								<input asp-for="PassportNumber" placeholder="passport number" class="form-control form-left-row-style"/>
