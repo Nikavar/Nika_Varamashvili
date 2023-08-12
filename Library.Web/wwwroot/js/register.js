@@ -146,10 +146,4 @@ function validate_confirm_password() {
 	}
 }
 
-//function fullValidation(){
-//	if ($(#firstNameError).val() == "")
-//		document.getElementById("firstNameError").innerHTML = "Input First Name";
 
-//	if ($(#lastNameError).val() == "")
-//		document.getElementById("lastNameError").innerHTML = "Input Last Name";
-//};
