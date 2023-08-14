@@ -15,8 +15,9 @@
     if(cookie != null)
         userId = Convert.ToInt32(TokenHelper.TokenDecryption(cookie));
 
-    var user = await userservice.GetUserByIdAsync(userId);    
-    //User.Identity.Name
+    var user = await userservice.GetUserByIdAsync(userId);
+
+    //var testUserName = User?.Identity?.Name; => returns null
 }
 
 

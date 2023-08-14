@@ -39,7 +39,7 @@ namespace Library.Web.Models.Account
 		//[Display(Name = "Confirm Email")]
 		//[Required(ErrorMessage = "Please confirm the Email Address!")]
 		//[EmailAddress(ErrorMessage = "Email Address u entered not equals to email!")]
-		public string? ConfirmEmail { get; set; }
+		//public string? ConfirmEmail { get; set; }
 
 		[DataType(DataType.Password)]
 		public string? Password { get; set; }

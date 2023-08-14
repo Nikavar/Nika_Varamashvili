@@ -24,6 +24,7 @@ using System.Data;
 using System.Diagnostics.Eventing.Reader;
 using Library.Web.Models.Email;
 using Library.Web.HelperMethods;
+using Uno.UI.DataBinding;
 
 namespace Library.Web.Controllers
 {
@@ -73,35 +74,27 @@ namespace Library.Web.Controllers
 		{
 			if (ModelState.IsValid)
 			{
-				if(string.IsNullOrEmpty(model.EmailAddress) && string.IsNullOrEmpty(model.Password))
+				if (string.IsNullOrEmpty(model.EmailAddress) && string.IsNullOrEmpty(model.Password))
+					return View();
+
+                var password = HelperMethods.LoginHelper.ComputeSha256Hash(model.Password);
+                var loggedUser = await _userService.LoginUserAsync(model.EmailAddress,password);
+
+				if (loggedUser != null)
 				{
-					TempData["Error"] = Warnings.UsernameOrPasswordIsIncorrect;
-					return View(model);
+					var token = TokenHelper.TokenGeneration(loggedUser, _configuration);
+					HttpContext.Response.Cookies.Append("Token", token);
+
+					return RedirectToAction("Index", "Home");
 				}
 
 				else
-				{
-
-                    var password = HelperMethods.EmailHelper.ComputeSha256Hash(model.Password);
-                    var loggedUser = await _userService.LoginUserAsync(model.EmailAddress,password);
-
-					if (loggedUser != null)
-					{
-						var token = TokenHelper.TokenGeneration(loggedUser, _configuration);
-						HttpContext.Response.Cookies.Append("Token", token);
-
-						return RedirectToAction("Index", "Home");
-					}
-
-					else
-					{ 
-						TempData["Error"] = Warnings.UsernameOrPasswordIsIncorrect;
-						return View(model);
-					}
-
-				}
+				{ 
+					TempData["Error"] = Warnings.UsernameOrPasswordIsIncorrect;
+					return View(model);
+				}				
 			}
-			return View("Login","Account");
+			return View();
 		}
 
 		public ActionResult ForgetPassword()
@@ -303,7 +296,7 @@ namespace Library.Web.Controllers
 
 					// Add & Log 'User' Entity In Database
 					var userEntity = model.Adapt<User>();
-					var hashedPassword = HelperMethods.EmailHelper.ComputeSha256Hash(model.Password);
+					var hashedPassword = HelperMethods.LoginHelper.ComputeSha256Hash(model.Password);
 					userEntity.Password = hashedPassword;
 
 					userEntity.StaffReaderID = staffReaderEntity.ID;

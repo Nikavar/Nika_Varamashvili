@@ -21,11 +21,10 @@
 	@*<link rel="stylesheet" href="fonts/material-icon/css/material-design-iconic-font.min.css">*@
 	<link href="~/colorlib-regform-7/colorlib-regform-7/fonts/material-icon/css/material-design-iconic-font.css" rel="stylesheet" />
 	<link href="~/colorlib-regform-7/colorlib-regform-7/fonts/material-icon/css/material-design-iconic-font.min.css" rel="stylesheet" />
-	<!-- Main css -->
-	@*<link rel="stylesheet" href="css/style.css">*@
-
 	<link href="~/colorlib-regform-7/colorlib-regform-7/css/style.css" rel="stylesheet" />
-	@*<a href="~/colorlib-regform-7/colorlib-regform-7/css/style.css.map">~/colorlib-regform-7/colorlib-regform-7/css/style.css.map</a>*@
+
+	<script src="~/js/login.js"></script>
+
 </head>
 <body>
 	<div class="main">		
@@ -47,13 +46,13 @@
 						<form method="POST" class="register-form" id="login-form">
 							<div class="form-group">
 								<label for="EmailAddress"><i class="zmdi zmdi-account material-icons-name"></i></label>
-								<input type="text" name="EmailAddress" id="EmailAddress" placeholder="Your Name" />
-								<span asp-validation-for="EmailAddress" class="text-danger"></span>
+								<input type="text" name="EmailAddress" id="email" placeholder="username/email" onkeyup="allowEmail()" />
+								<span asp-validation-for="EmailAddress" class="text-danger" id="emailError"></span>
 							</div>
 							<div class="form-group">
 								<label for="Password"><i class="zmdi zmdi-lock"></i></label>
-								<input type="password" name="Password" id="Password" placeholder="Password" />
-								<span asp-validation-for="Password" class="text-danger"></span>
+								<input type="password" name="Password" id="pass" placeholder="password" />
+								<span asp-validation-for="Password" class="text-danger" id="passError"></span>
 
 							</div>
 							<div class="form-group">
@@ -61,7 +60,7 @@
 								<label for="remember-me" class="label-agree-term"><span><span></span></span>Remember me</label>
 							</div>
 							<div class="form-group form-button">
-								<input type="submit" name="signin" id="signin" class="form-submit" value="Login" />
+								<input type="submit" name="signin" id="signin" class="form-submit" value="Login" onclick="validate_login()" />
 							</div>
 						</form>
 						<div class="social-login">
