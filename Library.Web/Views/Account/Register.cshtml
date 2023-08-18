@@ -72,19 +72,19 @@
 								<span asp-validator-for="Positions" class="text-danger"></span>
 							</div>
 							<div>
-								<input asp-for="FirstName" class="form-control form-left-row-style" placeholder="first name" id="firstName" onkeyup="allowFirstName('firstName')" required/>
+								<input asp-for="FirstName" class="form-control form-left-row-style" placeholder="first name" id="firstName" />
 								<span asp-validation-for="FirstName" class="text-danger" id="firstNameError"></span>
 							</div>
 							<div>
-								<input asp-for="LastName" class="form-control form-left-row-style" placeholder="last name" id="lastName" onkeyup="allowLastName('lastName')" required/>
+								<input asp-for="LastName" class="form-control form-left-row-style" placeholder="last name" id="lastName" />
 								<span asp-validation-for="LastName" class="text-danger" style="width:max-content" id="lastNameError"></span>
 							</div>
 							<div>
-								<input type = "date" asp-for="DOB" id="datepicker" class="form-control form-left-row-style" onload="setDatePickerFormat()" required/>
+								<input type = "date" asp-for="DOB" id="datepicker" class="form-control form-left-row-style" onload="setDatePickerFormat()"/>
 								<span asp-validation-for="DOB" class="text-danger"></span>
 							</div>
 							<div>
-								<input asp-for="PersonalNumber" placeholder="personal id" class="form-control form-left-row-style" id="personalId" onkeyup="allowPersonalId()"/>
+								<input asp-for="PersonalNumber" placeholder="personal id" class="form-control form-left-row-style" id="personalId" />
 								<span asp-validation-for="PersonalNumber" class="text-danger" id="personalIdError"></span>
 							</div>
 							<div>
@@ -99,8 +99,7 @@
 									<tr >
 										<td>
 											<div>
-												<input placeholder="enter your address"
-													   class="form-control" asp-for="Address" style="width: 250px" required/>													   
+												<input placeholder="enter your address" class="form-control" asp-for="Address" style="width: 250px" />													   													   
 												<span asp-validation-for="Address" class="text-danger" style="width: fit-content"></span>
 											</div>
 										</td>
@@ -124,28 +123,25 @@
 								<span asp-validation-for="PersonalPhoto" class="text-danger"></span>
 								</div>*@
 								<div>
-									<input type="tel" asp-for="PhoneNumber" id="phone" name="phone" placeholder="tel: (+995)123456" pattern="(+995)[0-9]{2}[0-9]{2}[0-9]{2}"
-										   class="form-control form-right-row-style" onkeyup="allowNumbers()" required/>
+									<input type="tel" asp-for="PhoneNumber" id="phone" name="phonenumber" placeholder="tel: +995 12-34-56" pattern="(+995)[0-9]{2}[0-9]{2}[0-9]{2}"
+										   class="form-control form-right-row-style" onkeyup="allowNumbers()" />
 									<span asp-validation-for="PhoneNumber" class="text-danger" style="width: fit-content" id="phoneError"></span>
 								</div>
 								<div>
-									<input asp-for="Email" placeholder="enter your email" class="form-control form-right-row-style" onkeyup="allowEmail()" id="email" name="email" required/>
+									<input asp-for="Email" placeholder="enter your email" class="form-control form-right-row-style" id="email" name="email" />
 									<span asp-validation-for="Email" class="text-danger" id="emailError"></span>
 								</div>
-@*								<div>
-									<input asp-for="ConfirmEmail" placeholder="confirm email" class="form-control form-right-row-style" />
-									<span asp-validation-for="ConfirmEmail" class="text-danger"></span>
-								</div>*@
-
 								<div>
-									<input asp-for="Password" type="password" id="pass" name="pass" placeholder="password" onkeyup="validate_password()" class="form-control form-right-row-style" required/>
+									<input asp-for="Password" placeholder="password" class="form-control form-right-row-style" id="pass" name="password" />
 									<span asp-validation-for="Password" class="text-danger" id="passError"></span>
 								</div>
 								<div>
-									<input asp-for="ConfirmPassword" id="confirm_pass" name="confirm-pass" placeholder="confirm password" onkeyup="validate_confirm_password()" class="form-control form-right-row-style" required />
-									<span asp-validation-for="ConfirmPassword" class="text-danger" id="wrong_pass_alert"></span>
+									<input asp-for="ConfirmPassword" placeholder="confirm password" class="form-control form-right-row-style" id="confirmPassword" name="confirmPassword" />
+									<span asp-validation-for="ConfirmPassword" class="text-danger" id="confirmPassError"></span>
 								</div>
+								<div>
 									<button type="submit" class="btn btn-primary" asp-controller="Account" asp-action="Register">Register</button>
+								</div>
 							</div>
 						</div>
 					</td>
@@ -163,7 +159,7 @@
 
 		<script type="text/javascript">
 			$(document).ready(function () {
-				$(".third-phone").inputmask("+99-9999999999");
+				$("#phone").inputmask("+995 599 99-99-99");
 			});	
 
 		</script>

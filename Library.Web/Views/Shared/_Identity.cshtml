@@ -32,15 +32,14 @@
         <a class="nav-link text-dark" asp-area="" asp-controller="account" asp-action="register">
             <i class="bi bi-person-plus"></i> Register
         </a>
-        </li>
+    </li>
 }
 
 else
 {
     <li class="navbar-nav flex-grow-1" style="margin-left:850px">
     <a class="nav-link text-dark" asp-area="" asp-controller="account" asp-action="logout">
-
-        <i class="bi bi-person-badge"></i> Hello @user.Email;
+			<i class="bi bi-person-badge" href="Book/Index"></i> Hello @user.Email;
     </a>
 </li>
 <li style="height:50px">

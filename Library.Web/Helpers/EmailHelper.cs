@@ -17,23 +17,25 @@ namespace Library.Web.HelperMethods
 {
     public static class EmailHelper
     {
-        public static async Task SendEmailAsync<TModel>(TModel model, IEmailService emailService, IConfiguration config, string emailTo) where TModel : class
+        public static async Task SendEmailAsync<TModel,TTemplate>(TTemplate template, TModel model, IConfiguration config, string emailTo) where TModel : class
+                                                                                                                                           where TTemplate : class
         {
+            Type templateType = template.GetType();
+
+            var bodyProperty = templateType.GetProperty("Body");
+			var subjectProperty = templateType.GetProperty("Subject");
+
+            var body = bodyProperty?.GetValue(template)?.ToString();
+            var subject = subjectProperty?.GetValue(template)?.ToString();
 
             Type modelType = model.GetType();
-
-            // takes relevant template by model type from DB
-            var _templateData = await emailService.GetManyEmailsAsync(x => x.TemplateType.ToLower() == modelType.Name.ToLower());
-            var body = _templateData?.FirstOrDefault()?.Body;
-            var subject = _templateData?.FirstOrDefault()?.Subject;
-
             PropertyInfo[] properties = modelType.GetProperties();
 
             foreach (PropertyInfo property in properties)
             {
                 string placeholder = "{" + property.Name + "}";
                 string value = property?.GetValue(model)?.ToString();
-                body = body?.Replace(placeholder, value);
+                body = body?.ToString()?.Replace(placeholder, value);
             }
 
             if (subject != null && body != null)

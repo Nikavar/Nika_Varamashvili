@@ -30,8 +30,7 @@ namespace Library.Web.Controllers
 {
     public class AccountController : Controller
 	{
-
-        private readonly IUserService _userService;
+		private readonly IUserService _userService;
 		private readonly IStaffReaderService _staffReaderService;
 		private readonly IRoleService _roleService;
 		private readonly IRoleUserService _roleUserService;
@@ -69,7 +68,8 @@ namespace Library.Web.Controllers
 			return View(new UserLoginViewModel());
 		}
 
-		[HttpPost]
+
+        [HttpPost]
 		public async Task<IActionResult> Login(UserLoginViewModel model)
 		{
 			if (ModelState.IsValid)
@@ -102,6 +102,11 @@ namespace Library.Web.Controllers
 			return View();
 		}
 
+		public ActionResult ConfirmResetPassword()
+		{
+			return View();
+		}
+
 		[HttpPost]
 		public async Task<ActionResult> ForgetPassword(ForgetPasswordViewModel model)		
 		{
@@ -128,7 +133,7 @@ namespace Library.Web.Controllers
 
 						else
 						{                      
-							var link = Url.Action("ResetPassword", "Account", new { email = model.Email, code = token }, Request.Scheme);       
+							var link = Url.Action("ResetPassword", "Account", new { token = token }, Request.Scheme);       
 						
 							var emailmodel = new ResetPassword
 							{
@@ -137,7 +142,9 @@ namespace Library.Web.Controllers
 								PasswordResetLink = link,
 							};
 
-							await HelperMethods.EmailHelper.SendEmailAsync(emailmodel, _emailService, _configuration, model.Email);
+							var templateData = await _emailService.GetManyEmailsAsync(x => x.TemplateType.ToLower() == emailmodel.GetType().Name.ToLower());
+
+							await EmailHelper.SendEmailAsync(templateData.FirstOrDefault(), emailmodel, _configuration, model.Email);
 						}
 					}					
 				}
@@ -145,16 +152,29 @@ namespace Library.Web.Controllers
 			return View("RegisterCompleted");           
         }
 
-        public ActionResult ResetPassword(string code)
-        {
-            ResetPasswordViewModel model = new ResetPasswordViewModel();
-            model.Token = code;
+		[HttpGet]
+        public async Task<ActionResult> ResetPassword(string token)
+        
+		{
+			var id = TokenHelper.TokenDecryption(token);
+
+            var user = await _userService.GetUserByIdAsync(id);
+            if (user == null)
+            {
+                return View("Register");
+            }
+
+            ResetPasswordViewModel model = new ResetPasswordViewModel
+            {				
+                Token = token,
+            };
+
             return View(model);
         }
 
-        [HttpPost]
+		[HttpPost]
         public async Task<ActionResult> ResetPassword(ResetPasswordViewModel model)
-		{ 
+		{
             if (ModelState.IsValid)
             {
                 var id = TokenHelper.TokenDecryption(model.Token);
@@ -168,15 +188,18 @@ namespace Library.Web.Controllers
 				var user = await _userService.GetUserByIdAsync(id);
 				if(user == null)
 				{
-					ViewBag.ErrorMessage = Warnings.SomethingWasWrong;
+					ViewBag.ErrorMessage = Warnings.SomethingWasWrong;					
 					return View(model);
 				}
 
 				else
 				{
-					user.Password = model.Password;
-					await HelperMethods.LogHelper.UpdateEntityWithLog(user, _userService.UpdateUserAsync, _logService);
-					return View();           
+					if (model.Password != null)
+						user.Password = LoginHelper.ComputeSha256Hash(model.Password);
+
+					await LogHelper.UpdateEntityWithLog(user, _userService.UpdateUserAsync, _logService);
+					
+					return Redirect("Account/ConfirmResetPassword");
 				}
             }
 
@@ -292,20 +315,15 @@ namespace Library.Web.Controllers
 				{
 					// Add & Log 'StaffReader' Entity In Database
 					var staffReaderEntity = model.Adapt<StaffReader>();
-					await HelperMethods.LogHelper.AddEntityWithLog(staffReaderEntity, _staffReaderService.AddStaffReaderAsync, _logService);
+					await LogHelper.AddEntityWithLog(staffReaderEntity, _staffReaderService.AddStaffReaderAsync, _logService);
 
 					// Add & Log 'User' Entity In Database
 					var userEntity = model.Adapt<User>();
-					var hashedPassword = HelperMethods.LoginHelper.ComputeSha256Hash(model.Password);
+					var hashedPassword = LoginHelper.ComputeSha256Hash(model.Password);
 					userEntity.Password = hashedPassword;
 
 					userEntity.StaffReaderID = staffReaderEntity.ID;
-					await HelperMethods.LogHelper.AddEntityWithLog(userEntity, _userService.AddUserAsync, _logService);
-
-					// Assing Role of 'user' to new user by default
-					var role = _roleService.GetRoleByNameAsync(AccountRole.user.ToString());
-					var roleUserEntity = new RoleUser() { RoleID = role.ID, UserID = userEntity.id };
-					await HelperMethods.LogHelper.AddEntityWithLog(roleUserEntity, _roleUserService.AddRoleUserAsync, _logService);
+					await LogHelper.AddEntityWithLog(userEntity, _userService.AddUserAsync, _logService);
 
 					// Logged PositionStaff
 					var loggedPositionStaff = await _logService.AddLogAsync(
@@ -319,7 +337,7 @@ namespace Library.Web.Controllers
 					{
 						//Create URL with above token
 						var token = TokenHelper.TokenGeneration(staffReaderEntity.ID.ToString(), _configuration);
-                        var url = Url.Action("ConfirmEmail", "Account", new { email = model.Email, emailToken = token }, Request.Scheme);
+                        var url = Url.Action("ConfirmEmail", "Account", new { token = token }, Request.Scheme);
 						
 						//var url = Request.Scheme + "://" + Request.Host + Url.Action("ConfirmEmail", "Account", new { email = model.Email, code = token }, "http") + "'>Confirm Password</a>";
 
@@ -330,11 +348,15 @@ namespace Library.Web.Controllers
 							ConfirmationLink = url
 						};
 						
-						
-						await HelperMethods.EmailHelper.SendEmailAsync(emailModel, _emailService, _configuration, model.Email);
+						var templateData = await _emailService.GetManyEmailsAsync(x => x.TemplateType.ToLower() == emailModel.GetType().Name.ToLower());
 
-                        //await EmailUtil.CreateTextAndSend(DataUtil.EmailHtmlPath, DataUtil.ConfirmEmailSubject, person.Email, emailmodel);
-                    }
+						await EmailHelper.SendEmailAsync(templateData.FirstOrDefault(), emailModel, _configuration, model.Email);
+
+						// Assing Role of 'user' to new user by default
+						var role = _roleService.GetRoleByNameAsync(AccountRole.user.ToString());
+						var roleUserEntity = new RoleUser() { RoleID = role.ID, UserID = userEntity.id };
+						await LogHelper.AddEntityWithLog(roleUserEntity, _roleUserService.AddRoleUserAsync, _logService);
+					}
 					
 					return View("RegisterCompleted");
 				}

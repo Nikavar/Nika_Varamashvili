@@ -15,7 +15,11 @@ namespace Library.Web.HelperMethods
 			try
 			{
 				entity = await AddEntityAsync(entity);
-				var entityJson = JsonConvert.SerializeObject(entity, Formatting.Indented);
+				var entityJson = JsonConvert.SerializeObject(entity, Formatting.Indented, new JsonSerializerSettings() 
+										    { 
+												ReferenceLoopHandling = ReferenceLoopHandling.Ignore 
+											});
+
 				log.LogContent = entityJson;
 				log.LogStatus = LogStatus.Info.ToString();
 

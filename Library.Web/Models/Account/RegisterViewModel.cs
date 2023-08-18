@@ -1,4 +1,5 @@
 ﻿using Library.Model.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -12,20 +13,26 @@ namespace Library.Web.Models.Account
 		public int PositionId { get; set; }
 		public List<SelectListItem>? Positions { get; set; }
 
+		[Required]
 		public string? FirstName { get; set; }
 
+		[Required]
 		public string? LastName { get; set; }
 
 		public string? Position { get; set; }
 
+		[Required]
 		public DateTime? DOB { get; set; }
 
+		[MaxLength(11, ErrorMessage = "personal id must be 11 digits")]
 		public string? PersonalNumber { get; set; }
 
 		public string? PassportNumber { get; set; }
 
+		[Required]
 		public string? PhoneNumber { get; set; }
 
+		[Required]
 		public string? Address { get; set; }
 
 		[Display(Name = "Gender:")]
@@ -34,17 +41,14 @@ namespace Library.Web.Models.Account
 		[Display(Name = "Photo:")]
 		public string? PersonalPhoto { get; set; }
 
-		public string? Email { get; set; }
+		[Required]
+		public string? Email { get; set; }		
 
-		//[Display(Name = "Confirm Email")]
-		//[Required(ErrorMessage = "Please confirm the Email Address!")]
-		//[EmailAddress(ErrorMessage = "Email Address u entered not equals to email!")]
-		//public string? ConfirmEmail { get; set; }
-
-		[DataType(DataType.Password)]
+		[Required]
 		public string? Password { get; set; }
 
-		[DataType(DataType.Password)]
+		[Required]
+		[Compare(nameof(Password),ErrorMessage = "Passwords don't match")]
 		public string? ConfirmPassword { get; set; }
 	}
 }

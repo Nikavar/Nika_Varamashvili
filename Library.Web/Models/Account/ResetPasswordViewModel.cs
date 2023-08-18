@@ -5,7 +5,6 @@ namespace Library.Web.Models.Account
 {
 	public class ResetPasswordViewModel
 	{
-		[Required]
 		public string? Token { get; set; }
 
 		[Required]

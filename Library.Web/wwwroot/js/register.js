@@ -1,6 +1,7 @@
 ﻿function showHidePositions() {
 	
 	var x = document.getElementById("positionsDiv");
+
 	if (x.style.display === "none") {
 		x.style.display = "block";
 	} else {
@@ -13,137 +14,142 @@ function setDatePickerFormat() {
 	x.datepicker({ format: "yyyy/mm//dd" });
 };
 
-function allowFirstName(elementId) {
-	let fname = document.getElementById(elementId).value
+//function allowFirstName(elementId) {
+//	let fname = document.getElementById(elementId).value
 
-	if (isValidName(fname)) {
-		document.getElementById("firstNameError").innerHTML = "";
-	}
+//	if (isValidName(fname)) {
+//		document.getElementById("firstNameError").innerHTML = "";
+//	}
 
-	else {
-		document.getElementById("firstNameError").innerHTML = "First Name is not a number";
-	}
-};
+//	else {
+//		document.getElementById("firstNameError").innerHTML = "First Name is not a number";
+//	}
+//};
 
-function allowLastName(elementId) {
-	let lname = document.getElementById(elementId).value
+//function allowLastName(elementId) {
+//	let lname = document.getElementById(elementId).value
 
-	if (isValidName(lname)) {
-		document.getElementById("lastNameError").innerHTML = "";
-	}
+//	if (isValidName(lname)) {
+//		document.getElementById("lastNameError").innerHTML = "";
+//	}
 
-	else {
-		document.getElementById("lastNameError").innerHTML = "Last Name is not a number";
-	}
-};
+//	else {
+//		document.getElementById("lastNameError").innerHTML = "Last Name is not a number";
+//	}
+//};
 
-function isValidName(name) {
-	if (
-		typeof name !== "string" ||
-		/[0-9]+/g.test(name)
-	) {
-		return false;
-	}
-	return true;
-};
+//function isValidName(name) {
+//	if (
+//		typeof name !== "string" ||
+//		/[0-9]+/g.test(name)
+//	) {
+//		return false;
+//	}
+//	return true;
+//};
 
 function allowNumbers() {
-	if (!($("#phone").val() >= 0 || $("#phone").val() <= 9)) {
-		document.getElementById("phoneError").innerHTML = "Given input is not a number";
-	}
+	const pattern = new RegExp('^(\\d|\\+)[ \\d-]+$');
+	let phoneNumber = $("#phone").val();
+	let phoneError = document.getElementById("phoneError");
 
-	else {
-		document.getElementById("phoneError").innerHTML = "";
-	}
+	if (!pattern.test(phoneNumber) && phoneNumber != "")
+		phoneError.innerHTML = "Given input has not a correct format for phone number ";
+
+	else
+		phoneError.innerHTML = "";
 };
 
-function allowPersonalId() {
-	if ($("#personalId").val() == "")
-		document.getElementById("personalIdError").innerHTML = "";
-
-	else if (!($("#personalId").val() >= 0 || $("#personalId").val() <= 9)) {
-		document.getElementById("personalIdError").innerHTML = "Given input must be the digits";
-	}
-
-	else if ($("#personalId").val().length != 11) {
-		document.getElementById("personalIdError").innerHTML = "personal id must contain 11 digits";
-	}
-
-	else {
-		document.getElementById("personalIdError").innerHTML = "";
-	}
-};
 
 function allowEmail() {
 	let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
 	let email = $("#email").val();
 
 	if (!regex.test(email))
-		document.getElementById("emailError").innerHTML = "Given input is not a correct email format";
+		document.getElementById("emailError").innerHTML = "Given input has not a correct format for email format";
 
 	else
 		document.getElementById("emailError").innerHTML = "";
 };
 
-function validate_password() {
-	let pass = document.getElementById('pass').value;
-	let confirm_pass = document.getElementById('confirm_pass').value;
+//function allowPersonalId() {
+//	if ($("#personalId").val() == "")
+//		document.getElementById("personalIdError").innerHTML = "";
 
-	if (pass == "" && confirm_pass == "") {
-			document.getElementById('wrong_pass_alert').innerHTML = "";
-	}
+//	else if (!($("#personalId").val() >= 0 || $("#personalId").val() <= 9)) {
+//		document.getElementById("personalIdError").innerHTML = "Given input must be the digits";
+//	}
 
-	else if (pass == "" && confirm_pass != "") {
-			document.getElementById('wrong_pass_alert').style.color = 'red';
-			document.getElementById('wrong_pass_alert').innerHTML
-				= '☒ input pass above to compare them!';
-	}
+//	else if ($("#personalId").val().length != 11) {
+//		document.getElementById("personalIdError").innerHTML = "personal id must contain 11 digits";
+//	}
 
-	else if (pass != "" && confirm_pass == "")
-	{
-		document.getElementById('wrong_pass_alert').innerHTML = "";
-	}
-
-	else if (pass != confirm_pass) {
-		document.getElementById('wrong_pass_alert').style.color = 'red';
-		document.getElementById('wrong_pass_alert').innerHTML
-			= '☒ Use same password';
-	}
-
-	else {
-		document.getElementById('wrong_pass_alert').style.color = 'green';
-		document.getElementById('wrong_pass_alert').innerHTML =
-			'🗹 Password Matched';
-	}
-
-}
-function validate_confirm_password() {
-	var pass = document.getElementById('pass').value;
-	var confirm_pass = document.getElementById('confirm_pass').value;
-
-	if (confirm_pass == "") {
-		document.getElementById('wrong_pass_alert').innerHTML = "";
-	}
+//	else {
+//		document.getElementById("personalIdError").innerHTML = "";
+//	}
+//};
 
 
-	else if (pass == "" && confirm_pass != "") {
-		document.getElementById('wrong_pass_alert').style.color = 'red';
-		document.getElementById('wrong_pass_alert').innerHTML
-			= '☒ input pass above to compare them!';
-	}
 
-	else if (pass != confirm_pass) {
-		document.getElementById('wrong_pass_alert').style.color = 'red';
-		document.getElementById('wrong_pass_alert').innerHTML
-			= '☒ Use same password';
-	}
+//function validate_password() {
+//	let pass = document.getElementById('pass').value;
+//	let confirm_pass = document.getElementById('confirm_pass').value;
+
+//	if (pass == "" && confirm_pass == "") {
+//			document.getElementById('wrong_pass_alert').innerHTML = "";
+//	}
+
+//	else if (pass == "" && confirm_pass != "") {
+//			document.getElementById('wrong_pass_alert').style.color = 'red';
+//			document.getElementById('wrong_pass_alert').innerHTML
+//				= '☒ input pass above to compare them!';
+//	}
+
+//	else if (pass != "" && confirm_pass == "")
+//	{
+//		document.getElementById('wrong_pass_alert').innerHTML = "";
+//	}
+
+//	else if (pass != confirm_pass) {
+//		document.getElementById('wrong_pass_alert').style.color = 'red';
+//		document.getElementById('wrong_pass_alert').innerHTML
+//			= '☒ Use same password';
+//	}
+
+//	else {
+//		document.getElementById('wrong_pass_alert').style.color = 'green';
+//		document.getElementById('wrong_pass_alert').innerHTML =
+//			'🗹 Password Matched';
+//	}
+
+//}
+//function validate_confirm_password() {
+//	var pass = document.getElementById('pass').value;
+//	var confirm_pass = document.getElementById('confirm_pass').value;
+
+//	if (confirm_pass == "") {
+//		document.getElementById('wrong_pass_alert').innerHTML = "";
+//	}
 
 
-	else {
-		document.getElementById('wrong_pass_alert').style.color = 'green';
-		document.getElementById('wrong_pass_alert').innerHTML =
-			'🗹 Password Matched';
-	}
-}
+//	else if (pass == "" && confirm_pass != "") {
+//		document.getElementById('wrong_pass_alert').style.color = 'red';
+//		document.getElementById('wrong_pass_alert').innerHTML
+//			= '☒ input pass above to compare them!';
+//	}
+
+//	else if (pass != confirm_pass) {
+//		document.getElementById('wrong_pass_alert').style.color = 'red';
+//		document.getElementById('wrong_pass_alert').innerHTML
+//			= '☒ Use same password';
+//	}
+
+
+//	else {
+//		document.getElementById('wrong_pass_alert').style.color = 'green';
+//		document.getElementById('wrong_pass_alert').innerHTML =
+//			'🗹 Password Matched';
+//	}
+//}
 
 
