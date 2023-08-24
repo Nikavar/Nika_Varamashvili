@@ -1,16 +1,9 @@
-﻿@using Library.Web.Models.BookTest.Enums
-@model Library.Web.Models.Book.CreateBookViewModel;
+﻿@model Library.Web.Models.Book.CreateBookViewModel;
 
 @{
-    var authors = Model.Authors;
-    var genres = Model.Genres;
-    var languages = Model.Languages;
-    var publishers = Model.Publishers;
-    var shelves = Model.Shelves;
-}
+	ViewData["Title"] = "Add Book";
 
-@{
-    ViewData["Title"] = "Add Book";
+	<link href="~/css/book/addbook.css" rel="stylesheet" />
 }
 
 <br />
@@ -20,130 +13,87 @@
 <hr />
 
 <main>
-    <form method="post">
+	<form method="post">
+		<table>
+			<tr>
+				<td colspan="5">
+					<input name="title" placeholder="Book Title" asp-for="Title" class="form-control" style="margin: 5px 0 5px 0"/>					
+					<span asp-validation-for="Title" class="text-danger"></span>
 
-		<input name="name" placeholder="Book Title" asp-for="Title" class="form-control" style="margin: 5px 0 5px 0" />
-        <span asp-validation-for="Title" class="text-danger"></span>
+					<input name="description" placeholder="Description" asp-for="Description" class="form-control" style="margin: 5px 0 5px 0" />
+					<span asp-validation-for="Description" class="text-danger"></span>
+				</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td valign="top" height="300px" width="320px">
+					<div>
+						<select name="authors" asp-for="Authors" id="authors" multiple="multiple" asp-items="ViewBag.Authors">
+							<optgroup label="Choose Authors" style="color:darkcyan;">
+							</optgroup>
+						</select>
+					</div>
+					<div>
+						<span asp-validation-for="Authors"></span>
+					</div>
+					<div>
+						<select name="publishers" asp-for="Publishers" id="publishers" multiple="multiple" asp-items="ViewBag.Publishers">
+							<optgroup label="Choose Publisher" style="color:darkcyan;">
+							</optgroup>
+						</select>
+					</div>
+					<div>
+						<span asp-validation-for="Publishers"></span>
+					</div>
 
-        <input name="description" placeholder="Description" asp-for="Description" class="form-control" style="margin: 5px 0 5px 0" />
-        <span asp-validation-for="Description" class="text-danger"></span>
+					<div>
+						<select name="languages" asp-for="Languages" id="languages" multiple="multiple" asp-items="ViewBag.Languages">
+							<optgroup label="Choose Language" style="color:darkcyan;">
+							</optgroup>
+						</select>
+					</div>
+					<div>
+						<span asp-validation-for="Languages"></span>
+					</div>
+				</td>
+				<td valign="top" height="300px">
+					<div>
+						<select name="genres" asp-for="Genres" id="genres" multiple="multiple" asp-items="ViewBag.Genres">
+							<optgroup label="Choose Genre" style="color:darkcyan;">
+							</optgroup>
 
-        <div>
-            <select name="authors" asp-for="Authors">
-                <option value="@null">Author</option>
-                @foreach (var item in authors)
-                {
-                    <option value="@item">@string.Format("{0} {1}",@item.FirstName,@item.LastName)</option>
-                }
-            </select>         
+						</select>
+					</div>
+					<div>
+						<span asp-validation-for="Genres"></span>
+					</div>
+					<div>
 
-            <span asp-validation-for="Authors"></span>
+						<select name="shelves" asp-for="Shelves" id="shelves" multiple="multiple" asp-items="ViewBag.Shelves">
+							<optgroup label="Choose Shelf" style="color:darkcyan;">
+							</optgroup>
+						</select>
+					</div>
+					<div>
+						<span asp-validation-for="Shelves"></span>
+					</div>
+					<div class="form-group mt-3">
+						<label class="mr-2" style="color:darkcyan;">Upload Book Cover Photo:</label>
+						<input type="file" name="file">
+					</div>
+					<div style="padding-top:33px">
+						<button type="submit" id="submit">Save</button>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</form>
 
-            <select name="publishers" asp-for="Publishers">
-                <option value="@null">Publisher</option>
-                @foreach (var item in publishers)
-                {
-                    <option value="@item">@item.PublisherName</option>
-                }
-            </select>
-            <span asp-validation-for="Publishers"></span>
-
-			<select name="languages" asp-for="Languages">
-				<option value="@null">Language</option>
-				@foreach (var item in languages)
-				{
-					<option value="@item">@item.LanguageName</option>
-				}
-			</select>
-			<span asp-validation-for="Languages"></span>
-
-            <select name="genres" asp-for="Genres">
-                <option value="@null">Genre</option>
-                @foreach (var item in genres)
-                {
-                    <option value="@item">@item.CategoryName</option>
-                }
-            </select>
-            <span asp-validation-for="Genres"></span>
-
-			
-            <select name="shelves" asp-for="Shelves">
-                <option value="@null">Shelves</option>
-                @foreach (var item in shelves)
-                {
-                    <option value="@item">@item.ShelfNumber</option>
-                }
-            </select>
-            <span asp-validation-for="Shelves"></span>
-        </div>
-        <button type="submit">Save</button>  
-    </form>
 </main>
 
+@section Scripts {
+	<script src="~/js/book/addbook.js"></script>
+}
 
 
-
-<style>
-
-    nav {
-        display: flex;
-        justify-content: flex-start;
-		/*        margin-left: 50px;
-        font-size: 40px;
-        font-family: monospace;
-        font-weight: 100;*/
-    }
-
-    main {
-        margin-inline: 10px;
-    }
-
-    form {
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-    }
-
-    input[name=name] {
-        width: 200px;
-        padding: 10px;
-        outline: none;
-    }
-
-    input[name=description] {
-        width: 600px;
-        padding: 10px 10px 162px 10px;
-        outline: none;
-    }
-
-
-    form div {
-        width: 550px;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-    }
-
-    select {
-        width: 265px;
-        height: 40px;
-        outline: none;
-    }
-
-    button {
-        position: absolute;
-        bottom: 61px;
-        right: 133px;
-        width: 105px;
-        height: 40px;
-        background: #8b8b8b;
-        color: #fff;
-        border: none;
-    }
-
-    span {
-        color: red;
-    }
-
-</style>
 

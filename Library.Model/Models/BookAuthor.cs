@@ -15,8 +15,8 @@ namespace Library.Model.Models
         public int AuthorId { get; set; }
 
         // realations
-        //public Book? Book { get; set; }
-        //public Category? Author { get; set; }
+        public Book? book { get; set; }
+        public Author? author { get; set; }
 
     }
 }

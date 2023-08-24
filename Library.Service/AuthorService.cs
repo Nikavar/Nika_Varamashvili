@@ -53,7 +53,20 @@ namespace Library.Service
         {
             await _authorRepository.UpdateAsync(entity);
         }
-    }
+
+		public async Task<IEnumerable<Author>> AddManyAuthorsAsync(List<Author> authors)
+		{
+            var addedAuthors = new List<Author>();
+
+            foreach (var author in authors)
+            {
+                var newAuthor = await _authorRepository.AddAsync(author);
+                addedAuthors.Add(newAuthor);
+            }
+
+            return addedAuthors;    
+		}
+	}
 
     public interface IAuthorService
     {
@@ -64,5 +77,6 @@ namespace Library.Service
         Task UpdateAuthorAsync(Author entity);
         Task DeleteAuthorAsync(Author entity);
         Task DeleteManyAuthorsAsync(Expression<Func<Author, bool>> filter);
+        Task<IEnumerable<Author>> AddManyAuthorsAsync(List<Author> authors);
     }
 }

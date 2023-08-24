@@ -1,6 +1,7 @@
 ﻿using Library.Model.Models;
 using Library.Web.Models;
 using Library.Web.Models.Account;
+using Library.Web.Models.Book;
 using Mapster;
 
 namespace Library.Web.Mapping
@@ -28,6 +29,15 @@ namespace Library.Web.Mapping
             TypeAdapterConfig<Publisher, PublisherViewModel>
                .NewConfig()
                .TwoWays();
-        }
+
+
+			TypeAdapterConfig<Book, CreateBookViewModel>
+			   .NewConfig()
+			   .TwoWays();
+
+			TypeAdapterConfig<BookPublisher, CreateBookViewModel>
+               .NewConfig()
+               .TwoWays();
+		}
     }
 }

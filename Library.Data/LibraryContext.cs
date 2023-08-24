@@ -33,12 +33,16 @@ namespace Library.Data
         public DbSet<ReaderStatus>? ReaderStatuses { get; set; }
         public DbSet<Publisher>? Publishers { get; set; }
         public DbSet<Tab>? Tabs { get; set; }
-        public DbSet<BookStorage>? BookStorages { get; set; }
         public DbSet<Language>? Languages { get; set; }
         public DbSet<Author>? Authors { get; set; }
         public DbSet<Category>? Categories { get; set; }
         public DbSet<Email>? EmailTemplates { get; set; }
         public DbSet<Storage>? Storages { get; set; }
+        public DbSet<Book>? Books { get; set; }
+        public DbSet<BookAuthor>? BookAuthors { get; set; }
+        public DbSet<BookPublisher>? BookPublishers { get; set; }
+        public DbSet<BookStorage>? BookStorages { get; set; }
+        public DbSet<BookCategory>? BookCategories { get; set; }
         public DbSet<LogInfo>? LogInfo { get; set; }
 
         public virtual void Commit()
@@ -54,17 +58,17 @@ namespace Library.Data
             modelBuilder.ApplyConfiguration(new ReaderStatusConfiguration());
             modelBuilder.ApplyConfiguration(new StaffReaderConfiguration());
             modelBuilder.ApplyConfiguration(new UserConfiguration());
+            modelBuilder.ApplyConfiguration(new RoleConfiguration());
             modelBuilder.ApplyConfiguration(new RoleUserConfiguration());
-            modelBuilder.ApplyConfiguration(new PositionConfiguration());
             modelBuilder.ApplyConfiguration(new PositionConfiguration());
             modelBuilder.ApplyConfiguration(new LogInfoConfiguration());
             modelBuilder.ApplyConfiguration(new TabConfiguration());
             modelBuilder.ApplyConfiguration(new LanguageConfiguration());
-            //modelBuilder.ApplyConfiguration(new BookPublisherConfiguration());
-            modelBuilder.ApplyConfiguration(new RoleConfiguration());
             modelBuilder.ApplyConfiguration(new AuthorConfiguration());
             modelBuilder.ApplyConfiguration(new CategoryConfiguration());
             modelBuilder.ApplyConfiguration(new EmailConfiguration());
+            modelBuilder.ApplyConfiguration(new BookAuthorConfiguration());
+            //modelBuilder.ApplyConfiguration(new BookPublisherConfiguration());
 
 
 

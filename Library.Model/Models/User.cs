@@ -15,7 +15,7 @@ namespace Library.Model.Models
         public string? Email { get; set; }
         public string? Password { get; set; }
         public int? StaffReaderID { get; set; }
-
+        public bool? IsConfirmed { get; set; } = false;
         // relations
         public StaffReader? StaffReader { get; set; }
         public ICollection<RoleUser>? UserRoles{ get; set; }    

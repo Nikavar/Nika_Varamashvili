@@ -1,9 +1,11 @@
 ﻿using Library.Model.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.CodeDom;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Linq.Expressions;
@@ -18,7 +20,7 @@ namespace Library.Data.Infrastructure
     /// </summary>
     /// <typeparam name="T">The Type of Entity to operate on</typeparam>
 
-    public class BaseRepository<T> : IBaseRepository<T> where T : class
+    public class BaseRepository<T> : IBaseRepository<T> where T : class, new()                                                        
     {
         #region Properties
         protected LibraryContext? dataContext;
@@ -52,6 +54,11 @@ namespace Library.Data.Infrastructure
         }
 
         #endregion
+
+        //public T GetEnumerator()
+        //{
+        //    return new T();
+        //}
 
         #region Implementation
 
@@ -88,6 +95,22 @@ namespace Library.Data.Infrastructure
 
             return entity;
         }
+
+   //     public virtual async Task<T> AddManyAsync(T entity)
+   //     {
+			//if (entity == null)
+			//{
+			//	throw new ArgumentNullException(nameof(entity));
+			//}          
+
+   //         foreach (var item in entity)
+   //         {
+   //             await dbSet.AddAsync(entity);
+   //             await dataContext.SaveChangesAsync();
+   //         }
+
+   //         return entity;
+   //     }
 
 
         public virtual async Task UpdateAsync(T entity)

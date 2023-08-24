@@ -1,17 +1,4 @@
-﻿@using Library.Web.Models.BookTest;
-@using Library.Web.Models.BookTest.Enums;
-@model BookTest
-
-@{
-    var Author = Enum.GetValues(typeof(Author));
-    var Genre = Enum.GetValues(typeof(Genre));
-    var Language = Enum.GetValues(typeof(Language));
-    var Publisher = Enum.GetValues(typeof(Publisher));
-    var Shelf = Enum.GetValues(typeof(Shelf));
-}
-
-
-<nav>
+﻿<nav>
 
     <h1>Edit Book</h1>
 
@@ -22,7 +9,7 @@
 
     <form method="post">
 
-        <input name="Name" placeholder="Name" asp-for="Name" />
+       @* <input name="Name" placeholder="Name" asp-for="Name" />
         <span asp-validation-for="Name"></span>
 
         <input name="Description" placeholder="Description" asp-for="Description" />
@@ -75,7 +62,7 @@
             </select>
             <span asp-validation-for="Language" ></span>
 
-        </div>
+        </div>*@
 
         <button type="submit">Save</button>
 

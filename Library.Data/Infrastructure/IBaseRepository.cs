@@ -16,9 +16,10 @@ namespace Library.Data.Infrastructure
         Task<IEnumerable<T>> GetManyAsync(Expression<Func<T, bool>> filter);
         Task<T> GetByIdAsync(params object[] key);
         Task<T> AddAsync(T entity);
+        //Task<T> AddManyAsync(T entity);
         Task UpdateAsync(T entity);
         Task DeleteAsync(T entity);
-        Task  DeleteManyAsync(Expression<Func<T, bool>> filter);
+        Task DeleteManyAsync(Expression<Func<T, bool>> filter);
         Task SaveAsync();
 
         #endregion

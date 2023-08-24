@@ -98,6 +98,17 @@ builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<IBookService, BookService>();
 
+builder.Services.AddScoped<IBookAuthorRepository, BookAuthorRepository>();
+builder.Services.AddScoped<IBookAuthorService, BookAuthorService>();
+
+builder.Services.AddScoped<IBookPublisherRepository, BookPublisherRepository>();
+builder.Services.AddScoped<IBookPublisherService, BookPublisherService>();
+
+builder.Services.AddScoped<IBookStorageRepository, BookStorageRepository>();
+builder.Services.AddScoped<IBookStorageService, BookStorageService>();
+
+builder.Services.AddScoped<IBookCategoryRepository, BookCategoryRepository>();
+builder.Services.AddScoped<IBookCategoryService, BookCategoryService>();
 
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();

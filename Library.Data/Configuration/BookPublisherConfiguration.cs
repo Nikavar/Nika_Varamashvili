@@ -18,10 +18,10 @@ namespace Library.Data.Configuration
             builder.HasKey(bp => bp.Id);
 
             builder.Property(bp => bp.PublisherId)
-                .HasColumnName("Publisher_Id");
+                .HasColumnName("PublisherId");
 
             builder.Property(bp => bp.BookId)
-                .HasColumnName("Book_Id");
+                .HasColumnName("BookId");
 
             // relations
             builder.HasOne(bp => bp.Book)

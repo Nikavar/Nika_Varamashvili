@@ -1,0 +1,87 @@
+﻿*,*:after,*:before{
+    box-sizing: border-box;
+}
+
+.search-select-box{
+    max-width: 400px;
+    margin: 80px auto;
+}
+
+.search-select-box select{
+    width: 100%;
+}
+
+.search-select-box button{
+    background-color: #080342 !important;
+    padding: 15px 25px;
+    color: #fff !important;
+    font-size: 20px;
+}
+
+.unselectable {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/*    nav {
+			display: flex;
+			justify-content: flex-start;
+			/*        margin-left: 50px;
+			font-size: 40px;
+			font-family: monospace;
+			font-weight: 100;*/
+}
+
+*/
+
+main {
+    margin-inline: 10px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+input[name=name] {
+    width: 200px;
+    padding: 10px;
+    outline: none;
+}
+
+input[name=description] {
+    width: 590px;
+    padding: 10px 10px 162px 10px;
+    outline: none;
+}
+
+form div {
+    /*width: 550px;*/
+    /*        display: flex;
+			flex-wrap: wrap;*/
+    gap: 20px;
+}
+
+select {
+    width: 270px;
+    height: 40px;
+    outline: none;
+    background-color: none;
+}
+
+button {
+    width: 105px;
+    height: 40px;
+    background: #8b8b8b;
+    color: #fff;
+    border: none;    
+}
+
+span {
+    color: red;
+}
+

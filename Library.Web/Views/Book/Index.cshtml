@@ -1,180 +1,102 @@
-﻿@using Library.Web.Models.BookTest;
-@using Library.Web.Models.BookTest.Enums;
-@model IEnumerable<BookTest>
-
-
-@{
-    var Author = Enum.GetValues(typeof(Author));
-    var Genre = Enum.GetValues(typeof(Genre));
-    var Language = Enum.GetValues(typeof(Language));
-    var Publisher = Enum.GetValues(typeof(Publisher));
-    var Shelf = Enum.GetValues(typeof(Shelf));
-}
-
+﻿@model Library.Web.Models.Book.CreateBookViewModel
 
 <nav>
 
-    <h1 class="title" style="margin-left:100%">Books</h1>
-    <a asp-action="AddBook"><i class="bi bi-plus-lg" style="color: #000; margin-left:250px; font-size: 40px"></i> </a>  
+	<h1 class="title" style="margin-left:100%">Books</h1>
+	<a asp-action="AddBook"><i class="bi bi-plus-lg" style="color: #000; margin-left:250px; font-size: 40px"></i> </a>
 
 </nav>
 
 
-<div class="search">
-
-    <form method="post">
-
-        <input  type="text" name="Name"  placeholder="Name" style="width: 146px;" />
-        <input type="text" name="Description" placeholder="Description" />
-        
-        <select name="Author">
-            <option value="@null">Author</option>
-            @foreach (var item in Author)
-            {
-                <option value="@item">@item</option>
-            }
-        </select>
-
-        <select name="Genre">
-            <option value="@null">Genre</option>
-            @foreach (var item in Genre)
-            {
-                <option value="@item">@item</option>
-            }
-        </select>
-
-        <select name="Publicher">
-            <option value="@null">Publicher</option>
-            @foreach (var item in Publisher)
-            {
-                <option value="@item">@item</option>
-            }
-        </select>
-
-        <select name="Shelf">
-            <option value="@null">Shelf</option>
-            @foreach (var item in Shelf)
-            {
-                <option value="@item">@item</option>
-            }
-        </select>
-
-        <button type="submit">Search</button>
-        <button formmethod="get">Reset</button>
-
-    </form>
-    <main>
-
-            @foreach (var item in Model)
-            {
-                <div>
-                    <input disabled value="@item.Name" type="text"  style="width: 146px;" />
-
-                    <input disabled value="@item.Description" type="text" />
-
-                    <input class="enum" disabled value="@item.Author" type="text"/>
-
-                    <input class="enum" disabled value="@item.Genre" type="text" />
-
-                    <input class="enum" disabled value="@item.Publicher" type="text" />
-
-                    <input class="enum" disabled value="@item.Shelf" type="text" />
-
-                    <a asp-action="UpdateBook" asp-route-name="@item.Name"><i class="bi bi-pencil-fill" style="font-size: 25px;"></i></a>
-
-                    <form method="post" asp-action="Delete" asp-route-name="@item.Name">
-                        <button type="submit" style="padding: 0; background: none;">
-                            <i class="bi bi-x" style="font-size: 37px; color: black;"></i>
-                        </button>
-                    </form>
-                </div>
-            }
-
-    </main>
-</div>
-
+<main>
+	<form method="post">
+		<table>
+			<tr>
+				<td colspan="5">
+					<input name="title" asp-for="Title" class="form-control" style="margin: 5px 0 5px 0" />
+				</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td valign="top" height="300px" width="320px">
+					<div>
+						<select name="authors" asp-for="Authors" id="authors" multiple="multiple" asp-items="ViewBag.Authors">
+						</select>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</form>
+</main>
 
 <style>
 
-    nav
-    {
-        display: flex;
-        justify-content: space-evenly;
-        align-items: center;
-        gap: 50%;
+	nav {
+		display: flex;
+		justify-content: space-evenly;
+		align-items: center;
+		gap: 50%;
+		font-size: 20px;
+		font-family: monospace;
+	}
 
-        font-size: 20px;
-        font-family: monospace;
-    }
+	.title {
+		font-weight: 200;
+	}
 
-    .title
-    {
-        font-weight: 200;
-    }
+	form {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: 10px;
+	}
 
-    form
-    {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 10px;
-    }
+	input[type=text] {
+		padding: 10px 5px 10px 10px;
+		outline: none;
+	}
 
-    input[type=text]
-    {
-        padding: 10px 5px 10px 10px;
-        outline: none;
-    }
+	select {
+		padding: 10px 90px 10px 10px;
+		outline: none;
+	}
 
-    select
-    {
-        padding: 10px 90px 10px 10px;
-        outline: none;
-    }
+	.enum {
+		padding: 10px 90px 10px 10px;
+	}
 
-    .enum
-    {
-        padding: 10px 90px 10px 10px;
-    }
+	button {
+		padding: 11px 30px;
+		background: #8b8b8b;
+		color: #fff;
+		border: none;
+	}
 
-    button
-    {
-        padding: 11px 30px;
-        background: #8b8b8b;
-        color: #fff;
-        border: none;
-    }
+	hr {
+		padding-block: 1px;
+		background: black;
+	}
 
-    hr
-    {
-        padding-block: 1px;
-        background: black;
-    }
+	.search {
+		display: flex;
+		flex-direction: column;
+	}
 
-    .search 
-    {
-        display: flex;
-        flex-direction: column;
-    }
+	main {
+		display: flex;
+		flex-direction: row;
+		flex-direction: column;
+		align-items: center;
+		margin-block: 41px;
+		gap: 19px;
+	}
 
-    main
-    {
-        display: flex;
-        flex-direction: row;
-        flex-direction: column;
-        align-items: center;
-        margin-block: 41px;
-        gap: 19px;
-    }
-
-    main div
-    {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: 10px;
-    }
-
+		main div {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			gap: 10px;
+		}
 
 </style>
 

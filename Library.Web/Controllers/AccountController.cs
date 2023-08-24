@@ -77,7 +77,7 @@ namespace Library.Web.Controllers
 				if (string.IsNullOrEmpty(model.EmailAddress) && string.IsNullOrEmpty(model.Password))
 					return View();
 
-                var password = HelperMethods.LoginHelper.ComputeSha256Hash(model.Password);
+                var password = LoginHelper.ComputeSha256Hash(model.Password);
                 var loggedUser = await _userService.LoginUserAsync(model.EmailAddress,password);
 
 				if (loggedUser != null)
@@ -198,8 +198,8 @@ namespace Library.Web.Controllers
 						user.Password = LoginHelper.ComputeSha256Hash(model.Password);
 
 					await LogHelper.UpdateEntityWithLog(user, _userService.UpdateUserAsync, _logService);
-					
-					return Redirect("Account/ConfirmResetPassword");
+
+					return View("ConfirmResetPassword");
 				}
             }
 
@@ -212,6 +212,7 @@ namespace Library.Web.Controllers
         public async Task<ActionResult> ConfirmEmail(string token)
         {
             var id = TokenHelper.TokenDecryption(token);
+			var user = await _userService.GetUserByIdAsync(id);
             var staffReader = await _staffReaderService.GetStaffReaderByIdAsync(id);
 
             if (staffReader == null)
@@ -220,9 +221,11 @@ namespace Library.Web.Controllers
                 return View("Index", "Home");
             }
 
-            staffReader.IsConfirmed = true;
+            user.IsConfirmed = true;
+			await _userService.UpdateUserAsync(user);
+
             await _staffReaderService.UpdateStaffReaderAsync(staffReader);
-            await HelperMethods.LogHelper.UpdateEntityWithLog(staffReader, _staffReaderService.UpdateStaffReaderAsync, _logService);
+            await LogHelper.UpdateEntityWithLog(staffReader, _staffReaderService.UpdateStaffReaderAsync, _logService);
             ViewBag.ErrorMessage = Warnings.EmailWasConfirmed;
 
             return View();
