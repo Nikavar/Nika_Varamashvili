@@ -1,4 +1,5 @@
 ﻿using Library.Model.Models;
+using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
 namespace Library.Web.Models.Book
@@ -6,10 +7,14 @@ namespace Library.Web.Models.Book
     public class CreateBookViewModel
     {
         public int Id { get; set; }
+
         [Required(ErrorMessage = "Please enter the Book Title")]
         public string? Title { get; set; }
         public string? Description { get; set; }
-		public string? PictureLink { get; set; }
+
+        [Required]
+        [DataType(DataType.Upload)]
+        public IFormFile? imgfile { get; set; }
 
 		[Required(ErrorMessage = "Please choose the authors")]
         public List<string>? Authors { get; set; }

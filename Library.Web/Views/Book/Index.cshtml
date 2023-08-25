@@ -17,11 +17,47 @@
 				</td>
 				<td></td>
 			</tr>
+
+			<tr>
+				<input name="description" placeholder="Description" asp-for="Description" class="form-control" style="margin: 5px 0 5px 0" />
+				<span asp-validation-for="Description" class="text-danger"></span>
+			</tr>
 			<tr>
 				<td valign="top" height="300px" width="320px">
 					<div>
 						<select name="authors" asp-for="Authors" id="authors" multiple="multiple" asp-items="ViewBag.Authors">
 						</select>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td valign="top" height="300px" width="320px">
+					<div>
+						<select name="genres" asp-for="Genres" id="genres" multiple="multiple" asp-items="ViewBag.Genres">
+						</select>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td valign="top" height="300px" width="320px">
+					<div>
+						<select name="publishers" asp-for="Publishers" id="publishers" multiple="multiple" asp-items="ViewBag.Publishers">
+						</select>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td valign="top" height="300px" width="320px">
+					<div>
+						<select name="shelves" asp-for="Shelves" id="shelves" multiple="multiple" asp-items="ViewBag.Shelves">
+						</select>
+					</div>
+				</td>
+				<td>
+					<div style="padding-top:33px">
+						<button type="submit" id="edit">Edit</button>
+						<button type="submit" id="remove">Remove</button>
+						<button type="submit" id="add">Add New Book</button>
 					</div>
 				</td>
 			</tr>
@@ -31,7 +67,7 @@
 
 <style>
 
-	nav {
+	/*nav {
 		display: flex;
 		justify-content: space-evenly;
 		align-items: center;
@@ -96,7 +132,7 @@
 			flex-direction: row;
 			align-items: center;
 			gap: 10px;
-		}
+		}*/
 
 </style>
 

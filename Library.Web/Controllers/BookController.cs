@@ -12,11 +12,15 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
 using System.Drawing.Text;
 using Windows.ApplicationModel.VoiceCommands;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
 
 namespace Library.Web.Controllers
 {
     public class BookController : Controller
     {
+        private readonly IWebHostEnvironment _webhost;
         private readonly IStorageService _storageService;
         private readonly ICategoryService _categoryService;
         private readonly ILanguageService _languageService;
@@ -31,6 +35,7 @@ namespace Library.Web.Controllers
 
 		public BookController
         (
+            IWebHostEnvironment webhost,
             ILogService logService,
             IStorageService storageService, 
             ICategoryService categoryService, 
@@ -44,6 +49,7 @@ namespace Library.Web.Controllers
 			IBookCategoryService bookCategoryService
 		)
         {
+            _webhost = webhost;
             _logService = logService;
             _storageService = storageService;
             _categoryService = categoryService;
@@ -63,29 +69,29 @@ namespace Library.Web.Controllers
             var books = await _bookService.GetAllBooksAsync();               
             var authors = await _authorService.GetAllAuthorsAsync();
             var bookAuthors = await _bookAuthorService.GetAllBookAuthorsAsync();
+            var bookPublishers = await _bookPublisherService.GetAllBookPublishersAsync();
+            var publishers = await _publisherService.GetAllPublishersAsync();
 
-            var result = (from xx in books
-                         join yy in bookAuthors
-                         on xx.Id equals yy.BookId
-                         join zz in authors
-                         on yy.AuthorId equals zz.Id
-                         //where yy.BookId == 7
+            var result = from b in books
+                         join ba in bookAuthors
+                         on b.Id equals ba.BookId
+                         join a in authors
+                         on ba.AuthorId equals a.Id
+                         join bp in bookPublishers
+                         on b.Id equals bp.BookId
+                         join p in publishers
+                         on bp.PublisherId equals p.ID
                          select new
-                         {   bookId = xx.Id,
-                             authors = yy.author
-                         }).ToList();
-
+                         {
+                             bookId = b.Id,
+                             authors = ba.AuthorId,
+                             publishers = bp.PublisherId
+                         };
 
             CreateBookViewModel model = new CreateBookViewModel();
 
-            foreach (var book in books.ToList())
-            {
-                var res = result.ToList().Where(x=>x.bookId == Convert.ToInt32(book.Id));
-                //model.Authors.AddRange(res);
+            //model.Authors = result.Select(x => x.authors.Id.ToString()).ToList();
 
-                SelectListItem items = new SelectListItem() { Text = res.ToString() };
-				ViewBag.Authors = items;
-			}
 
             return View();
         }
@@ -110,7 +116,8 @@ namespace Library.Web.Controllers
             return View(fillterBook.ToList());
         }
 
-        [HttpPost]
+
+		[HttpPost]
         public IActionResult Delete(string name)
         {
             //_bookRepository.DeleteBook(name);
@@ -199,14 +206,23 @@ namespace Library.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(CreateBookViewModel model)
+        public async Task<IActionResult> Add(CreateBookViewModel model, IFormFile imgFile)
         {
             await FillDropDownLists(model);
-            
+
             if (ModelState.IsValid)
             {
+                // save images to Folder "~/CoverPhotos"
+                var saveimg = Path.Combine(_webhost.WebRootPath, "CoverPhotos", imgFile.FileName);
+                string imgext = Path.GetExtension(imgFile.FileName);
+                var uploadimg = new FileStream(saveimg, FileMode.Create);
 
-                Book newBook = new Book() { Title = model.Title, Description = model.Description };
+                using (uploadimg)
+                {
+                    await imgFile.CopyToAsync(uploadimg);
+                }
+
+                Book newBook = new Book() { Title = model.Title, Description = model.Description, ImageLink = saveimg };
                 await LogHelper.AddEntityWithLog(newBook,_bookService.AddBookAsync,_logService);      
 
                 if(model.Authors != null)

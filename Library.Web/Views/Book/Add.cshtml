@@ -13,7 +13,7 @@
 <hr />
 
 <main>
-	<form method="post">
+	<form method="post" id="addBook" asp-action="Add" asp-controller="Book" enctype="multipart/form-data">
 		<table>
 			<tr>
 				<td colspan="5">
@@ -77,10 +77,15 @@
 					<div>
 						<span asp-validation-for="Shelves"></span>
 					</div>
+
 					<div class="form-group mt-3">
 						<label class="mr-2" style="color:darkcyan;">Upload Book Cover Photo:</label>
-						<input type="file" name="file">
+						<input type="file" name="imgfile" id="imgfile" asp-for="imgfile">
 					</div>
+					<div>
+						<span asp-validation-for="imgfile" id="imgError"></span>
+					</div>
+
 					<div style="padding-top:33px">
 						<button type="submit" id="submit">Save</button>
 					</div>
