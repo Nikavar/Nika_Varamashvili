@@ -54,11 +54,16 @@ namespace Library.Service
             await emailRepository.UpdateAsync(entity);  
         }
 
-        //public IEnumerable<Email> GetEmailEntityByTemplateTypeAsync(Expression<Func<Email,bool>>filter)
-        //{
-        //    return emailRepository.GetEmailEntityByTemplateTypeAsync(filter);
-        //}
-    }
+		public async Task<Email> GetTemplateByEmailTypeAsync(Expression<Func<Email, bool>> filter)
+		{
+            return await emailRepository.GetTemplateByEmailTypeAsync(filter);
+		}
+
+		//public IEnumerable<Email> GetEmailEntityByTemplateTypeAsync(Expression<Func<Email,bool>>filter)
+		//{
+		//    return emailRepository.GetEmailEntityByTemplateTypeAsync(filter);
+		//}
+	}
 
     public interface IEmailService
     {
@@ -69,6 +74,6 @@ namespace Library.Service
         Task UpdateEmailAsync(Email entity);
         Task DeleteEmailAsync(Email entity);
         Task DeleteManyEmailsAsync(Expression<Func<Email, bool>> filter);
-        //Task<IEnumerable<Email>> GetEmailEntityByTemplateTypeAsync(Expression<Func<Email,bool>> filter);
+        Task<Email> GetTemplateByEmailTypeAsync(Expression<Func<Email,bool>> filter);
     }
 }

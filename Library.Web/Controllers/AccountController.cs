@@ -142,9 +142,9 @@ namespace Library.Web.Controllers
 								PasswordResetLink = link,
 							};
 
-							var templateData = await _emailService.GetManyEmailsAsync(x => x.TemplateType.ToLower() == emailmodel.GetType().Name.ToLower());
+							var templateData = await _emailService.GetTemplateByEmailTypeAsync(x => x.TemplateType.ToLower() == emailmodel.GetType().Name.ToLower());
 
-							await EmailHelper.SendEmailAsync(templateData.FirstOrDefault(), emailmodel, _configuration, model.Email);
+							await EmailHelper.SendEmailAsync(templateData, emailmodel, _configuration, model.Email);
 						}
 					}					
 				}
@@ -351,9 +351,10 @@ namespace Library.Web.Controllers
 							ConfirmationLink = url
 						};
 						
-						var templateData = await _emailService.GetManyEmailsAsync(x => x.TemplateType.ToLower() == emailModel.GetType().Name.ToLower());
+						//var templateData = await _emailService.GetManyEmailsAsync(x => x.TemplateType.ToLower() == emailModel.GetType().Name.ToLower());
+						var templateData = await _emailService.GetTemplateByEmailTypeAsync(x => x.TemplateType.ToLower() == emailModel.GetType().Name.ToLower());
 
-						await EmailHelper.SendEmailAsync(templateData.FirstOrDefault(), emailModel, _configuration, model.Email);
+						await EmailHelper.SendEmailAsync(templateData, emailModel, _configuration, model.Email);
 
 						// Assing Role of 'user' to new user by default
 						var role = _roleService.GetRoleByNameAsync(AccountRole.user.ToString());

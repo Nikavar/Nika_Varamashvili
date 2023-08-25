@@ -1,5 +1,6 @@
 ﻿using Library.Data.Infrastructure;
 using Library.Model.Models;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -17,23 +18,14 @@ namespace Library.Data.Repositories
                 
         }
 
-        public IEnumerable<Email> GetEmailEntityByTemplateTypeAsync(Expression<Func<Email,bool>> filter)
-        {
-            //IQueryable<Email> query = dbSet;
-
-            //if (filter != null)
-            //{
-            //    query = query.Where(filter);
-            //}
-
-            //return await query.FirstOrDefaultAsync();
-
-            return dbSet.Where(x=>x.Equals(filter));
-        }
-    }
+		public async Task<Email> GetTemplateByEmailTypeAsync(Expression<Func<Email, bool>> filter)
+		{
+            return await dbSet.Where(filter).FirstOrDefaultAsync();
+		}
+	}
 
     public interface IEmailRepository : IBaseRepository<Email>
     {
-        IEnumerable<Email> GetEmailEntityByTemplateTypeAsync(Expression<Func<Email,bool>> filter);
+        Task<Email> GetTemplateByEmailTypeAsync(Expression<Func<Email,bool>> filter);
     }
 }
