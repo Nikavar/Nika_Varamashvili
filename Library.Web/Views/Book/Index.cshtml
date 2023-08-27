@@ -1,138 +1,199 @@
-﻿@model Library.Web.Models.Book.CreateBookViewModel
+﻿@model List<Library.Web.Models.Book.AllBooksViewModel>
 
-<nav>
-
+@*<nav>
 	<h1 class="title" style="margin-left:100%">Books</h1>
 	<a asp-action="AddBook"><i class="bi bi-plus-lg" style="color: #000; margin-left:250px; font-size: 40px"></i> </a>
+</nav>*@
 
-</nav>
+@{
+	ViewData["Title"] = "Index";
 
+	PagerModel pager = new PagerModel();
+	int pageNo = 0;
+
+	if (ViewBag.Pager != null)
+	{
+		pager = ViewBag.Pager;
+		pageNo = pager.CurrentPage;
+	}
+}
 
 <main>
 	<form method="post">
-		<table>
-			<tr>
-				<td colspan="5">
-					<input name="title" asp-for="Title" class="form-control" style="margin: 5px 0 5px 0" />
-				</td>
-				<td></td>
-			</tr>
 
-			<tr>
-				<input name="description" placeholder="Description" asp-for="Description" class="form-control" style="margin: 5px 0 5px 0" />
-				<span asp-validation-for="Description" class="text-danger"></span>
-			</tr>
-			<tr>
-				<td valign="top" height="300px" width="320px">
-					<div>
-						<select name="authors" asp-for="Authors" id="authors" multiple="multiple" asp-items="ViewBag.Authors">
-						</select>
-					</div>
-				</td>
-			</tr>
-			<tr>
-				<td valign="top" height="300px" width="320px">
-					<div>
-						<select name="genres" asp-for="Genres" id="genres" multiple="multiple" asp-items="ViewBag.Genres">
-						</select>
-					</div>
-				</td>
-			</tr>
-			<tr>
-				<td valign="top" height="300px" width="320px">
-					<div>
-						<select name="publishers" asp-for="Publishers" id="publishers" multiple="multiple" asp-items="ViewBag.Publishers">
-						</select>
-					</div>
-				</td>
-			</tr>
-			<tr>
-				<td valign="top" height="300px" width="320px">
-					<div>
-						<select name="shelves" asp-for="Shelves" id="shelves" multiple="multiple" asp-items="ViewBag.Shelves">
-						</select>
-					</div>
-				</td>
-				<td>
-					<div style="padding-top:33px">
-						<button type="submit" id="edit">Edit</button>
-						<button type="submit" id="remove">Remove</button>
-						<button type="submit" id="add">Add New Book</button>
-					</div>
-				</td>
-			</tr>
-		</table>
+		@foreach (var row in Model)
+		{
+			<table>
+				<tr style="vertical-align:top">
+					<td width="100px">
+						<div>
+							<label>Title:</label> @row.Title
+						</div>
+					</td>
+					<td width="100px">
+						<div>
+							<label>Description:</label> @row.Description
+						</div>
+					</td>
+					<td width="200px">
+						<div>
+							<label>
+								Authors:
+							</label>
+							@if (row?.Authors?.Count > 0)
+							{
+								foreach (var auth in row.Authors)
+								{
+									<div>
+										@auth.FirstName&nbsp;@auth.LastName
+									</div>
+								}
+							}
+						</div>
+					</td>
+					<td width="150px">
+							<label>
+								Publishers:
+							</label>
+						<div>
+							@if (row?.Publishers?.Count > 0)
+							{
+								foreach (var p in row.Publishers)
+								{
+									<div>
+										@p.PublisherName
+									</div>
+								}
+							}
+						</div>
+					</td>
+					<td width="150px">
+						<div>
+							<label>
+								Genres:
+							</label>
+							@if (row?.Genres?.Count > 0)
+							{
+								foreach (var genre in row.Genres)
+								{
+									<div>
+										@genre.CategoryName
+									</div>
+								}
+							}
+						</div>
+					</td>
+					<td width="150px">
+						<div>
+							<label>
+								Shelves:
+							</label>
+							@if (row?.Shelves?.Count > 0)
+							{
+								foreach (var shelf in row.Shelves)
+								{
+									<div>
+										@shelf.ShelfNumber&nbsp;@shelf.ClosetNumber
+									</div>
+								}
+							}
+						</div>
+					</td>
+					<td>
+						<div>
+							<button type="submit" id="edit" style="margin: 5px 5px 5px 5px">Edit</button>
+						</div>
+					</td>
+					<td>
+						<div>
+							<button type="submit" id="remove" style="margin: 5px 5px 5px 5px">Remove</button>
+						</div>
+					</td>
+					<td>
+						<div>
+							<button type="submit" id="add" asp-action="add" asp-controller="Book" style="margin: 5px 5px 5px 5px">Add New Book</button>
+						</div>
+					</td>
+				</tr>
+			</table>
+		}
 	</form>
+
+	<partial name="_pager" model="@pager" />
+
+	<br />
+	<tfoot>
+	</tfoot>
 </main>
 
 <style>
 
 	/*nav {
-		display: flex;
-		justify-content: space-evenly;
-		align-items: center;
-		gap: 50%;
-		font-size: 20px;
-		font-family: monospace;
-	}
-
-	.title {
-		font-weight: 200;
-	}
-
-	form {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		gap: 10px;
-	}
-
-	input[type=text] {
-		padding: 10px 5px 10px 10px;
-		outline: none;
-	}
-
-	select {
-		padding: 10px 90px 10px 10px;
-		outline: none;
-	}
-
-	.enum {
-		padding: 10px 90px 10px 10px;
-	}
-
-	button {
-		padding: 11px 30px;
-		background: #8b8b8b;
-		color: #fff;
-		border: none;
-	}
-
-	hr {
-		padding-block: 1px;
-		background: black;
-	}
-
-	.search {
-		display: flex;
-		flex-direction: column;
-	}
-
-	main {
-		display: flex;
-		flex-direction: row;
-		flex-direction: column;
-		align-items: center;
-		margin-block: 41px;
-		gap: 19px;
-	}
-
-		main div {
 			display: flex;
-			flex-direction: row;
+			justify-content: space-evenly;
+			align-items: center;
+			gap: 50%;
+			font-size: 20px;
+			font-family: monospace;
+		}
+
+		.title {
+			font-weight: 200;
+		}
+
+		form {
+			display: flex;
+			justify-content: center;
 			align-items: center;
 			gap: 10px;
-		}*/
+		}
+
+		input[type=text] {
+			padding: 10px 5px 10px 10px;
+			outline: none;
+		}
+
+		select {
+			padding: 10px 90px 10px 10px;
+			outline: none;
+		}
+
+		.enum {
+			padding: 10px 90px 10px 10px;
+		}
+
+		button {
+			padding: 11px 30px;
+			background: #8b8b8b;
+			color: #fff;
+			border: none;
+		}
+
+		hr {
+			padding-block: 1px;
+			background: black;
+		}
+
+		.search {
+			display: flex;
+			flex-direction: column;
+		}
+
+		main {
+			display: flex;
+			flex-direction: row;
+			flex-direction: column;
+			align-items: center;
+			margin-block: 41px;
+			gap: 19px;
+		}
+
+			main div {
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				gap: 10px;
+			}*/
 
 </style>
 

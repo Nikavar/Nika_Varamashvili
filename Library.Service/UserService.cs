@@ -99,7 +99,12 @@ namespace Library.Service
 
             return result.Count > 0 ? true : false;
         }
-    }
+
+		public async Task<User> GetUserByCredentialsAsync(Expression<Func<User, bool>> filter)
+		{
+			return await _userRepository.GetUserByCredentialsAsync(filter);
+		}
+	}
 
     public interface IUserService
     {
@@ -117,5 +122,6 @@ namespace Library.Service
         Task<User> LoginUserAsync(string userName, string password);
         Task LogoutUserAsync(User user);
         Task<bool> IsInRole(int id, string role);
+        Task<User> GetUserByCredentialsAsync(Expression<Func<User, bool>> filter);
     }
 }

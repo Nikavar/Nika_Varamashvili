@@ -15,6 +15,8 @@ using Windows.ApplicationModel.VoiceCommands;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
+using static System.Reflection.Metadata.BlobBuilder;
+using Windows.UI.Xaml.Controls;
 
 namespace Library.Web.Controllers
 {
@@ -63,37 +65,137 @@ namespace Library.Web.Controllers
             _bookCategoryService = bookCategoryService;
         }
 
-        [HttpGet]
+        private async Task<List<Author>> GetAuthors(int id)
+        {
+			var books = await _bookService.GetAllBooksAsync();
+			var authors = await _authorService.GetAllAuthorsAsync();
+			var bookAuthors = await _bookAuthorService.GetAllBookAuthorsAsync();
+
+			List<Author> _authors = (from b in books
+						 join ba in bookAuthors
+						 on b.Id equals ba.BookId
+						 join a in authors
+						 on ba.AuthorId equals a.Id
+						 where ba.BookId == id
+						 select a).ToList();
+            
+            return _authors;
+		}
+
+		private async Task<List<Publisher>> GetPublishers(int id)
+		{
+			var books = await _bookService.GetAllBooksAsync();
+			var bookPublishers = await _bookPublisherService.GetAllBookPublishersAsync();
+			var publishers = await _publisherService.GetAllPublishersAsync();
+
+			List<Publisher> _publishers = (from b in books
+									 join bp in bookPublishers
+									 on b.Id equals bp.BookId
+									 join p in publishers
+									 on bp.PublisherId equals p.ID
+									 where bp.BookId == id
+									 select p).ToList();
+
+			return _publishers;
+		}
+
+		private async Task<List<Category>> GetGenres(int id)
+		{
+			var books = await _bookService.GetAllBooksAsync();
+			var bookGenres = await _bookCategoryService.GetAllBookCategoriesAsync();
+			var genres = await _categoryService.GetAllCategoriesAsync();
+
+			List<Category> _genres = (from b in books
+										   join bg in bookGenres
+										   on b.Id equals bg.BookId
+										   join g in genres
+										   on bg.CategoryId equals g.Id
+										   where bg.BookId == id
+										   select g).ToList();
+
+			return _genres;
+		}
+
+		private async Task<List<Storage>> GetShelves(int id)
+		{
+			var books = await _bookService.GetAllBooksAsync();
+			var bookShelves = await _bookStorageService.GetAllBookStoragesAsync();
+			var shelves = await _storageService.GetAllStoragesAsync();
+
+			List<Storage> _shelves = (from b in books
+									  join bs in bookShelves
+									  on b.Id equals bs.BookId
+									  join s in shelves
+									  on bs.StorageId equals s.Id
+									  where bs.BookId == id
+									  select s).ToList();
+
+			return _shelves;
+		}
+
+		[HttpGet]
         public async Task<IActionResult> Index()
         {
             var books = await _bookService.GetAllBooksAsync();               
-            var authors = await _authorService.GetAllAuthorsAsync();
-            var bookAuthors = await _bookAuthorService.GetAllBookAuthorsAsync();
-            var bookPublishers = await _bookPublisherService.GetAllBookPublishersAsync();
-            var publishers = await _publisherService.GetAllPublishersAsync();
 
-            var result = from b in books
-                         join ba in bookAuthors
-                         on b.Id equals ba.BookId
-                         join a in authors
-                         on ba.AuthorId equals a.Id
-                         join bp in bookPublishers
-                         on b.Id equals bp.BookId
-                         join p in publishers
-                         on bp.PublisherId equals p.ID
-                         select new
-                         {
-                             bookId = b.Id,
-                             authors = ba.AuthorId,
-                             publishers = bp.PublisherId
-                         };
+            List<AllBooksViewModel> allBooks = new List<AllBooksViewModel>();
 
-            CreateBookViewModel model = new CreateBookViewModel();
+            foreach (var book in books)
+            {
+                AllBooksViewModel model = new AllBooksViewModel();
 
-            //model.Authors = result.Select(x => x.authors.Id.ToString()).ToList();
+                model.Id = book.Id;
+                model.Title = book.Title;
+                model.Description = book.Description;
+                model.Authors = await GetAuthors(book.Id);
+				model.Publishers = await GetPublishers(book.Id);
+                model.Genres = await GetGenres(book.Id);
+                model.Shelves = await GetShelves(book.Id);
 
+				// Authors
+				List<SelectListItem> autorsLst = new List<SelectListItem>();
 
-            return View();
+				foreach (var author in model.Authors)
+				{
+					autorsLst.Add(new SelectListItem() { Value = author.Id.ToString(), Text = String.Concat(author.FirstName, " ", author.LastName) });
+				}
+
+				ViewBag.Authors = autorsLst;
+
+				// publishers
+				List<SelectListItem> publishersLst = new List<SelectListItem>();
+
+				foreach (var publisher in model.Publishers)
+				{
+					publishersLst.Add(new SelectListItem() { Value = publisher.ID.ToString(), Text = publisher.PublisherName });
+				}
+
+				ViewBag.Publishers = publishersLst;
+
+				// genres
+				List<SelectListItem> genresLst = new List<SelectListItem>();
+
+				foreach (var genre in model.Genres)
+				{
+					genresLst.Add(new SelectListItem() { Value = genre.Id.ToString(), Text = genre.CategoryName });
+				}
+
+				ViewBag.Genres = genresLst;
+
+				// shelves
+				List<SelectListItem> shelvesLst = new List<SelectListItem>();
+
+				foreach (var shelf in model.Shelves)
+				{
+					shelvesLst.Add(new SelectListItem() { Value = shelf.Id.ToString(), Text = String.Concat("shelf:", shelf.ShelfNumber.ToString(), "-", "closet:", shelf.ClosetNumber.ToString()) });
+				}
+
+				ViewBag.Shelves = shelvesLst;
+
+				allBooks.Add(model);
+            }
+
+            return View(allBooks);
         }
 
         [HttpPost]
@@ -123,6 +225,17 @@ namespace Library.Web.Controllers
             //_bookRepository.DeleteBook(name);
             return RedirectToAction("Index");
         }
+
+        //private async Task<IActionResult> LoadAllBooks(CreateBookViewModel model)
+        //{
+        //    var books = await _bookService.GetAllBooksAsync();
+
+        //    foreach (var book in books)
+        //    {
+        //        await _authorService.GetManyAuthorsAsync(x=>x.id)
+        //    }
+
+        //}
 
         private async Task<IActionResult> FillDropDownLists(CreateBookViewModel model)
         {

@@ -20,7 +20,8 @@ namespace Library.Data.Repositories
 
 		public async Task<Email> GetTemplateByEmailTypeAsync(Expression<Func<Email, bool>> filter)
 		{
-            return await dbSet.Where(filter).FirstOrDefaultAsync();
+            var result = await dbSet.Where(filter).FirstOrDefaultAsync();
+            return result;
 		}
 	}
 

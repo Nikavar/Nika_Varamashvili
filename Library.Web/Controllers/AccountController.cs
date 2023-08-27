@@ -312,9 +312,10 @@ namespace Library.Web.Controllers
 		{
             if (ModelState.IsValid)
 			{
-				var account = await _userService.GetManyUsersAsync(x => x.Email.ToLower() == model.Email.ToLower());
+				//var account = await _userService.GetManyUsersAsync(x => x.Email.ToLower() == model.Email.ToLower());
+				var account = await _userService.GetUserByCredentialsAsync(x => (x.Email.ToLower() == model.Email.ToLower()) && x.IsConfirmed != true);
 
-				if (account.FirstOrDefault() == null && model.Password != null)
+				if (account == null && model.Password != null)
 				{
 					// Add & Log 'StaffReader' Entity In Database
 					var staffReaderEntity = model.Adapt<StaffReader>();
