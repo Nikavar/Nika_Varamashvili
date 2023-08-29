@@ -5,6 +5,8 @@
 	<a asp-action="AddBook"><i class="bi bi-plus-lg" style="color: #000; margin-left:250px; font-size: 40px"></i> </a>
 </nav>*@
 
+<link href=" ~ /css/book/allbooks.css" rel="stylesheet" type="text/css"/>
+
 @{
 	ViewData["Title"] = "Index";
 
@@ -19,18 +21,66 @@
 }
 
 <main>
-	<form method="post">
+	<form method="get">
+		<br/>
+
+		<table>
+			<tr>
+				<td colspan="5">
+					<div>
+						<button id="add" asp-action="Add" asp-controller="Book" class="btn btn-primary" style="margin-bottom: 5px; background-color:cadetblue; color:aliceblue"> add new book</button>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td width="100px">
+					<div>
+						<input placeholder="Name" id="name"/>
+					</div>
+				</td>
+				<td width="100px">
+					<div>
+						<input placeholder="Description" id="description"/>
+					</div>
+				</td>
+				<td width="100px">
+					<div>
+						<input placeholder="Author" id="author"/>
+					</div>
+				</td>
+				<td width="100px">
+					<div>
+						<input placeholder="Publisher" />
+					</div>
+				</td>
+				<td width="100px">
+					<div>
+						<input placeholder="Genre" />
+					</div>
+				</td>
+				<td width="100px">
+					<div>
+						<input placeholder="Shelf" />
+					</div>
+				</td>
+				<td width="60px">
+					<button value="search" style="width:60px; height:25px; margin-left:5px">search</button>
+				</td>
+			</tr>
+		</table>
+
+		<hr/>
 
 		@foreach (var row in Model)
 		{
 			<table>
 				<tr style="vertical-align:top">
-					<td width="100px">
+					<td width="200px">
 						<div>
 							<label>Title:</label> @row.Title
 						</div>
 					</td>
-					<td width="100px">
+					<td width="200px">
 						<div>
 							<label>Description:</label> @row.Description
 						</div>
@@ -106,12 +156,7 @@
 					</td>
 					<td>
 						<div>
-							<button type="submit" id="remove" style="margin: 5px 5px 5px 5px">Remove</button>
-						</div>
-					</td>
-					<td>
-						<div>
-							<button type="submit" id="add" asp-action="add" asp-controller="Book" style="margin: 5px 5px 5px 5px">Add New Book</button>
+							<button type="submit" id="remove" asp-action="delete" asp-controller="book" asp-route-id="@row?.Id" style="margin: 5px 5px 5px 5px">Remove</button>
 						</div>
 					</td>
 				</tr>
@@ -122,8 +167,6 @@
 	<partial name="_pager" model="@pager" />
 
 	<br />
-	<tfoot>
-	</tfoot>
 </main>
 
 <style>

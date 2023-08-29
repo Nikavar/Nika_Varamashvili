@@ -18,15 +18,16 @@ namespace Library.Data.Repositories
                 
         }
 
-		public async Task<Email> GetTemplateByEmailTypeAsync(Expression<Func<Email, bool>> filter)
+		public Email GetTemplateByEmailTypeAsync(string emailType)
 		{
-            var result = await dbSet.Where(filter).FirstOrDefaultAsync();
-            return result;
-		}
+            var email = dbSet.Where(x => x.TemplateType == emailType).FirstOrDefault();
+
+            return email;
+        }
 	}
 
     public interface IEmailRepository : IBaseRepository<Email>
     {
-        Task<Email> GetTemplateByEmailTypeAsync(Expression<Func<Email,bool>> filter);
+        Email GetTemplateByEmailTypeAsync(string emailType);
     }
 }

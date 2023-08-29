@@ -142,7 +142,7 @@ namespace Library.Web.Controllers
 								PasswordResetLink = link,
 							};
 
-							var templateData = await _emailService.GetTemplateByEmailTypeAsync(x => x.TemplateType.ToLower() == emailmodel.GetType().Name.ToLower());
+							var templateData = _emailService.GetTemplateByEmailTypeAsync(emailmodel.GetType().Name.ToLower());
 
 							await EmailHelper.SendEmailAsync(templateData, emailmodel, _configuration, model.Email);
 						}
@@ -340,7 +340,7 @@ namespace Library.Web.Controllers
 					if (userEntity != null)
 					{
 						//Create URL with above token
-						var token = TokenHelper.TokenGeneration(staffReaderEntity.ID.ToString(), _configuration);
+						var token = TokenHelper.TokenGeneration(userEntity.id.ToString(), _configuration);
                         var url = Url.Action("ConfirmEmail", "Account", new { token = token }, Request.Scheme);
 						
 						//var url = Request.Scheme + "://" + Request.Host + Url.Action("ConfirmEmail", "Account", new { email = model.Email, code = token }, "http") + "'>Confirm Password</a>";
@@ -353,7 +353,7 @@ namespace Library.Web.Controllers
 						};
 						
 						//var templateData = await _emailService.GetManyEmailsAsync(x => x.TemplateType.ToLower() == emailModel.GetType().Name.ToLower());
-						var templateData = await _emailService.GetTemplateByEmailTypeAsync(x => x.TemplateType.ToLower() == emailModel.GetType().Name.ToLower());
+						var templateData = _emailService.GetTemplateByEmailTypeAsync(emailModel.GetType().Name.ToLower());
 
 						await EmailHelper.SendEmailAsync(templateData, emailModel, _configuration, model.Email);
 

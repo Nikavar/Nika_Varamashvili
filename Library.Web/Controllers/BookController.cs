@@ -15,8 +15,8 @@ using Windows.ApplicationModel.VoiceCommands;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
-using static System.Reflection.Metadata.BlobBuilder;
 using Windows.UI.Xaml.Controls;
+
 
 namespace Library.Web.Controllers
 {
@@ -34,6 +34,8 @@ namespace Library.Web.Controllers
         private readonly IBookStorageService _bookStorageService;
 		private readonly IBookCategoryService _bookCategoryService;
 		private readonly ILogService _logService;
+		List<AllBooksViewModel> allBooks = new List<AllBooksViewModel>();
+
 
 		public BookController
         (
@@ -138,7 +140,7 @@ namespace Library.Web.Controllers
         {
             var books = await _bookService.GetAllBooksAsync();               
 
-            List<AllBooksViewModel> allBooks = new List<AllBooksViewModel>();
+            //List<AllBooksViewModel> allBooks = new List<AllBooksViewModel>();
 
             foreach (var book in books)
             {
@@ -150,47 +152,7 @@ namespace Library.Web.Controllers
                 model.Authors = await GetAuthors(book.Id);
 				model.Publishers = await GetPublishers(book.Id);
                 model.Genres = await GetGenres(book.Id);
-                model.Shelves = await GetShelves(book.Id);
-
-				// Authors
-				List<SelectListItem> autorsLst = new List<SelectListItem>();
-
-				foreach (var author in model.Authors)
-				{
-					autorsLst.Add(new SelectListItem() { Value = author.Id.ToString(), Text = String.Concat(author.FirstName, " ", author.LastName) });
-				}
-
-				ViewBag.Authors = autorsLst;
-
-				// publishers
-				List<SelectListItem> publishersLst = new List<SelectListItem>();
-
-				foreach (var publisher in model.Publishers)
-				{
-					publishersLst.Add(new SelectListItem() { Value = publisher.ID.ToString(), Text = publisher.PublisherName });
-				}
-
-				ViewBag.Publishers = publishersLst;
-
-				// genres
-				List<SelectListItem> genresLst = new List<SelectListItem>();
-
-				foreach (var genre in model.Genres)
-				{
-					genresLst.Add(new SelectListItem() { Value = genre.Id.ToString(), Text = genre.CategoryName });
-				}
-
-				ViewBag.Genres = genresLst;
-
-				// shelves
-				List<SelectListItem> shelvesLst = new List<SelectListItem>();
-
-				foreach (var shelf in model.Shelves)
-				{
-					shelvesLst.Add(new SelectListItem() { Value = shelf.Id.ToString(), Text = String.Concat("shelf:", shelf.ShelfNumber.ToString(), "-", "closet:", shelf.ClosetNumber.ToString()) });
-				}
-
-				ViewBag.Shelves = shelvesLst;
+                model.Shelves = await GetShelves(book.Id);				
 
 				allBooks.Add(model);
             }
@@ -199,43 +161,41 @@ namespace Library.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Index(Book book)
+        public async Task<IActionResult> Index(AllBooksViewModel books)
         {
-            IEnumerable<Book> fillterBook = null;
-                //allBook.Where(b =>
-                //   b.Name == book.Name ||
-                //   b.Description == book.Description ||
-                //   b.Shelf == book.Shelf ||
-                //   b.Publicher == book.Publicher ||
-                //   b.Author == book.Author ||
-                //   b.Genre == book.Genre
-                //);
-
-            //if (fillterBook == null)
-            //    return RedirectToAction("Index");
-
-
-            return View(fillterBook.ToList());
+            await Index();
+            return View();
         }
 
+		public async Task<ActionResult> Delete(int id)
+		{
+			var book = await _bookService.GetBookByIdAsync(id);
 
-		[HttpPost]
-        public IActionResult Delete(string name)
+            return View(book);
+		}
+
+        [HttpPost]
+        public async Task<ActionResult> Delete(AllBooksViewModel model)
         {
-            //_bookRepository.DeleteBook(name);
-            return RedirectToAction("Index");
-        }
+            var book = await _bookService.GetBookByIdAsync(model.Id);
+			await _bookAuthorService.DeleteManyBookAuthorsAsync(x => x.BookId == book.Id);
+			await _bookPublisherService.DeleteManyBookPublishersAsync(x => x.BookId == book.Id);
+			await _bookCategoryService.DeleteManyBookCategoriesAsync(x => x.BookId == book.Id);
+			await _bookStorageService.DeleteManyBookStoragesAsync(x => x.BookId == book.Id);
 
-        //private async Task<IActionResult> LoadAllBooks(CreateBookViewModel model)
-        //{
-        //    var books = await _bookService.GetAllBooksAsync();
+			var imgToDelete = Path.Combine(_webhost.WebRootPath, "CoverPhotos", book.ImageLink);
+			var removeImg = new FileStream(imgToDelete, FileMode.Open);
 
-        //    foreach (var book in books)
-        //    {
-        //        await _authorService.GetManyAuthorsAsync(x=>x.id)
-        //    }
+			//using (removeImg)
+			//{
+			//	await imgFile.CopyToAsync(imgToDelete);
+			//}
 
-        //}
+			await _bookService.DeleteBookAsync(book);
+			await Index();
+
+			return RedirectToAction("Index");
+		}
 
         private async Task<IActionResult> FillDropDownLists(CreateBookViewModel model)
         {
@@ -304,7 +264,7 @@ namespace Library.Web.Controllers
             {
                 shelvesLst.Add(new SelectListItem() { Value = shelf.Id.ToString(), Text = String.Concat("shelf:", shelf.ShelfNumber.ToString(), "-", "closet:", shelf.ClosetNumber.ToString()) });
             }
-
+            
             ViewBag.Shelves = shelvesLst;
 
             return View();
@@ -385,12 +345,6 @@ namespace Library.Web.Controllers
 				return RedirectToAction("Index");
             }
 
-            return View();
-        }
-
-        [HttpGet("{name}")]
-        public IActionResult UpdateBook(string name)
-        {
             return View();
         }
 
