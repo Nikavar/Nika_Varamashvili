@@ -42,7 +42,7 @@
 
   <ItemGroup>
     <Folder Include="App_Start\" />
-    <Folder Include="wwwroot\CoverPhotos\" />
+    <Folder Include="wwwroot\photos\profile\" />
   </ItemGroup>
 
   <ItemGroup>

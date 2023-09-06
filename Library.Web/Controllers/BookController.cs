@@ -285,8 +285,8 @@ namespace Library.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                // save images to Folder "~/CoverPhotos"
-                var saveimg = Path.Combine(_webhost.WebRootPath, "CoverPhotos", imgFile.FileName);
+                // save images to Folder "~/cover"
+                var saveimg = Path.Combine(_webhost.WebRootPath, "photos\\cover", imgFile.FileName);
                 string imgext = Path.GetExtension(imgFile.FileName);
                 var uploadimg = new FileStream(saveimg, FileMode.Create);
 

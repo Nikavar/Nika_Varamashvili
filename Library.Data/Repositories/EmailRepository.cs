@@ -20,8 +20,7 @@ namespace Library.Data.Repositories
 
 		public Email GetTemplateByEmailTypeAsync(string emailType)
 		{
-            var email = dbSet.Where(x => x.TemplateType == emailType).FirstOrDefault();
-
+            var email = dbSet.FirstOrDefault(x => x.TemplateType == emailType);
             return email;
         }
 	}

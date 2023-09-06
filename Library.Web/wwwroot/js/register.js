@@ -9,44 +9,58 @@
 	}
 };
 
+function allowPosition() {
+	var isChecked = $("input[id=staff]:checked").val();	
+	var selectedPosition = $('#positionsDiv :selected').text();
+
+	if (selectedPosition.toLowerCase().includes('--')) {
+		$("#positionError").html("U have to choose a position");
+	}
+
+	else {
+		$("#positionError").html("");
+	}
+}
+
 function setDatePickerFormat() {
 	var x = document.getElementById("datepicker");
 	x.datepicker({ format: "yyyy/mm//dd" });
 };
 
-//function allowFirstName(elementId) {
-//	let fname = document.getElementById(elementId).value
+function allowFirstName() {
+	let fname = $("#firstName").val();
 
-//	if (isValidName(fname)) {
-//		document.getElementById("firstNameError").innerHTML = "";
-//	}
+	if (isValidName(fname)) {
+		$("#firstNameError").html("");
+	}
 
-//	else {
-//		document.getElementById("firstNameError").innerHTML = "First Name is not a number";
-//	}
-//};
+	else {
+		var errorMsg = "First Name is not a number";
+		$("#firstNameError").html(errorMsg); 
+	}
+};
 
-//function allowLastName(elementId) {
-//	let lname = document.getElementById(elementId).value
+function allowLastName() {
+	let lname = $("#lastName").val();
 
-//	if (isValidName(lname)) {
-//		document.getElementById("lastNameError").innerHTML = "";
-//	}
+	if (isValidName(lname)) {
+		$("#lastNameError").html("");
+	}
 
-//	else {
-//		document.getElementById("lastNameError").innerHTML = "Last Name is not a number";
-//	}
-//};
+	else {
+		$("#lastNameError").html("Last Name is not a number");
+	}
+};
 
-//function isValidName(name) {
-//	if (
-//		typeof name !== "string" ||
-//		/[0-9]+/g.test(name)
-//	) {
-//		return false;
-//	}
-//	return true;
-//};
+function isValidName(name) {
+	if (
+		typeof name !== "string" ||
+		/[0-9]+/g.test(name)
+	) {
+		return false;
+	}
+	return true;
+};
 
 function allowNumbers() {
 	const pattern = new RegExp('^(\\d|\\+)[ \\d-]+$');
