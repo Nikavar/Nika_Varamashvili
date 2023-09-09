@@ -14,9 +14,11 @@ namespace Library.Web.Models.Account
 		public List<SelectListItem>? Positions { get; set; }
 
 		[Required]
+		[RegularExpression("^[a-zA-Z ]*$",ErrorMessage = "Input Format is only text")]
 		public string? FirstName { get; set; }
 
 		[Required]
+		[RegularExpression("^[a-zA-Z ]*$", ErrorMessage = "Input Format is only text")]
 		public string? LastName { get; set; }
 
 		public string? Position { get; set; }
@@ -42,12 +44,17 @@ namespace Library.Web.Models.Account
 		public string? PersonalPhoto { get; set; }
 
 		[Required]
+		[RegularExpression("[a-z0-9]+@[a-z]+\\.[a-z]{2,3}",ErrorMessage = "Input value in Mail Format")]
+		[DataType(DataType.EmailAddress)]
+		[EmailAddress(ErrorMessage = "Email format is not correct!")]
 		public string? Email { get; set; }		
 
 		[Required]
+		[DataType(DataType.Password)]
 		public string? Password { get; set; }
 
 		[Required]
+		[DataType(DataType.Password)]
 		[Compare(nameof(Password),ErrorMessage = "Passwords don't match")]
 		public string? ConfirmPassword { get; set; }
 	}

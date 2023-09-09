@@ -27,30 +27,30 @@ function setDatePickerFormat() {
 	x.datepicker({ format: "yyyy/mm//dd" });
 };
 
-function allowFirstName() {
-	let fname = $("#firstName").val();
+//function allowFirstName() {
+//	let fname = $("#firstName").val();
 
-	if (isValidName(fname)) {
-		$("#firstNameError").html("");
-	}
+//	if (isValidName(fname)) {
+//		$("#firstNameError").html("");
+//	}
 
-	else {
-		var errorMsg = "First Name is not a number";
-		$("#firstNameError").html(errorMsg); 
-	}
-};
+//	else {
+//		var errorMsg = "First Name is not a number";
+//		$("#firstNameError").html(errorMsg); 
+//	}
+//};
 
-function allowLastName() {
-	let lname = $("#lastName").val();
+//function allowLastName() {
+//	let lname = $("#lastName").val();
 
-	if (isValidName(lname)) {
-		$("#lastNameError").html("");
-	}
+//	if (isValidName(lname)) {
+//		$("#lastNameError").html("");
+//	}
 
-	else {
-		$("#lastNameError").html("Last Name is not a number");
-	}
-};
+//	else {
+//		$("#lastNameError").html("Last Name is not a number");
+//	}
+//};
 
 function isValidName(name) {
 	if (

@@ -135,7 +135,7 @@
 										<span asp-validation-for="PhoneNumber" class="text-danger" style="width: fit-content" id="phoneError"></span>
 									</div>
 									<div>
-										<input asp-for="Email" placeholder="enter your email" class="form-control form-right-row-style" id="email" name="email" />
+										<input asp-for="Email" placeholder="enter your email" class="form-control form-right-row-style" id="email" name="email" onkeyup="allowEmail()" />
 										<span asp-validation-for="Email" class="text-danger" id="emailError"></span>
 									</div>
 									<div>
