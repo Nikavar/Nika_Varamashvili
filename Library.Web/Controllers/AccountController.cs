@@ -30,6 +30,7 @@ namespace Library.Web.Controllers
 {
     public class AccountController : Controller
 	{
+		private readonly IWebHostEnvironment _webhost;
 		private readonly IUserService _userService;
 		private readonly IStaffReaderService _staffReaderService;
 		private readonly IRoleService _roleService;
@@ -42,7 +43,9 @@ namespace Library.Web.Controllers
 		
 		public AccountController
         (
-            ILogService logService,
+
+		    IWebHostEnvironment webhost,
+			ILogService logService,
             IUserService userService,
             IStaffReaderService staffReaderService,
             IRoleService roleService,
@@ -53,6 +56,7 @@ namespace Library.Web.Controllers
 			IConfiguration configuration
         )
         {
+			_webhost = webhost;
             _logService = logService;
             _userService = userService;
             _staffReaderService = staffReaderService;
@@ -308,7 +312,7 @@ namespace Library.Web.Controllers
 		}
 
         [HttpPost]
-		public async Task<IActionResult> Register(RegisterViewModel model)
+		public async Task<IActionResult> Register(RegisterViewModel model, IFormFile imgFile)
 		{
             if (ModelState.IsValid)
 			{
@@ -326,6 +330,17 @@ namespace Library.Web.Controllers
 					var hashedPassword = LoginHelper.ComputeSha256Hash(model.Password);
 					userEntity.Password = hashedPassword;
 
+					// save images to Folder "~/cover"
+					var saveimg = Path.Combine(_webhost.WebRootPath, "photos\\profile", imgFile.FileName);
+					string imgext = Path.GetExtension(imgFile.FileName);
+					var uploadimg = new FileStream(saveimg, FileMode.Create);
+
+					using (uploadimg)
+					{
+						await imgFile.CopyToAsync(uploadimg);
+					}
+
+					userEntity.ImageLink = saveimg;
 					userEntity.StaffReaderID = staffReaderEntity.ID;
 					await LogHelper.AddEntityWithLog(userEntity, _userService.AddUserAsync, _logService);
 
@@ -361,6 +376,8 @@ namespace Library.Web.Controllers
 						var role = _roleService.GetRoleByNameAsync(AccountRole.user.ToString());
 						var roleUserEntity = new RoleUser() { RoleID = role.ID, UserID = userEntity.id };
 						await LogHelper.AddEntityWithLog(roleUserEntity, _roleUserService.AddRoleUserAsync, _logService);
+
+
 					}
 					
 					return View("RegisterCompleted");

@@ -1,8 +1,10 @@
 ﻿using Library.Model.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace Library.Web.Models.Account
 {
@@ -14,11 +16,11 @@ namespace Library.Web.Models.Account
 		public List<SelectListItem>? Positions { get; set; }
 
 		[Required]
-		[RegularExpression("^[a-zA-Z ]*$",ErrorMessage = "Input Format is only text")]
+		[RegularExpression("^[a-zA-Z ]*$",ErrorMessage = "Input Format is only Text")]
 		public string? FirstName { get; set; }
 
 		[Required]
-		[RegularExpression("^[a-zA-Z ]*$", ErrorMessage = "Input Format is only text")]
+		[RegularExpression("^[a-zA-Z ]*$", ErrorMessage = "Input Format is only Text")]
 		public string? LastName { get; set; }
 
 		public string? Position { get; set; }
@@ -35,19 +37,18 @@ namespace Library.Web.Models.Account
 		public string? PhoneNumber { get; set; }
 
 		[Required]
+		[RegularExpression("[a-z0-9]+@[a-z]+\\.[a-z]{2,3}",ErrorMessage = "Input value in Mail Format")]
+		public string? Email { get; set; }		
+
+		[Required]
 		public string? Address { get; set; }
 
 		[Display(Name = "Gender:")]
 		public bool Gender { get; set; } = true;
 
-		[Display(Name = "Photo:")]
-		public string? PersonalPhoto { get; set; }
-
 		[Required]
-		[RegularExpression("[a-z0-9]+@[a-z]+\\.[a-z]{2,3}",ErrorMessage = "Input value in Mail Format")]
-		[DataType(DataType.EmailAddress)]
-		[EmailAddress(ErrorMessage = "Email format is not correct!")]
-		public string? Email { get; set; }		
+		[DataType(DataType.Upload)]
+		public IFormFile? imgfile { get; set; }
 
 		[Required]
 		[DataType(DataType.Password)]

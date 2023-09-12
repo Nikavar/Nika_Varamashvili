@@ -14,7 +14,8 @@ namespace Library.Model.Models
         public int id { get; set; }
         public string? Email { get; set; }
         public string? Password { get; set; }
-        public int? StaffReaderID { get; set; }
+		public string? ImageLink { get; set; }
+		public int? StaffReaderID { get; set; }
         public bool? IsConfirmed { get; set; } = false;
         // relations
         public StaffReader? StaffReader { get; set; }

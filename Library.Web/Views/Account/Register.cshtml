@@ -36,6 +36,7 @@
 	*@
 
 	<link href="~/css/register.css" rel="stylesheet" type="text/css" />
+	<script src="~/js/site.js"></script>
 	<script src="~/js/register.js"></script>
 
 	@{
@@ -50,7 +51,7 @@
 
 <div>
 	<div class="col-md-8">
-		<form asp-action="View" method="post" id="register-form">
+		<form asp-action="View" method="post" id="register-form" enctype="multipart/form-data">
 			<table width="1300px">
 				<tr style="vertical-align:central">
 					<td style="width:400px">
@@ -98,18 +99,18 @@
 								<input placeholder="enter your address" class="form-control form-left-row-style" asp-for="Address" />
 								<span asp-validation-for="Address" class="text-danger"></span>
 							</div>
-						</div>
+					    </div>
 					</td>
-					<td width=400px>
-						<div id="right-side" class="form-right-row-style">
+					<td style="width:400px">
+						<div id="right-side">
 							<div class="row-cols-1">
 								<table style="margin-top:43px">
 									<tr>
 										<td>
 											<div class="form-group mt-3">
 												<label class="mr-2" style="color:darkcyan;">Upload Your Profile Picture:</label>
-												<input type="file" name="imgfile" id="imgfile" asp-for="PersonalPhoto">
-												<span asp-validation-for="PersonalPhoto" id="imgError" class="text-danger"></span>
+												<input type="file" name="imgfile" id="imgfile" asp-for="imgfile">
+												<span asp-validation-for="imgfile" id="imgError" class="text-danger"></span>
 											</div>
 										</td>
 										<td>
@@ -127,29 +128,26 @@
 										</td>
 									</tr>
 								</table>
-								<div class="form-group">
-
 									<div>
 										<input type="tel" asp-for="PhoneNumber" id="phone" name="phonenumber" placeholder="tel: +995 12-34-56" pattern="(+995)[0-9]{2}[0-9]{2}[0-9]{2}"
 											   class="form-control form-right-row-style" onkeyup="allowNumbers()" />
 										<span asp-validation-for="PhoneNumber" class="text-danger" style="width: fit-content" id="phoneError"></span>
 									</div>
 									<div>
-										<input asp-for="Email" placeholder="enter your email" class="form-control form-right-row-style" id="email" name="email" onkeyup="allowEmail()" />
+										<input asp-for="Email" placeholder="enter your email" class="form-control form-right-row-style" id="email" onkeyup="allowEmail()" />
 										<span asp-validation-for="Email" class="text-danger" id="emailError"></span>
 									</div>
 									<div>
-										<input asp-for="Password" placeholder="password" class="form-control form-right-row-style" id="pass" name="password" />
+										<input asp-for="Password" placeholder="password" class="form-control form-right-row-style" id="pass" />
 										<span asp-validation-for="Password" class="text-danger" id="passError"></span>
 									</div>
 									<div>
-										<input asp-for="ConfirmPassword" placeholder="confirm password" class="form-control form-right-row-style" id="confirmPassword" name="confirmPassword" />
+										<input asp-for="ConfirmPassword" placeholder="confirm password" class="form-control form-right-row-style" id="confirmPassword" />
 										<span asp-validation-for="ConfirmPassword" class="text-danger" id="confirmPassError"></span>
 									</div>
 									<div>
 										<button type="submit" class="btn btn-primary" asp-controller="Account" asp-action="Register" onclick="allowPosition()">Register</button>
-									</div>
-								</div>
+									</div>				
 							</div>
 						</div>
 					</td>
@@ -161,8 +159,6 @@
 					</td>
 				</tr>
 			</table>
-			<div id="register-div">
-			</div>
 		</form>
 
 		<script type="text/javascript">

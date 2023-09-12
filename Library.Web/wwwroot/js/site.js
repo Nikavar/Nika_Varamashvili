@@ -40,3 +40,21 @@
 //    e.preventDefault();
 
 //});
+
+$(function () {
+    $('form').submit(function () {
+        //Logo Image
+        var selectedFile = $('#imgfile').val();
+        if (selectedFile == "") {
+            $("imgError") = 'please select cover image for your book';
+            return false;
+        }
+        else {
+            var fileExtension = ['jpeg', 'jpg', 'png', 'gif', 'bmp'];
+            if ($.inArray($('#imgfile').val().split('.').pop().toLowerCase(), fileExtension) == -1) {
+                $("imgError") = "You are permited to select only '\n.jpeg','.jpg', '.png', '.gif', '.bmp' formats are allowed.";
+                return false;
+            }
+        }
+    })
+});
