@@ -25,6 +25,10 @@ using System.Diagnostics.Eventing.Reader;
 using Library.Web.Models.Email;
 using Library.Web.HelperMethods;
 using Uno.UI.DataBinding;
+using DocumentFormat.OpenXml.Drawing.Charts;
+using System.Security.Claims;
+using Windows.Gaming.Input;
+using Windows.UI.Xaml;
 
 namespace Library.Web.Controllers
 {
@@ -70,6 +74,40 @@ namespace Library.Web.Controllers
         public IActionResult Login()
 		{
 			return View(new UserLoginViewModel());
+		}
+
+		[HttpGet]
+		public async Task<IActionResult> Profile()
+		{
+			var token = Request.Cookies["Token"];
+		    int userId = token != null ? TokenHelper.TokenDecryption(token) : -1;
+			var user = await _userService.GetUserByIdAsync(userId);
+
+			var staffReader = await _staffReaderService.GetStaffReaderByIdAsync(user.StaffReaderID ?? -1);
+			var position = staffReader != null && staffReader.PositionId != null 
+				? await _positionService.GetPositionByIdAsync(staffReader.PositionId) : null;
+
+			//Product product = new Product { Name = "product1", ImageName = "red.PNG" };
+			var index = user.ImageLink.LastIndexOf('\\')+1;
+			string path = "./wwwroot/photos/profile/" + user.ImageLink.Substring(index);
+			using (var stream = System.IO.File.OpenRead(path))
+			{
+				RegisterViewModel model = new RegisterViewModel
+				{
+					FirstName = staffReader.FirstName,
+					LastName = staffReader.LastName,
+					Email = staffReader.Email,
+					Address = staffReader.Address,
+					DOB = staffReader.DOB,
+					Gender = (bool)(staffReader.Gender),
+					imgfile = new FormFile(stream, 0, stream.Length, null, Path.GetFileName(stream.Name)),
+					PassportNumber = staffReader.PassportNumber,
+					PersonalNumber = staffReader.PersonalNumber,
+					PhoneNumber = staffReader.PhoneNumber,
+					Position = position.PositionName
+				};
+				return View(model);
+			}
 		}
 
 
@@ -288,8 +326,7 @@ namespace Library.Web.Controllers
 			return View(user);
 		}
 
-		[HttpGet]
-		public async Task<IActionResult> Register()
+		private async Task<RegisterViewModel> GetPositionsForModel()
 		{
 			RegisterViewModel model = new RegisterViewModel();
 			model.Positions = new List<SelectListItem>();
@@ -308,13 +345,23 @@ namespace Library.Web.Controllers
 
 			ViewData["Positions"] = model.Positions;
 
-			return View(model);
+			return model;
+		}
+
+		[HttpGet]
+		public async Task<IActionResult> Register()
+		{
+			var positionsForModel = await GetPositionsForModel();
+
+			return View(positionsForModel);
 		}
 
         [HttpPost]
 		public async Task<IActionResult> Register(RegisterViewModel model, IFormFile imgFile)
 		{
-            if (ModelState.IsValid)
+			var positionsForModel = await GetPositionsForModel();
+
+			if (ModelState.IsValid)
 			{
 				//var account = await _userService.GetManyUsersAsync(x => x.Email.ToLower() == model.Email.ToLower());
 				var account = await _userService.GetUserByCredentialsAsync(x => (x.Email.ToLower() == model.Email.ToLower()) && x.IsConfirmed != true);
@@ -376,15 +423,13 @@ namespace Library.Web.Controllers
 						var role = _roleService.GetRoleByNameAsync(AccountRole.user.ToString());
 						var roleUserEntity = new RoleUser() { RoleID = role.ID, UserID = userEntity.id };
 						await LogHelper.AddEntityWithLog(roleUserEntity, _roleUserService.AddRoleUserAsync, _logService);
-
-
-					}
+					}	
 					
 					return View("RegisterCompleted");
 				}
 			}
 
-			return View("Error"); 
+			return View(model); 
 		}
 
         public async Task<IActionResult> Edit(int id)

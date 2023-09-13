@@ -1,0 +1,98 @@
+﻿@model Library.Web.Models.Account.RegisterViewModel
+
+@{
+	var gender = Model.Gender == true ? "Male" : "Female";
+	var dob = Model.DOB.Value.ToShortDateString();
+	var imglink = Model.imgfile.FileName;
+}
+
+<section style="background-color: #eee; width:980px">
+	<div class="container py-5"> 
+		<div class="row">
+			<div class="col">
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-4">
+				<div class="card mb-4">
+					<div class="card-body text-center" style="margin:50px">
+						<img src="~/photos/profile/@imglink" alt="avatar"
+							 class="rounded-circle img-fluid" style="width: 150px;">
+							 
+						<h5 class="my-3">@Model.FirstName @Model.LastName</h5>
+						<p class="text-muted mb-1">@Model.Position</p>
+						<p class="text-muted mb-4">@Model.Address</p>
+						<div class="d-flex justify-content-center">
+							<button type="button" class="btn btn-primary ms-1">Edit Profile</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-lg-6">
+				<div class="card mb-5">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-sm-3">
+								<p class="mb-0">Gender</p>
+							</div>
+							<div class="col-sm-9">
+								<p class="text-muted mb-0">@gender</p>
+							</div>
+						</div>
+						<hr />
+						<div class="row">
+							<div class="col-sm-3">
+								<p class="mb-0">Email</p>
+							</div>
+							<div class="col-sm-9">
+								<p class="text-muted mb-0">@Model.Email</p>
+							</div>
+						</div>
+						<hr />
+						<div class="row">
+							<div class="col-sm-3">
+								<p class="mb-0">Personal Number</p>
+							</div>
+							<div class="col-sm-9">
+								<p class="text-muted mb-0">@Model.PersonalNumber</p>
+							</div>
+						</div>
+						<hr />
+						<div class="row">
+							<div class="col-sm-3">
+								<p class="mb-0">Passport Number</p>
+							</div>
+							<div class="col-sm-9">
+								<p class="text-muted mb-0">
+								    @Model.PassportNumber
+								</p>
+							</div>
+						</div>
+						<hr />
+
+						<div class="row">
+							<div class="col-sm-3">
+								<p class="mb-0">Phone</p>
+							</div>
+							<div class="col-sm-9">
+								<p class="text-muted mb-0">@Model.PhoneNumber</p>
+							</div>
+						</div>
+						<hr>
+						<div class="row">
+							<div class="col-sm-3">
+								<p class="mb-0">DoB</p>
+							</div>
+							<div class="col-sm-9">
+								<p class="text-muted mb-0">@dob</p>
+							</div>
+						</div>
+						<hr>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</section>

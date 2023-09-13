@@ -48,7 +48,7 @@ namespace Library.Web.Models.Account
 
 		[Required]
 		[DataType(DataType.Upload)]
-		public IFormFile? imgfile { get; set; }
+	    public IFormFile? imgfile { get; set; }
 
 		[Required]
 		[DataType(DataType.Password)]

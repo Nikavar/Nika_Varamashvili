@@ -4,11 +4,11 @@
 
 @{
 	ViewBag.Title = "User Registration";
-	var positionLst = ViewBag.message;
+	var positionLst = ViewBag.Positions;
 }
 
 @{
-	ViewData["Title"] = "View";
+	//ViewData["Title"] = "View";
 	// Layout = "~/Views/Account/Login.cshtml";
 }
 
@@ -54,7 +54,7 @@
 		<form asp-action="View" method="post" id="register-form" enctype="multipart/form-data">
 			<table width="1300px">
 				<tr style="vertical-align:central">
-					<td style="width:400px">
+					<td style="width:200px">
 						<div id="left-side">
 							<div class="form-group" style="display:inline; width: 100px">
 								<label for="reader"><i class="zmdi zmdi-male">Reader</i></label>
@@ -72,8 +72,6 @@
 								@Html.DropDownListFor(x=>x.PositionId,
 								new SelectList(ViewBag.Positions, "Value", "Text"),
 								new { @class="form-control", @onchange="allowPosition()"})
-
-
 								<span asp-validator-for="Positions" class="text-danger" id="positionError"></span>
 							</div>
 							<div>
@@ -101,7 +99,10 @@
 							</div>
 					    </div>
 					</td>
-					<td style="width:400px">
+					<td width="30px">
+
+					</td>
+					<td style="width:300px">
 						<div id="right-side">
 							<div class="row-cols-1">
 								<table style="margin-top:43px">
@@ -109,7 +110,7 @@
 										<td>
 											<div class="form-group mt-3">
 												<label class="mr-2" style="color:darkcyan;">Upload Your Profile Picture:</label>
-												<input type="file" name="imgfile" id="imgfile" asp-for="imgfile">
+												<input type="file" id="imgfile" asp-for="imgfile" value="no img is chosen">
 												<span asp-validation-for="imgfile" id="imgError" class="text-danger"></span>
 											</div>
 										</td>
