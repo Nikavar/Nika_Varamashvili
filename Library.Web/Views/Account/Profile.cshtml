@@ -4,18 +4,18 @@
 	var gender = Model.Gender == true ? "Male" : "Female";
 	var dob = Model.DOB.Value.ToShortDateString();
 	var imglink = Model.imgfile.FileName;
+
+	<link href="~/css/profile.css" rel="stylesheet" />
+
 }
 
-<section style="background-color: #eee; width:980px">
+
+<section style="background-color: #eee; width:980px; margin:50px; height:410px">
 	<div class="container py-5"> 
 		<div class="row">
-			<div class="col">
-			</div>
-		</div>
-		<div class="row">
 			<div class="col-lg-4">
-				<div class="card mb-4">
-					<div class="card-body text-center" style="margin:50px">
+				<div class="card mb-4" style="margin-left:5px">
+					<div class="card-body text-center" style="margin:50px; height:250px">
 						<img src="~/photos/profile/@imglink" alt="avatar"
 							 class="rounded-circle img-fluid" style="width: 150px;">
 							 
@@ -23,7 +23,7 @@
 						<p class="text-muted mb-1">@Model.Position</p>
 						<p class="text-muted mb-4">@Model.Address</p>
 						<div class="d-flex justify-content-center">
-							<button type="button" class="btn btn-primary ms-1">Edit Profile</button>
+							<button type="button" data-toggle="modal" data-target="#exampleModalLong" class="btn btn-primary ms-1">Edit Profile</button>
 						</div>
 					</div>
 				</div>
@@ -79,7 +79,7 @@
 								<p class="text-muted mb-0">@Model.PhoneNumber</p>
 							</div>
 						</div>
-						<hr>
+						<hr />
 						<div class="row">
 							<div class="col-sm-3">
 								<p class="mb-0">DoB</p>
@@ -88,10 +88,111 @@
 								<p class="text-muted mb-0">@dob</p>
 							</div>
 						</div>
-						<hr>
 					</div>
 				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Modal -->
+	<div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content" style="margin-top:20px; width:350px">
+				<div class="modal-header" style="margin-top:10px">
+					<h5 class="modal-title" id="exampleModalLongTitle" style="margin-left:105px">Update Profile</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-left:80px">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body" style="margin-left:25px">
+					<form asp-action="View" method="post" id="register-form" enctype="multipart/form-data">
+						<table>
+							<tr style="vertical-align:central">
+								<td style="width:200px">
+									<div id="left-side">
+										<div class="form-group" style="display:inline; width: 100px">
+											<label for="reader"><i class="zmdi zmdi-male">Reader</i></label>
 
+											<input onclick="showHidePositions()" type="radio" id="reader"
+												   name="staffReaderGroup" value="false">
+										</div>
+										<div class="form-group" style="display:inline; width: 100px; margin-left:50px">
+											<label for="staff"><i class="zmdi zmdi-female">Staff</i></label>
+
+											<input onclick="showHidePositions()" type="radio" id="staff"
+												   name="staffReaderGroup" value="true" checked>
+										</div>
+@*										<div id="positionsDiv" class="form-left-row-style">
+											@Html.DropDownListFor(x=>x.PositionId,
+											new SelectList(ViewBag.Positions, "Value", "Text"),
+											new { @class="form-control", @onchange="allowPosition()"})
+											<span asp-validator-for="Positions" class="text-danger" id="positionError"></span>
+										</div>*@
+										<div>
+											<input asp-for="FirstName" style="margin:5px 0px 5px 0px" class="form-control form-left-row-style" placeholder="first name" id="firstName" onkeyup="allowFirstName()" />
+											<span asp-validation-for="FirstName" class="text-danger" id="firstNameError"></span>
+										</div>
+										<div>
+											<input asp-for="LastName" class="form-control form-left-row-style" placeholder="last name" id="lastName" onkeyup="allowLastName()" />
+											<span asp-validation-for="LastName" class="text-danger" style="width:max-content" id="lastNameError"></span>
+										</div>
+										<div>
+											<input type="date" asp-for="DOB" style="margin:5px 0px 5px 0px" id="datepicker" class="form-control form-left-row-style" onload="setDatePickerFormat()" />
+											<span asp-validation-for="DOB" class="text-danger"></span>
+										</div>
+										<div>
+											<input asp-for="PersonalNumber" placeholder="personal id" class="form-control form-left-row-style" id="personalId" />
+											<span asp-validation-for="PersonalNumber" class="text-danger" id="personalIdError"></span>
+										</div>
+										<div>
+											<input asp-for="PassportNumber" placeholder="passport number" class="form-control form-left-row-style" />
+										</div>
+										<div>
+											<input placeholder="enter your address" class="form-control form-left-row-style" asp-for="Address" />
+											<span asp-validation-for="Address" class="text-danger"></span>
+										</div>
+									</div>	
+									<div class="row-cols-1">
+										<table style="margin-top:43px">
+											<tr>
+												<td>
+													<div class="form-group mt-3">
+														<label class="mr-2" style="color:darkcyan;">Upload Your Profile Picture:</label>
+														<input type="file" id="imgfile" asp-for="imgfile" value="no img is chosen">
+														<span asp-validation-for="imgfile" id="imgError" class="text-danger"></span>
+													</div>
+													<div>
+														<label class="mr-2" style="color:darkcyan;">Gender:</label>
+													</div>
+													<div class="form-group" style="display:inline; width: 100px">
+														<label for="male"><i class="zmdi zmdi-male">male</i></label>
+														<input type="radio" id="male" name="genderGroup" value="true" checked>
+													</div>
+													<div class="form-group" style="display:inline; width: 100px">
+														<label for="female"><i class="zmdi zmdi-female">female</i></label>
+														<input type="radio" id="female" name="genderGroup" value="false">
+													</div>
+												</td>
+											</tr>
+										</table>
+										<div>
+											<input type="tel" asp-for="PhoneNumber" id="phone" name="phonenumber" placeholder="tel: +995 12-34-56" pattern="(+995)[0-9]{2}[0-9]{2}[0-9]{2}"
+												   class="form-control form-right-row-style" onkeyup="allowNumbers()" />
+											<span asp-validation-for="PhoneNumber" class="text-danger" style="width: fit-content" id="phoneError"></span>
+										</div>
+										<div>
+											<input asp-for="Email" placeholder="enter your email" class="form-control form-right-row-style" id="email" onkeyup="allowEmail()" />
+											<span asp-validation-for="Email" class="text-danger" id="emailError"></span>
+										</div>
+									</div>
+								</td>								
+							</tr>
+						</table>
+					</form>
+				</div>
+				<div class="modal-footer" style="width:350px">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<input type="button" class="btn btn-primary" style="margin-right:30px" value="Save changes" onclick="@("window.location.href='" + @Url.Action("updateprofile", "account") + "'");" />
+				</div>
 			</div>
 		</div>
 	</div>

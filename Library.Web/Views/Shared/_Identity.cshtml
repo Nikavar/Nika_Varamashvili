@@ -37,11 +37,17 @@
 
 else
 {
-    <li class="navbar-nav flex-grow-1" style="margin-left:850px">
-    <a class="nav-link text-dark" asp-area="" asp-controller="account" asp-action="logout">
-			<i class="bi bi-person-badge" href="Book/Index"></i> Hello @user.Email;
-    </a>
-</li>
+    <li class="nav-item dropdown" style="margin-left:860px">
+        <a class="nav-link text-dark dropdown-toggle" asp-controller = "account" asp-action = "logout" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-person-badge" href="Book/Index"></i> Hello @user.Email
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" asp-controller="account" asp-action="profile">Profile</a></li>
+            <li><a class="dropdown-item" href="#">Another action</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#">Something else here</a></li>
+        </ul>
+    </li>
 <li style="height:50px">
     <a class="btn btn-outline-danger btn-sm" asp-controller="Account" asp-action="Logout">
         <i class="bi bi-box-arrow-in-right"></i> Log Out

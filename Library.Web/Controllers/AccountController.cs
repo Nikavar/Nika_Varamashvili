@@ -29,6 +29,7 @@ using DocumentFormat.OpenXml.Drawing.Charts;
 using System.Security.Claims;
 using Windows.Gaming.Input;
 using Windows.UI.Xaml;
+using AutoMapper;
 
 namespace Library.Web.Controllers
 {
@@ -99,7 +100,7 @@ namespace Library.Web.Controllers
 					Email = staffReader.Email,
 					Address = staffReader.Address,
 					DOB = staffReader.DOB,
-					Gender = (bool)(staffReader.Gender),
+					Gender = (bool)staffReader.Gender,
 					imgfile = new FormFile(stream, 0, stream.Length, null, Path.GetFileName(stream.Name)),
 					PassportNumber = staffReader.PassportNumber,
 					PersonalNumber = staffReader.PersonalNumber,
@@ -110,6 +111,11 @@ namespace Library.Web.Controllers
 			}
 		}
 
+		[HttpGet]
+		public IActionResult UpdateProfile(RegisterViewModel model)
+		{
+			return Redirect("profile");
+		}
 
         [HttpPost]
 		public async Task<IActionResult> Login(UserLoginViewModel model)
