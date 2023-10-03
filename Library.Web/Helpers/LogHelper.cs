@@ -58,7 +58,8 @@ namespace Library.Web.HelperMethods
 
 			if (idProperty != null)
 			{
-				log = await logService.GetLogByEntityId((int)idProperty.GetValue(entity));
+				var id = (int)idProperty.GetValue(entity);
+				log = await logService.GetLogByEntityId(id);
 			}
 
 			try

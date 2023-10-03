@@ -72,29 +72,30 @@ namespace Library.Web.Controllers
 			_emailService = emailService;
 			_configuration = configuration;
         }
-        public IActionResult Login()
+        public ActionResult Login()
 		{
 			return View(new UserLoginViewModel());
 		}
 
 		[HttpGet]
-		public async Task<IActionResult> Profile()
+		public async Task<ActionResult> Profile()
 		{
 			var token = Request.Cookies["Token"];
-		    int userId = token != null ? TokenHelper.TokenDecryption(token) : -1;
+			int userId = token != null ? TokenHelper.TokenDecryption(token) : -1;
 			var user = await _userService.GetUserByIdAsync(userId);
-
+			
 			var staffReader = await _staffReaderService.GetStaffReaderByIdAsync(user.StaffReaderID ?? -1);
-			var position = staffReader != null && staffReader.PositionId != null 
+			var position = staffReader != null && staffReader.PositionId != null
 				? await _positionService.GetPositionByIdAsync(staffReader.PositionId) : null;
 
-			//Product product = new Product { Name = "product1", ImageName = "red.PNG" };
-			var index = user.ImageLink.LastIndexOf('\\')+1;
+			var index = user.ImageLink.LastIndexOf('\\') + 1;
 			string path = "./wwwroot/photos/profile/" + user.ImageLink.Substring(index);
+			
 			using (var stream = System.IO.File.OpenRead(path))
 			{
 				RegisterViewModel model = new RegisterViewModel
 				{
+					Id = staffReader.ID,
 					FirstName = staffReader.FirstName,
 					LastName = staffReader.LastName,
 					Email = staffReader.Email,
@@ -111,14 +112,17 @@ namespace Library.Web.Controllers
 			}
 		}
 
-		[HttpGet]
-		public IActionResult UpdateProfile(RegisterViewModel model)
+		[HttpPost]
+		public async Task<ActionResult> UpdateProfile(RegisterViewModel model)
 		{
-			return Redirect("profile");
+			var staffReader = await _staffReaderService.GetStaffReaderByIdAsync(model.Id);
+			await LogHelper.UpdateEntityWithLog(staffReader, _staffReaderService.UpdateStaffReaderAsync, _logService);
+
+			return Redirect("Profile");
 		}
 
         [HttpPost]
-		public async Task<IActionResult> Login(UserLoginViewModel model)
+		public async Task<ActionResult> Login(UserLoginViewModel model)
 		{
 			if (ModelState.IsValid)
 			{
@@ -285,7 +289,7 @@ namespace Library.Web.Controllers
             return RedirectToAction("Login", "Account");
         }
 
-        public async Task<IActionResult> Index(string sortBy, string find = "", int pg = 1)
+        public async Task<ActionResult> Index(string sortBy, string find = "", int pg = 1)
 		{
 			var users = await _userService.GetAllUsersAsync();
 			pg = pg < 1 ? 1 : pg;
@@ -326,7 +330,7 @@ namespace Library.Web.Controllers
 			return View(data);
 		}
 
-		public async Task<IActionResult> Details(int id)
+		public async Task<ActionResult> Details(int id)
 		{
 			var user = await _userService.GetUserByIdAsync(id);
 			return View(user);
@@ -355,7 +359,7 @@ namespace Library.Web.Controllers
 		}
 
 		[HttpGet]
-		public async Task<IActionResult> Register()
+		public async Task<ActionResult> Register()
 		{
 			var positionsForModel = await GetPositionsForModel();
 
@@ -363,7 +367,7 @@ namespace Library.Web.Controllers
 		}
 
         [HttpPost]
-		public async Task<IActionResult> Register(RegisterViewModel model, IFormFile imgFile)
+		public async Task<ActionResult> Register(RegisterViewModel model, IFormFile imgFile)
 		{
 			var positionsForModel = await GetPositionsForModel();
 
@@ -438,7 +442,7 @@ namespace Library.Web.Controllers
 			return View(model); 
 		}
 
-        public async Task<IActionResult> Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
 			var user = await _userService.GetUserByIdAsync(id);
 			return View(user);
@@ -446,7 +450,7 @@ namespace Library.Web.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Edit(int id, User user)
+		public async Task<ActionResult> Edit(int id, User user)
 		{
 			if (id != user.id)
 			{
@@ -461,7 +465,7 @@ namespace Library.Web.Controllers
 			return View(user);
 		}
 
-		public async Task<IActionResult> Delete(int id)
+		public async Task<ActionResult> Delete(int id)
 		{
 			var user = await _userService.GetUserByIdAsync(id);
 			return View(user);
@@ -469,7 +473,7 @@ namespace Library.Web.Controllers
 
 		[HttpPost, ActionName("Delete")]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> DeleteConfirmed(User user)
+		public async Task<ActionResult> DeleteConfirmed(User user)
 		{
 			await _userService.DeleteUserAsync(user);
 			await _logService.DeleteManyLogsAsync(x=> x.EntityID == user.id);
